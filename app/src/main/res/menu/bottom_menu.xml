@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_1"
+        android:enabled="true"
+        android:icon="@drawable/ic_view_list_black_24dp"
+        android:title="메인"
+        />
+    <item android:id="@+id/action_2"
+        android:enabled="true"
+        android:icon="@drawable/ic_directions_walk_black_24dp"
+        android:title="만보기"/>
+    <item android:id="@+id/action_3"
+        android:enabled="true"
+        android:icon="@drawable/ic_date_range_black_24dp"
+        android:title="달력"/>
+    <item android:id="@+id/action_4"
+        android:enabled="true"
+        android:icon="@drawable/ic_sentiment_satisfied_black_24dp"
+        android:title="팁"/>
+</menu>
