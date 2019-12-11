@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+
 public class MainActivity extends AppCompatActivity {
 
     private CoordinatorLayout coordinatorLayout;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Stetho.initializeWithDefaults(this);
 
         coordinatorLayout = findViewById(R.id.coordinatorLayout);
         bottomMenu = findViewById(R.id.bottomMenu);

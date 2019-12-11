@@ -3,6 +3,8 @@ package com.example.yunoi.cleaningmaster;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,7 +33,8 @@ public class MainFragment extends Fragment {
     private View view;
     private ListView listView;
     private ArrayList<String> list = new ArrayList<>();
-    private MainAdapter adapter;
+    private SQLiteDatabase db;
+    private DBHelper dbHelper;
 
     @Nullable
     @Override
@@ -40,6 +43,7 @@ public class MainFragment extends Fragment {
         customActionBar(inflater);
 
         listView = view.findViewById(R.id.listView);
+        list = getTotalArea();
         MainAdapter adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
         listView.setAdapter(adapter);
 
@@ -78,6 +82,7 @@ public class MainFragment extends Fragment {
                             toastDisplay("청소구역을 입력해 주세요!");
                         } else{
                             list.add(str1);
+                            insertArea(new NotifyVO(0,0,0,0,0,str1, null, null, null));
                             alertDialog.dismiss();
                         }
                     }
@@ -126,6 +131,34 @@ public class MainFragment extends Fragment {
         Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
+    // 청소구역 입력 (insert)
+    public void insertArea(NotifyVO notifyVO){
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        int year = notifyVO.getYear();
+        int month = notifyVO.getMonth();
+        int day = notifyVO.getDay();
+        int hour = notifyVO.getHour();
+        int minute = notifyVO.getMinute();
+        String area = notifyVO.getArea();
+        String task = notifyVO.getTask();
+        String alarmSet = notifyVO.getAlarmSet();
+        String loop = notifyVO.getLoop();
+        db.execSQL("INSERT INTO notifyTBL (year, month, day, hour, minute, area, task, alarmSet, loop )" +
+                "VALUES ("+year+","+ month+","+day+","+hour+"," +minute+", '"+ area +"', '" + task +"','" + alarmSet +"','"+loop+"');");
+
+    }
+    // 전체 청소구역 불러오기 (select)
+    public ArrayList<String> getTotalArea(){
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
+        Cursor cursor;
+        cursor = db.rawQuery("SELECT area FROM notifyTBL;", null);
+        while(cursor.moveToNext()){
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        return list;
+    }
+
     class MainAdapter extends BaseAdapter {
         private Context context;
         private int layout;
@@ -166,5 +199,5 @@ public class MainFragment extends Fragment {
             tvCleaning.setText(list.get(position));
             return convertView;
         }
-    }
+    }   // end of MainAdapter
 }
