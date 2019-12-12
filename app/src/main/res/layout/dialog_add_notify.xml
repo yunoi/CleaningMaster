@@ -77,77 +77,70 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="월"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnTuesday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="화"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnWednesday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="수"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnThursday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="목"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnFriday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="금"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnSaturday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="토"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnSunday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btndayofweek_btnoff"
             android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
             android:text="일"
-            android:textSize="20dp" />
+            android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
