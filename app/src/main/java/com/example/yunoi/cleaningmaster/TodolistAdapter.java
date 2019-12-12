@@ -1,8 +1,10 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -99,7 +101,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         return list != null ? list.size() : 0;
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private ImageButton todolist_alram;
         private ExTextView todolist_text;
@@ -108,16 +110,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         private LinearLayout todo_linearLayout;
         private CheckBox todolist_checkBox;
         StrikeThroughPainting strikeThroughPainting;
-
         private boolean btnCheck = false;
         private TextView txtDayCheck;
-        private Button btnMonday;
-        private Button btnTuesday;
-        private Button btnWednesday;
-        private Button btnThursday;
-        private Button btnFriday;
-        private Button btnSaturday;
-        private Button btnSunday;
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -162,24 +156,24 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 public void onClick(View v) {
                     final View dialogView = View.inflate(itemView.getContext(), R.layout.dialog_add_notify, null);
                     final AlertDialog.Builder dlg = new AlertDialog.Builder(itemView.getContext());
-                    btnMonday = itemView.findViewById(R.id.btnMonday);
-                    btnTuesday = itemView.findViewById(R.id.btnTuesday);
-                    btnWednesday = itemView.findViewById(R.id.btnWednesday);
-                    btnThursday = itemView.findViewById(R.id.btnThursday);
-                    btnFriday = itemView.findViewById(R.id.btnFriday);
-                    btnSaturday = itemView.findViewById(R.id.btnSaturday);
-                    btnSunday = itemView.findViewById(R.id.btnSunday);
-                    txtDayCheck = itemView.findViewById(R.id.txtDayCheck);
-
-                    btnMonday.setOnClickListener(this);
-                    btnTuesday.setOnClickListener(this);
-                    btnWednesday.setOnClickListener(this);
-                    btnThursday.setOnClickListener(this);
-                    btnFriday.setOnClickListener(this);
-                    btnSaturday.setOnClickListener(this);
-                    btnSunday.setOnClickListener(this);
-
                     dlg.setView(dialogView);
+
+                    final Button btnMonday = dialogView.findViewById(R.id.btnMonday);
+                    final Button btnTuesday = dialogView.findViewById(R.id.btnTuesday);
+                    final Button btnWednesday = dialogView.findViewById(R.id.btnWednesday);
+                    final Button btnThursday = dialogView.findViewById(R.id.btnThursday);
+                    final Button btnFriday = dialogView.findViewById(R.id.btnFriday);
+                    final Button btnSaturday = dialogView.findViewById(R.id.btnSaturday);
+                    final Button btnSunday = dialogView.findViewById(R.id.btnSunday);
+                    txtDayCheck = dialogView.findViewById(R.id.txtDayCheck);
+
+                    btnMonday.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            btnBackGroundChange(btnMonday);
+                        }
+                    });
+
                     dlg.setPositiveButton("확인", null);
                     dlg.setNegativeButton("취소",
                             new DialogInterface.OnClickListener() {
@@ -208,30 +202,19 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 }
             });
         }
-
+        //요일 버튼 이벤트
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         private void btnBackGroundChange(Button btn) {
-            if (!btnCheck) {
-                btn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.btndayofweek_btnon));
-                txtDayCheck.setText("매주 " + btn.getText().toString().trim() + "요일에 알림이 울립니다.");
-                btnCheck = true;
-            } else {
-                btn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.btndayofweek_btnoff));
+            if(!btnCheck){
+                btn.setBackground(ContextCompat.getDrawable(itemView.getContext(),R.drawable.btndayofweek_btnon));
+                txtDayCheck.setText("매주 "+btn.getText().toString().trim()+"요일에 알람이 울립니다.");
+                btnCheck=true;
+            }else{
+                btn.setBackground(ContextCompat.getDrawable(itemView.getContext(),R.drawable.btndayofweek_btnoff));
                 txtDayCheck.setText("매일 알림");
-                btnCheck = false;
+                btnCheck=false;
             }
         }
 
-        @Override
-        public void onClick(View v) {
-            switch(v.getId()){
-                case R.id.btnMonday : btnBackGroundChange(btnMonday); break;
-                case R.id.btnTuesday : btnBackGroundChange(btnMonday); break;
-                case R.id.btnWednesday : btnBackGroundChange(btnMonday); break;
-                case R.id.btnThursday : btnBackGroundChange(btnMonday); break;
-                case R.id.btnFriday : btnBackGroundChange(btnMonday); break;
-                case R.id.btnSaturday : btnBackGroundChange(btnMonday); break;
-                case R.id.btnSunday : btnBackGroundChange(btnMonday); break;
-            }
-        }
-    } // end of customViewHolder
+    } // end of customViewHolder class
 }
