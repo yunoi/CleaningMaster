@@ -2,6 +2,7 @@ package com.example.yunoi.cleaningmaster;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 
 import lib.mozidev.me.extextview.ExTextView;
 import lib.mozidev.me.extextview.StrikeThroughPainting;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.CustomViewHolder> {
 
@@ -141,6 +144,17 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                                 .strokeWidth(4).totalTime(10_0L).strikeThrough();
                         checkcount++;//체크 카운트
 
+                        //체크한 카운트가 만든 리스트와 맞을때
+                        if (checkcount==TodolistFragment.taskcount){
+
+                            Intent intent=new Intent(itemView.getContext(),ExpShowActivity.class);
+                            startActivity(itemView.getContext(),intent,null);
+
+                        }
+
+
+
+
                     }else {
                         checkcount--;
                         strikeThroughPainting.clearStrikeThrough();
@@ -153,9 +167,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
 
             todolist_alram = itemView.findViewById(R.id.todolist_alram);
-            todolist_text = itemView.findViewById(R.id.todolist_text);
-            todolist_switch = itemView.findViewById(R.id.todolist_switch);
-            swipe_sample1 = itemView.findViewById(R.id.swipe_sample1);
 
             todolist_alram.setOnClickListener(new View.OnClickListener() {
                 @Override
