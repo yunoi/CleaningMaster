@@ -29,7 +29,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="청소구역을 입력해 주세요"
+        android:text="To do list"
         android:textColor="#ffffff"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/alert_todolist_alerEdt"
@@ -37,7 +37,7 @@
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--191212 am 10:40 알런트 힌트색 바꿈. by 채현 -->
+
     <EditText
         android:id="@+id/alert_todolist_alerEdt"
         android:layout_width="0dp"
@@ -46,7 +46,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="#ffffff"
-        android:hint="ex)거실,부엌,큰방,작은방..."
+        android:hint="ex)방 청소,냉장고 정리, 옷 정리 ..."
         android:inputType="textPersonName"
         android:textColor="#ffffff"
         android:textColorHint="#7fffffff"
