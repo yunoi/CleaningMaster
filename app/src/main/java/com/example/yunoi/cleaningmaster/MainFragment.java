@@ -74,7 +74,7 @@ public class MainFragment extends Fragment {
                 dialogView.findViewById(R.id.alertTxt1);
         alerEdt = dialogView.findViewById(R.id.alerEdt);
 
-        final EditText alerEdt = dialogView.findViewById(R.id.alert_todolist_alerEdt);
+        final EditText alerEdt = dialogView.findViewById(R.id.alerEdt);
 
         dlg.setPositiveButton("확인", null);
         dlg.setNegativeButton("취소",
