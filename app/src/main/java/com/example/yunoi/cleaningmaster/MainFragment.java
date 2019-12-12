@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.mozilla.javascript.tools.jsc.Main;
 
 import java.util.ArrayList;
 
@@ -37,6 +40,9 @@ public class MainFragment extends Fragment {
     private ArrayList<String> list = new ArrayList<>();
     private SQLiteDatabase db;
     private DBHelper dbHelper;
+    private MainAdapter adapter;
+    private EditText alerEdt; // 청소구역추가 다이얼로그 내부 변수
+    private int checkedPosition; // 리스트뷰의 포지션을 가져온다.
 
     @Nullable
     @Override
@@ -46,9 +52,14 @@ public class MainFragment extends Fragment {
 
         listView = view.findViewById(R.id.listView);
         list = getTotalArea();
-        MainAdapter adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
+        final MainAdapter adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
         listView.setAdapter(adapter);
-
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                checkedPosition = listView.getCheckedItemPosition(); // 리스트뷰의 포지션을 가져온다.
+            }
+        });
         return view;
     }
 
@@ -61,7 +72,7 @@ public class MainFragment extends Fragment {
                 dialogView.findViewById(R.id.imageView);
         TextView alertTxt1 =
                 dialogView.findViewById(R.id.alertTxt1);
-        final EditText alerEdt = dialogView.findViewById(R.id.alerEdt);
+        alerEdt = dialogView.findViewById(R.id.alerEdt);
 
         dlg.setPositiveButton("확인", null);
         dlg.setNegativeButton("취소",
@@ -92,7 +103,8 @@ public class MainFragment extends Fragment {
             } // end of onShow
         });
         alertDialog.show();
-    }
+
+    } // end of addArea
 
     private void customActionBar(LayoutInflater inflater) {
 
@@ -154,6 +166,7 @@ public class MainFragment extends Fragment {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
         cursor = db.rawQuery("SELECT area FROM notifyTBL;", null);
+        list.clear();
         while(cursor.moveToNext()){
             list.add(cursor.getString(0));
         }
@@ -161,17 +174,77 @@ public class MainFragment extends Fragment {
         return list;
     }
 
+    // 청소 구역 수정 (upadate)
+    public void updateArea(){
+        final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_room, null);
+        final AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity(),R.style.MyDialogTheme);
+
+        dlg.setView(dialogView);
+        ImageView imageView =
+                dialogView.findViewById(R.id.imageView);
+        TextView alertTxt1 =
+                dialogView.findViewById(R.id.alertTxt1);
+        alerEdt = dialogView.findViewById(R.id.alerEdt);
+        alertTxt1.setText("변경하실 구역명을 작성해 주세요");
+        alerEdt.setText(list.get(checkedPosition));
+        dlg.setPositiveButton("확인", null);
+        dlg.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        toastDisplay("취소되었습니다.");
+                    }
+                });
+        final AlertDialog alertDialog = dlg.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String str1 = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
+                        if(str1.equals("")){
+                            toastDisplay("청소구역을 입력해 주세요!");
+                        } else{
+                            list.remove(checkedPosition);
+                            list.add(str1);
+                            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+                            if(alerEdt.getText().toString() != ""){
+                                db.execSQL("UPDATE notifyTBL SET area = '"
+                                        + str1 + "' WHERE area = '"
+                                        + list.get(checkedPosition)+"';");
+                            }
+                            alertDialog.dismiss();
+                            toastDisplay("수정되었습니다.");
+                        }
+                    }
+                });
+            } // end of onShow
+        });
+        alertDialog.show();
+    }
+
     class MainAdapter extends BaseAdapter {
         private Context context;
         private int layout;
         private ArrayList<String> list;
         private LayoutInflater layoutInflater;
+        private TextView tvCleaning;
 
         public MainAdapter(Context context, int layout, ArrayList<String> list) {
             this.context = context;
             this.layout = layout;
             this.list = list;
             layoutInflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        }
+
+        public TextView getTvCleaning() {
+            return tvCleaning;
+        }
+
+        public void setTvCleaning(TextView tvCleaning) {
+            this.tvCleaning = tvCleaning;
         }
 
         @Override
@@ -195,10 +268,11 @@ public class MainFragment extends Fragment {
                 convertView = layoutInflater.inflate(layout, null);
             }
             LinearLayout linearLayout = convertView.findViewById(R.id.linearLayout);
-            TextView tvCleaning = convertView.findViewById(R.id.tvCleaning);
+            tvCleaning = convertView.findViewById(R.id.tvCleaning);
             ImageView ivAddTask = convertView.findViewById(R.id.ivAddTask);
-
+            tvCleaning.setTag(convertView);
             tvCleaning.setText(list.get(position));
+            setTvCleaning(tvCleaning);
 
             //191212 am 09:51 linearlayout 클릭 리스너 추가 by 채현
             final String groupText=tvCleaning.getText().toString();
@@ -217,9 +291,12 @@ public class MainFragment extends Fragment {
 
                 }
             });
-
-
-
+            tvCleaning.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateArea();
+                }
+            });
             return convertView;
         }
     }   // end of MainAdapter
