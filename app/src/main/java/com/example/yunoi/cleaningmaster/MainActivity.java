@@ -1,5 +1,7 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -24,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private SettingFragment settingFragment;
     private Fragment mainFragment;
     private static final String TAG = "MainActivity";
-
+    //191212 am 11:20 도움말 이동에 관련된 SharedPreferences by 재훈
+    SharedPreferences passTutorial;
+    int tutorialState;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
         bottomMenu = findViewById(R.id.bottomMenu);
         settingFragment = new SettingFragment();
         mainFragment = new MainFragment();
+
+        //191212 am 11:20 도움말 안보기 설정이 아닐시 자동으로 도움말로 이동 by 재훈
+//        passTutorial = getSharedPreferences("change",MODE_PRIVATE);
+//        tutorialState = passTutorial.getInt("First",0);
+//        if(tutorialState !=1){
+//            Intent intent = new Intent(MainActivity.this,TutorialGuideActivity.class);
+//            startActivity(intent);
+//        }
 
         Log.d(TAG, "test입니다.");
 
