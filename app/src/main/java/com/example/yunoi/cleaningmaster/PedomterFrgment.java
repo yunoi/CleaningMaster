@@ -35,6 +35,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     static final String LOG_TAG="PedomterFrgment";
     // 프래그먼트
     MyReceiver myReceiver = null;
+    private PedomterFrgment pedomterFrgment;
     private CircleProgressBar day_Graph=null;
     private CircleProgressBar day_Kcal=null;
     private CircleProgressBar day_Min=null;
@@ -42,6 +43,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     private Context mContext;
     private Activity activity;
     private Thread progressThread;
+    private boolean Yes_No;
     static PedomterSensor sensorService;
     static Chronometer chronometer;
     private TextView textStep , textKcal , textMinute;
@@ -49,7 +51,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
    // PedDBHelper pedDBHelper;
     ImageButton ivBtnBar , ivbtnTwo , ivbtnThree;
     Intent intent;
-    int count=0;
     final static int[] timeProgress = {0};
 
     @Nullable
@@ -130,6 +131,14 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         editor.commit();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(pedomterFrgment == null){
+
+            pedomterFrgment = new PedomterFrgment();
+        }
+    }
 
     @Override
     public void onDestroy() {
@@ -154,7 +163,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
                 break;
             // 중지 버튼
 
-
             case R.id.ivbtnTwo :
 //                float xValue = Float.parseFloat(String.valueOf(reading));
 //                float yValue = Float.parseFloat(String.valueOf(readkcal));
@@ -167,7 +175,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
                 // 센서값 안받기
                 activity.stopService(intent);
 
-  //              onStop();
+                onStop();
                 return;
 
 
@@ -222,7 +230,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
 
 
             // 값을 Toast로 확인한다
-            Toast.makeText(context,""+ksm,Toast.LENGTH_LONG).show();
+          //  Toast.makeText(context,""+ksm,Toast.LENGTH_LONG).show();
             // 값을 TextView 로 확인한다
             textStep.setText("Step:" +ksm);
             textKcal.setText(ksm2+" Kcal");
