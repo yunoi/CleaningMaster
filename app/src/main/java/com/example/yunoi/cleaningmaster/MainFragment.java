@@ -74,6 +74,8 @@ public class MainFragment extends Fragment {
                 dialogView.findViewById(R.id.alertTxt1);
         alerEdt = dialogView.findViewById(R.id.alerEdt);
 
+        final EditText alerEdt = dialogView.findViewById(R.id.alert_todolist_alerEdt);
+
         dlg.setPositiveButton("확인", null);
         dlg.setNegativeButton("취소",
                 new DialogInterface.OnClickListener() {
@@ -277,14 +279,16 @@ public class MainFragment extends Fragment {
             //191212 am 09:51 linearlayout 클릭 리스너 추가 by 채현
             final String groupText=tvCleaning.getText().toString();
 
-            linearLayout.setOnClickListener(new View.OnClickListener() {
+            ivAddTask.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //todolist 화면 전환시 데이터 전달
                     Fragment fragment=new TodolistFragment();
                     Bundle bundle=new Bundle();
                     bundle.putString("groupText",groupText);
                     fragment.setArguments(bundle);
 
+                    //todolist 화면 전환
                     FragmentManager fragmentManager=((MainActivity)getActivity()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.coordinatorLayout,fragment).commit();

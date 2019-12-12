@@ -9,14 +9,12 @@
         android:id="@+id/actionbar_todoBtnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
         android:src="@drawable/backbutton"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/actionbar_todoText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,12 +22,15 @@
         android:id="@+id/actionbar_todoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="텍스트"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/actionbar_todoBtnBack"
+        android:textSize="20sp"
+        android:textColor="#024873"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/actionbar_todoBtnAddlist"
         app:layout_constraintStart_toEndOf="@+id/actionbar_todoBtnBack"
-        app:layout_constraintTop_toTopOf="@+id/actionbar_todoBtnBack" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageButton
@@ -37,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="10dp"
 
         android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"

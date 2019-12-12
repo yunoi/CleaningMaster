@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_arrow_back_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_delete_forever_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,9 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="024873" />
+                            <entry key="color" value="ffffff" />
                             <entry key="height" value="30" />
-                            <entry key="outputName" value="backbutton" />
+                            <entry key="outputName" value="delete" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\user" />
                             <entry key="width" value="30" />
