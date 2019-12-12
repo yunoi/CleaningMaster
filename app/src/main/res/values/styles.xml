@@ -12,4 +12,7 @@
         <item name="colorAccent">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
+    <style name="SplashTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@layout/opening</item>
+    </style>
 </resources>
