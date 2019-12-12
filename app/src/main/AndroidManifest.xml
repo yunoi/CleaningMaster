@@ -3,6 +3,10 @@
     package="com.example.yunoi.cleaningmaster">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,8 +16,8 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".MainActivity"
-            android:label="@string/app_name"/>
-
+            android:label="@string/app_name">
+        </activity>
         <!-- 191212 am 10:20 오프닝 액티비티 생성 - by 재훈 -->
         <!-- 191212 am 10:20 오프닝 액티비티에 인텐트 필터 이동- by 재훈 -->
         <activity android:name=".OpeningActivity">

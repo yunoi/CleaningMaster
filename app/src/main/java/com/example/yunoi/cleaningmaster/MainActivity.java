@@ -55,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        Log.d(TAG, "test입니다.");
-
         // bottomMenu를 변경했을 때 그것을 감지하여 해당된 프래그먼트를 세팅해주는 리스너
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
