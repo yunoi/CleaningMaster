@@ -21,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomMenu;
     private FragmentManager fragmentManager;
     private FragmentTransaction ft;
+    private Fragment pedomterFrgment;
+    private Fragment pedomterBar;
+
     private SettingFragment settingFragment;
     private Fragment mainFragment;
     private static final String TAG = "MainActivity";
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         bottomMenu = findViewById(R.id.bottomMenu);
         settingFragment = new SettingFragment();
         mainFragment = new MainFragment();
+        pedomterFrgment=new PedomterFrgment();
+        pedomterBar=new PedomterBar();
 
         Log.d(TAG, "test입니다.");
 
@@ -72,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.coordinatorLayout, mainFragment);
                 ft.commit();
                 break;
-            case 1:
+                //성민이꺼
+            case 1:ft.replace(R.id.coordinatorLayout,pedomterFrgment);
+                   ft.commit();
 
                 break;
             case 2:
@@ -105,6 +112,15 @@ public class MainActivity extends AppCompatActivity {
                 toastDisplay("옵션메뉴테스트");
                 Log.d("MainActivity", "설정");
                 ft.replace(R.id.coordinatorLayout, settingFragment);
+                ft.commit();
+                return true;
+
+            case 2:
+                fragmentManager=getSupportFragmentManager();
+                ft=fragmentManager.beginTransaction();
+                toastDisplay("통계 테스트");
+                Log.d("MainActivity","통계");
+                ft.replace(R.id.coordinatorLayout,pedomterBar);
                 ft.commit();
                 return true;
         }
