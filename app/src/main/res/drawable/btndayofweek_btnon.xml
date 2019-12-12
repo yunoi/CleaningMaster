@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- 테두리 내부 여백 설정 -->
+    <padding
+        android:bottom="1dp"
+        android:left="1dp"
+        android:right="1dp"
+        android:top="1dp" />
+
+    <solid android:color="#A5BFA4" />
+    <!-- 테두리 설정: 두께, 색상 -->
+    <stroke
+        android:width="0.5dp"
+        android:color="@android:color/darker_gray" />
+
+</shape>
