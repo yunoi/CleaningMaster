@@ -12,10 +12,10 @@ public class TutorialVierPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position){
-//            case 0: return TutorialPageFirst.newInstance();
-//            case 1: return TutorialPage2.newInstance();
-//            case 2: return TutorialPage3.newInstance();
-//            case 3: return TutorialPageLast.newInstance();
+            case 0: return TutorialPageFirst.newInstance();
+            case 1: return TutorialPage2.newInstance();
+            case 2: return TutorialPage3.newInstance();
+            case 3: return TutorialPageLast.newInstance();
             default: return null;
         }
 
