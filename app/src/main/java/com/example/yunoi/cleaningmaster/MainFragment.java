@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.daimajia.swipe.SwipeLayout;
 
 import java.util.ArrayList;
 
@@ -48,7 +52,7 @@ public class MainFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.main_fragment,container,false);
+        view = inflater.inflate(R.layout.main_fragment, container, false);
         customActionBar(inflater);
 
         listView = view.findViewById(R.id.listView);
@@ -66,7 +70,7 @@ public class MainFragment extends Fragment {
 
     private void addArea() {
         final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_room, null);
-        final AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity(),R.style.MyDialogTheme);
+        final AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
 
         dlg.setView(dialogView);
         ImageView imageView =
@@ -92,11 +96,12 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         String str1 = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
-                        if(str1.equals("")){
+                        if (str1.equals("")) {
                             toastDisplay("청소구역을 입력해 주세요!");
-                        } else{
+                        } else {
                             list.add(str1);
-                            insertArea(new NotifyVO(0,0,0,0,0,str1, null, null, null));
+                            insertNotifyArea(new NotifyVO(0, 0, 0, 0, 0, str1, null, null, null));
+                            insertCleaningArea(new TodolistVo(0, 0, 0, str1, null, 0, 0)); //CeaningTBL 저장 추가 by 채현
                             alertDialog.dismiss();
                         }
                     }
@@ -109,7 +114,7 @@ public class MainFragment extends Fragment {
 
     private void customActionBar(LayoutInflater inflater) {
 
-        ActionBar actionBar=((MainActivity)getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
         // Custom Actionbar 사용하기 위해 CustomEnabled을 true 시키고 필요 없는 것은 false 시킨다
         actionBar.setDisplayShowCustomEnabled(true);
@@ -117,18 +122,18 @@ public class MainFragment extends Fragment {
         actionBar.setDisplayShowTitleEnabled(false);        //액션바에 표시되는 제목의 표시유무를 설정합니다.
         actionBar.setDisplayShowHomeEnabled(false);//홈 아이콘을 숨김처리합니다.
 
-        View actionbarlayout=inflater.inflate(R.layout.mainactionbar_layout,null);
+        View actionbarlayout = inflater.inflate(R.layout.mainactionbar_layout, null);
         actionBar.setCustomView(actionbarlayout);
         //액션바 양쪽 공백 없애기
-        Toolbar parent = (Toolbar)actionbarlayout.getParent();
-        parent.setContentInsetsAbsolute(0,0);
-        ActionBar.LayoutParams params=new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.MATCH_PARENT);
+        Toolbar parent = (Toolbar) actionbarlayout.getParent();
+        parent.setContentInsetsAbsolute(0, 0);
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
 
-        actionBar.setCustomView(actionbarlayout,params);
+        actionBar.setCustomView(actionbarlayout, params);
 
         ////end of 액션바 공백 없애기
 
-        ImageButton main_btnAdd=actionbarlayout.findViewById(R.id.main_btnAdd);
+        ImageButton main_btnAdd = actionbarlayout.findViewById(R.id.main_btnAdd);
 
 
         main_btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +144,6 @@ public class MainFragment extends Fragment {
         }); //액션바위에 add버튼
 
 
-
     }
 
     public void toastDisplay(String s) {
@@ -147,7 +151,7 @@ public class MainFragment extends Fragment {
     }
 
     // 청소구역 입력 (insert)
-    public void insertArea(NotifyVO notifyVO){
+    public void insertNotifyArea(NotifyVO notifyVO) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         int year = notifyVO.getYear();
         int month = notifyVO.getMonth();
@@ -159,152 +163,218 @@ public class MainFragment extends Fragment {
         String alarmSet = notifyVO.getAlarmSet();
         String loop = notifyVO.getLoop();
         db.execSQL("INSERT INTO notifyTBL (year, month, day, hour, minute, area, task, alarmSet, loop )" +
-                "VALUES ("+year+","+ month+","+day+","+hour+"," +minute+", '"+ area +"', '" + task +"','" + alarmSet +"','"+loop+"');");
+                "VALUES (" + year + "," + month + "," + day + "," + hour + "," + minute + ", '" + area + "', '" + task + "','" + alarmSet + "','" + loop + "');");
 
     }
+
     // 전체 청소구역 불러오기 (select)
-    public ArrayList<String> getTotalArea(){
+    public ArrayList<String> getTotalArea() {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
         cursor = db.rawQuery("SELECT area FROM notifyTBL;", null);
         list.clear();
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             list.add(cursor.getString(0));
         }
         cursor.close();
         return list;
     }
 
-    // 청소 구역 수정 (upadate)
-    public void updateArea(){
-        final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_room, null);
-        final AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity(),R.style.MyDialogTheme);
+    //cleaningTBL 구역 정보 저장하기(insert) 1212 청소구역 저장 pm 4:42 by 채현
+    public void insertCleaningArea(TodolistVo todolistVo) {
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
+        int year = todolistVo.getYear();
+        int month = todolistVo.getMonth();
+        int day = todolistVo.getDay();
+        String todolist_text = todolistVo.getTodolist_text();
+        String groupName = todolistVo.getGroupName();
+        int taskcount = todolistVo.getTaskcount();
+        int checkcount = todolistVo.getCheckcount();
 
-        dlg.setView(dialogView);
-        ImageView imageView =
-                dialogView.findViewById(R.id.imageView);
-        TextView alertTxt1 =
-                dialogView.findViewById(R.id.alertTxt1);
-        alerEdt = dialogView.findViewById(R.id.alerEdt);
-        alertTxt1.setText("변경하실 구역명을 작성해 주세요");
-        final String curArea = list.get(checkedPosition);
-        alerEdt.setText(list.get(checkedPosition));
-
-        dlg.setPositiveButton("확인", null);
-        dlg.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,
-                                        int which) {
-                        toastDisplay("취소되었습니다.");
-                    }
-                });
-        final AlertDialog alertDialog = dlg.create();
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String newArea = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
-                        if(newArea.equals("")){
-                            toastDisplay("청소구역을 입력해 주세요!");
-                        } else{
-                            list.remove(checkedPosition);
-                            list.add(newArea);
-                            Log.d(TAG, "추가된 리스트: "+newArea);
-                            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-                            if(alerEdt.getText().toString() != ""){
-                                db.execSQL("UPDATE notifyTBL SET area = '"
-                                        + newArea + "' WHERE area = '"
-                                        + curArea+"';");
-                            }
-                            Log.d(TAG, "기존 리스트: "+curArea);
-                            alertDialog.dismiss();
-                            toastDisplay("수정되었습니다.");
-                        }
-                    }
-                });
-            } // end of onShow
-        });
-        alertDialog.show();
+        db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, taskCount, checkCount )" +
+                "VALUES (" + year + "," + month + "," + day + ",'" + groupName + "','" + todolist_text + "'," + taskcount + ", " + checkcount + " );");
     }
 
-    class MainAdapter extends BaseAdapter {
-        private Context context;
-        private int layout;
-        private ArrayList<String> list;
-        private LayoutInflater layoutInflater;
-        private TextView tvCleaning;
+    //cleaningTBL 구역 삭제하기 1212 pm 5:07 by 채현
+    public void deleteTask(String groupName) {
 
-        public MainAdapter(Context context, int layout, ArrayList<String> list) {
-            this.context = context;
-            this.layout = layout;
-            this.list = list;
-            layoutInflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
+        db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
+
+    }
+        // 청소 구역 수정 (upadate)
+        public void updateArea () {
+            final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_room, null);
+            final AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
+
+            dlg.setView(dialogView);
+            ImageView imageView =
+                    dialogView.findViewById(R.id.imageView);
+            TextView alertTxt1 =
+                    dialogView.findViewById(R.id.alertTxt1);
+            alerEdt = dialogView.findViewById(R.id.alerEdt);
+            alertTxt1.setText("변경하실 구역명을 작성해 주세요");
+            final String curArea = list.get(checkedPosition);
+            alerEdt.setText(list.get(checkedPosition));
+
+            dlg.setPositiveButton("확인", null);
+            dlg.setNegativeButton("취소",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                            int which) {
+                            toastDisplay("취소되었습니다.");
+                        }
+                    });
+            final AlertDialog alertDialog = dlg.create();
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String newArea = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
+                            if (newArea.equals("")) {
+                                toastDisplay("청소구역을 입력해 주세요!");
+                            } else {
+                                list.remove(checkedPosition);
+                                list.add(newArea);
+                                Log.d(TAG, "추가된 리스트: " + newArea);
+                                db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+                                if (alerEdt.getText().toString() != "") {
+                                    db.execSQL("UPDATE notifyTBL SET area = '"
+                                            + newArea + "' WHERE area = '"
+                                            + curArea + "';");
+                                }
+                                Log.d(TAG, "기존 리스트: " + curArea);
+                                alertDialog.dismiss();
+                                toastDisplay("수정되었습니다.");
+                            }
+                        }
+                    });
+                } // end of onShow
+            });
+            alertDialog.show();
+
         }
 
-        public TextView getTvCleaning() {
-            return tvCleaning;
-        }
+        class MainAdapter extends BaseAdapter {
+            private Context context;
+            private int layout;
+            private ArrayList<String> list;
+            private LayoutInflater layoutInflater;
+            private TextView tvCleaning;
 
-        public void setTvCleaning(TextView tvCleaning) {
-            this.tvCleaning = tvCleaning;
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if(convertView == null){
-                convertView = layoutInflater.inflate(layout, null);
+            public MainAdapter(Context context, int layout, ArrayList<String> list) {
+                this.context = context;
+                this.layout = layout;
+                this.list = list;
+                layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
             }
-            LinearLayout linearLayout = convertView.findViewById(R.id.linearLayout);
-            tvCleaning = convertView.findViewById(R.id.tvCleaning);
-            ImageView ivAddTask = convertView.findViewById(R.id.ivAddTask);
-            tvCleaning.setTag(convertView);
-            tvCleaning.setText(list.get(position));
-            setTvCleaning(tvCleaning);
 
-            //191212 am 09:51 linearlayout 클릭 리스너 추가 by 채현
-            final String groupText=tvCleaning.getText().toString();
+            public TextView getTvCleaning() {
+                return tvCleaning;
+            }
 
-            ivAddTask.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //todolist 화면 전환시 데이터 전달
-                    Fragment fragment=new TodolistFragment();
-                    Bundle bundle=new Bundle();
-                    bundle.putString("groupText",groupText);
-                    fragment.setArguments(bundle);
+            public void setTvCleaning(TextView tvCleaning) {
+                this.tvCleaning = tvCleaning;
+            }
 
-                    //todolist 화면 전환
-                    FragmentManager fragmentManager=((MainActivity)getActivity()).getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.coordinatorLayout,fragment).commit();
+            @Override
+            public int getCount() {
+                return list.size();
+            }
 
+            @Override
+            public Object getItem(int position) {
+                return list.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(final int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = layoutInflater.inflate(layout, null);
                 }
-            });
-            tvCleaning.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    updateArea();
-                }
-            });
-            return convertView;
-        }
-    }   // end of MainAdapter
-}
+
+                final LinearLayout linearLayout = convertView.findViewById(R.id.linearLayout);
+                TextView tvCleaning = convertView.findViewById(R.id.tvCleaning);
+                ImageView ivAddTask = convertView.findViewById(R.id.ivAddTask);
+                tvCleaning.setText(list.get(position));
+                //191212 pm 3:51 SwipeLayout 추가 (DeleteButton 기능)
+                final String groupText = tvCleaning.getText().toString();
+
+                SwipeLayout swipeLayout = convertView.findViewById(R.id.main_swipeLayout);
+                swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
+                swipeLayout.findViewById(R.id.main_delete_btn).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //취소 알런트
+                        final View alertDialogView = View.inflate(v.getContext(), R.layout.dialog_maindelete_layout, null);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
+                        builder.setView(alertDialogView);
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                list.remove(position);
+                                notifyDataSetChanged();
+
+                                deleteTask(groupText); //cleaningTBL Db 삭제
+
+                                Snackbar snackbar = Snackbar.make(linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
+
+                                snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                                View snackbarView = snackbar.getView();
+                                TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                tv.setTextColor(Color.WHITE);
+
+                                snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+                                snackbar.show();
+
+
+                            }
+                        });
+                        builder.setNegativeButton("취소", null);
+                        builder.show();
+                    }
+                });
+
+
+                tvCleaning.setTag(convertView);
+                setTvCleaning(tvCleaning);
+
+                //191212 am 09:51 linearlayout 클릭 리스너 추가 by 채현
+
+                ivAddTask.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //todolist 화면 전환시 데이터 전달
+                        Fragment fragment = new TodolistFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("groupText", groupText);
+                        fragment.setArguments(bundle);
+
+                        //todolist 화면 전환
+                        FragmentManager fragmentManager = ((MainActivity) getActivity()).getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.coordinatorLayout, fragment).commit();
+
+                    }
+                });
+                tvCleaning.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateArea();
+                    }
+                });
+                return convertView;
+            }
+
+
+        }// end of MainAdapter
+    }
