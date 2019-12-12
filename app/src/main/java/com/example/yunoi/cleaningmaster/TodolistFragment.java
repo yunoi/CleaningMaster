@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -96,7 +95,7 @@ public class TodolistFragment extends Fragment {
                 builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditText alerEdt=alertDialogView.findViewById(R.id.alert_todolist_alerEdt);
+                        EditText alerEdt=alertDialogView.findViewById(R.id.alerEdt);
                         list.add(new TodolistVo(alerEdt.getText().toString().trim()));
                         todolistAdapter.notifyDataSetChanged();
                     }

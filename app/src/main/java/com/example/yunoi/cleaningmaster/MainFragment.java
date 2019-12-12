@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.mozilla.javascript.tools.jsc.Main;
 
 import java.util.ArrayList;
 
@@ -43,6 +42,8 @@ public class MainFragment extends Fragment {
     private MainAdapter adapter;
     private EditText alerEdt; // 청소구역추가 다이얼로그 내부 변수
     private int checkedPosition; // 리스트뷰의 포지션을 가져온다.
+    private static final String TAG = "MainFragment";
+
 
     @Nullable
     @Override
@@ -188,7 +189,9 @@ public class MainFragment extends Fragment {
                 dialogView.findViewById(R.id.alertTxt1);
         alerEdt = dialogView.findViewById(R.id.alerEdt);
         alertTxt1.setText("변경하실 구역명을 작성해 주세요");
+        final String curArea = list.get(checkedPosition);
         alerEdt.setText(list.get(checkedPosition));
+
         dlg.setPositiveButton("확인", null);
         dlg.setNegativeButton("취소",
                 new DialogInterface.OnClickListener() {
@@ -205,18 +208,20 @@ public class MainFragment extends Fragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String str1 = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
-                        if(str1.equals("")){
+                        String newArea = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
+                        if(newArea.equals("")){
                             toastDisplay("청소구역을 입력해 주세요!");
                         } else{
                             list.remove(checkedPosition);
-                            list.add(str1);
+                            list.add(newArea);
+                            Log.d(TAG, "추가된 리스트: "+newArea);
                             db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
                             if(alerEdt.getText().toString() != ""){
                                 db.execSQL("UPDATE notifyTBL SET area = '"
-                                        + str1 + "' WHERE area = '"
-                                        + list.get(checkedPosition)+"';");
+                                        + newArea + "' WHERE area = '"
+                                        + curArea+"';");
                             }
+                            Log.d(TAG, "기존 리스트: "+curArea);
                             alertDialog.dismiss();
                             toastDisplay("수정되었습니다.");
                         }

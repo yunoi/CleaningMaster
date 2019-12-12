@@ -45,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
         pedomterFrgment=new PedomterFrgment();
         pedomterBar=new PedomterBar();
 
-        //191212 am 11:20 도움말 안보기 설정이 아닐시 자동으로 도움말로 이동 by 재훈
-//        passTutorial = getSharedPreferences("change",MODE_PRIVATE);
-//        tutorialState = passTutorial.getInt("First",0);
-//        if(tutorialState !=1){
-//            Intent intent = new Intent(MainActivity.this,TutorialGuideActivity.class);
-//            startActivity(intent);
-//        }
+        //191212 pm 03:40 다시 보지 않기 설정 안할 시 자동으로 도움말로 이동 by 재훈
+        passTutorial = getSharedPreferences("change",MODE_PRIVATE);
+        tutorialState = passTutorial.getInt("First",0);
+        if(tutorialState !=1){
+            Intent intent = new Intent(MainActivity.this,TutorialGuideActivity.class);
+            startActivity(intent);
+        }
 
         Log.d(TAG, "test입니다.");
 
