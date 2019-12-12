@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.yunoi.cleaningmaster">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,15 +14,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity"
-            android:label="@string/app_name"
-            >
+            android:label="@string/app_name">
+        </activity>
+        <!-- 191212 am 10:20 오프닝 액티비티 생성 - by 재훈 -->
+        <!-- 191212 am 10:20 오프닝 액티비티에 인텐트 필터 이동- by 재훈 -->
+        <activity android:name=".OpeningActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".PedomterSensor"
+            android:enabled="true"/>
+        <receiver android:name=".PedomterFrgment$MyReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="com.example.yunoi.cleaningmaster.MY_ACTION"/>
+            </intent-filter>
+        </receiver>
+        <!-- 191212 am 10:20 닉네임 액티비티 생성- by 재훈 -->
+        <activity android:name=".NickNameSetting" />
+        <!-- 191212 am 11:10 프로필 설정 액티비티 생성- by 재훈 -->
+        <activity android:name=".ProfileFirstSetting" />
+        <!--<activity-->
+            <!--android:name=".MainActivity"-->
+            <!--android:label="@string/app_name"></activity>-->
+        <activity android:name=".TutorialGuideActivity"></activity>
     </application>
 
 </manifest>

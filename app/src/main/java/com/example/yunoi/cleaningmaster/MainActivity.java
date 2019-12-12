@@ -1,5 +1,7 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,10 +23,15 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomMenu;
     private FragmentManager fragmentManager;
     private FragmentTransaction ft;
+    private Fragment pedomterFrgment;
+    private Fragment pedomterBar;
+
     private SettingFragment settingFragment;
     private Fragment mainFragment;
     private static final String TAG = "MainActivity";
-
+    //191212 am 11:20 도움말 이동에 관련된 SharedPreferences by 재훈
+    SharedPreferences passTutorial;
+    int tutorialState;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +42,16 @@ public class MainActivity extends AppCompatActivity {
         bottomMenu = findViewById(R.id.bottomMenu);
         settingFragment = new SettingFragment();
         mainFragment = new MainFragment();
+        pedomterFrgment=new PedomterFrgment();
+        pedomterBar=new PedomterBar();
 
-        Log.d(TAG, "test입니다.");
+        //191212 pm 03:40 다시 보지 않기 설정 안할 시 자동으로 도움말로 이동 by 재훈
+        passTutorial = getSharedPreferences("change",MODE_PRIVATE);
+        tutorialState = passTutorial.getInt("First",0);
+        if(tutorialState !=1){
+            Intent intent = new Intent(MainActivity.this,TutorialGuideActivity.class);
+            startActivity(intent);
+        }
 
         // bottomMenu를 변경했을 때 그것을 감지하여 해당된 프래그먼트를 세팅해주는 리스너
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -72,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.coordinatorLayout, mainFragment);
                 ft.commit();
                 break;
-            case 1:
+                //성민이꺼
+            case 1:ft.replace(R.id.coordinatorLayout,pedomterFrgment);
+                   ft.commit();
 
                 break;
             case 2:
@@ -105,6 +122,15 @@ public class MainActivity extends AppCompatActivity {
                 toastDisplay("옵션메뉴테스트");
                 Log.d("MainActivity", "설정");
                 ft.replace(R.id.coordinatorLayout, settingFragment);
+                ft.commit();
+                return true;
+
+            case 2:
+                fragmentManager=getSupportFragmentManager();
+                ft=fragmentManager.beginTransaction();
+                toastDisplay("통계 테스트");
+                Log.d("MainActivity","통계");
+                ft.replace(R.id.coordinatorLayout,pedomterBar);
                 ft.commit();
                 return true;
         }
