@@ -5,15 +5,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.CheckBox;
 
 public class TutorialGuideActivity extends AppCompatActivity {
     ViewPager vpTutorial;
 
     FragmentPagerAdapter fragmentPagerAdapter;
 
-    public static SharedPreferences sharedPreferences;
+    public static SharedPreferences spPassTutorial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +24,7 @@ public class TutorialGuideActivity extends AppCompatActivity {
         fragmentPagerAdapter = new TutorialVierPagerAdapter(getSupportFragmentManager());
         vpTutorial.setAdapter(fragmentPagerAdapter);
 
-        sharedPreferences = getSharedPreferences("change",MODE_PRIVATE);
+        spPassTutorial = getSharedPreferences("change",MODE_PRIVATE);
 
     }
 }

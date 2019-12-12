@@ -31,7 +31,7 @@ public class TutorialPageLast extends Fragment {
             public void onClick(View v){
                 if(cbEndTuto.isChecked()){
                     int intoMain = 1;
-                    SharedPreferences.Editor editor = TutorialGuideActivity.sharedPreferences.edit();
+                    SharedPreferences.Editor editor = TutorialGuideActivity.spPassTutorial.edit();
                     editor.putInt("First",intoMain);
                     editor.commit();
                 }
