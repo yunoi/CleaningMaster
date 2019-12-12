@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SettingFragment settingFragment;
     private Fragment mainFragment;
+    private Fragment profileFragment;
     private static final String TAG = "MainActivity";
     //191212 am 11:20 도움말 이동에 관련된 SharedPreferences by 재훈
     SharedPreferences passTutorial;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         mainFragment = new MainFragment();
         pedomterFrgment=new PedomterFrgment();
         pedomterBar=new PedomterBar();
+        profileFragment=new ProfileFragment();
 
         //191212 pm 03:40 다시 보지 않기 설정 안할 시 자동으로 도움말로 이동 by 재훈
         passTutorial = getSharedPreferences("change",MODE_PRIVATE);
@@ -135,6 +137,16 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.coordinatorLayout,pedomterBar);
                 ft.commit();
                 return true;
+            //191212 pm 05:40 상단메뉴 프로필 설정 -by 재훈
+             case 1:
+                fragmentManager=getSupportFragmentManager();
+                ft=fragmentManager.beginTransaction();
+                toastDisplay("프로필 테스트");
+                Log.d("MainActivity","프로필");
+                ft.replace(R.id.coordinatorLayout,profileFragment);
+                ft.commit();
+                return true;
+
         }
 
         return false;
