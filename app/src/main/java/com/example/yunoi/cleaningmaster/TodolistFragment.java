@@ -1,6 +1,8 @@
 package com.example.yunoi.cleaningmaster;
 
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,15 +25,18 @@ import java.util.ArrayList;
 public class TodolistFragment extends Fragment {
 
     View view;
+    private SQLiteDatabase db;
 
-    ArrayList<TodolistVo> list=new ArrayList<TodolistVo>();
-    TodolistAdapter todolistAdapter;
-    LinearLayoutManager linearLayoutManager;
+    private ArrayList<TodolistVo> list=new ArrayList<TodolistVo>();
+    private TodolistAdapter todolistAdapter;
+    private LinearLayoutManager linearLayoutManager;
+
+    private String groupText; //구역이름
+    public static int taskcount=0; //그 구역의 총 리스트 사이즈
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         view=inflater.inflate(R.layout.todolist_fragment,container,false);
         RecyclerView recyclerView =view.findViewById(R.id.todo_listView);
 
@@ -72,6 +77,7 @@ public class TodolistFragment extends Fragment {
         });
 
         //mainFragment 에서 번들값 받아옴.
+
         if (getArguments()!=null){
             String groupText=getArguments().getString("groupText");
             actionbar_todoText.setText(groupText);
@@ -96,14 +102,14 @@ public class TodolistFragment extends Fragment {
                 builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        taskcount++;
                         EditText alerEdt=alertDialogView.findViewById(R.id.alert_todolist_alerEdt);
-                        list.add(new TodolistVo(alerEdt.getText().toString().trim()));
+                        list.add(new TodolistVo(groupText,alerEdt.getText().toString()));
                         todolistAdapter.notifyDataSetChanged();
                     }
                 });
                 builder.setNegativeButton("취소",null);
                 builder.show();
-
 
             }
         });
@@ -111,4 +117,6 @@ public class TodolistFragment extends Fragment {
 
         return view;
     }
+
+
 }

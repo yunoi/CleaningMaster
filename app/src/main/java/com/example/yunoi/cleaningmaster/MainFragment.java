@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +27,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.daimajia.swipe.SwipeLayout;
 
 import java.util.ArrayList;
 
@@ -84,7 +88,8 @@ public class MainFragment extends Fragment {
                             toastDisplay("청소구역을 입력해 주세요!");
                         } else{
                             list.add(str1);
-                            insertArea(new NotifyVO(0,0,0,0,0,str1, null, null, null));
+                            insertNotifyArea(new NotifyVO(0,0,0,0,0,str1, null, null, null));
+                            insertCleaningArea(new TodolistVo(0,0,0,str1,null,0,0)); //CeaningTBL 저장 추가 by 채현
                             alertDialog.dismiss();
                         }
                     }
@@ -134,7 +139,7 @@ public class MainFragment extends Fragment {
     }
 
     // 청소구역 입력 (insert)
-    public void insertArea(NotifyVO notifyVO){
+    public void insertNotifyArea(NotifyVO notifyVO){
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         int year = notifyVO.getYear();
         int month = notifyVO.getMonth();
@@ -159,6 +164,27 @@ public class MainFragment extends Fragment {
         }
         cursor.close();
         return list;
+    }
+
+    //cleaningTBL 구역 정보 저장하기(insert) 1212 청소구역 저장 pm 4:42 by 채현
+    public void insertCleaningArea(TodolistVo todolistVo){
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
+        int year = todolistVo.getYear();
+        int month = todolistVo.getMonth();
+        int day = todolistVo.getDay();
+        String todolist_text=todolistVo.getTodolist_text();
+        String groupName=todolistVo.getGroupName();
+        int taskcount=todolistVo.getTaskcount();
+        int checkcount=todolistVo.getCheckcount();
+
+        db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, taskCount, checkCount )" +
+                "VALUES ("+year+","+ month+","+day+",'"+groupName+"','"+todolist_text+"',"+ taskcount +", " + checkcount +" );");
+    }
+    //cleaningTBL 구역 삭제하기 1212 pm 5:07 by 채현
+    public void deleteTask(String groupName){
+
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
+        db.execSQL("DELETE FROM cleaningTBL WHERE area='"+groupName+"';");
     }
 
     class MainAdapter extends BaseAdapter {
@@ -190,18 +216,60 @@ public class MainFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             if(convertView == null){
                 convertView = layoutInflater.inflate(layout, null);
             }
-            LinearLayout linearLayout = convertView.findViewById(R.id.linearLayout);
+            final LinearLayout linearLayout = convertView.findViewById(R.id.linearLayout);
             TextView tvCleaning = convertView.findViewById(R.id.tvCleaning);
             ImageView ivAddTask = convertView.findViewById(R.id.ivAddTask);
-
             tvCleaning.setText(list.get(position));
+            //191212 pm 3:51 SwipeLayout 추가 (DeleteButton 기능)
+            final String groupText=tvCleaning.getText().toString();
+
+            SwipeLayout swipeLayout=convertView.findViewById(R.id.main_swipeLayout);
+            swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
+            swipeLayout.findViewById(R.id.main_delete_btn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //취소 알런트
+                    final View alertDialogView=View.inflate(v.getContext(),R.layout.dialog_maindelete_layout,null);
+                    AlertDialog.Builder builder=new AlertDialog.Builder(getActivity(),R.style.MyDialogTheme);
+                    builder.setView(alertDialogView);
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            list.remove(position);
+                            notifyDataSetChanged();
+
+                            deleteTask(groupText); //cleaningTBL Db 삭제
+
+                            Snackbar snackbar=Snackbar.make(linearLayout,"삭제되었습니다!",Snackbar.LENGTH_SHORT);
+
+                            snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                            View snackbarView=snackbar.getView();
+                            TextView tv=(TextView)snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                            tv.setTextColor(Color.WHITE);
+
+                            snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+                            snackbar.show();
+
+
+
+
+
+
+                        }
+                    });
+                    builder.setNegativeButton("취소",null);
+                    builder.show();
+                }
+            });
+
+
 
             //191212 am 09:51 linearlayout 클릭 리스너 추가 by 채현
-            final String groupText=tvCleaning.getText().toString();
 
             ivAddTask.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -224,5 +292,8 @@ public class MainFragment extends Fragment {
 
             return convertView;
         }
-    }   // end of MainAdapter
+
+
+
+    }// end of MainAdapter
 }

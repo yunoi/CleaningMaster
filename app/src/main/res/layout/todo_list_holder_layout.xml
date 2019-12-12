@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:id="@+id/todo_linearLayout"
     >
 
     <com.daimajia.swipe.SwipeLayout
@@ -19,17 +20,20 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#F23D3D"
+            android:background="#F25116"
             android:orientation="horizontal"
+            android:clickable="true"
             android:tag="Bottom2">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/delete_btn"
                 android:layout_width="70dp"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:layout_gravity="center"
-                android:src="@drawable/delete" />
+                android:src="@drawable/delete"
+                android:clickable="true"
+                />
 
         </LinearLayout>
 
@@ -53,22 +57,31 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <CheckBox
+                android:id="@+id/todolist_checkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/todolist_text"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/todolist_alram"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <lib.mozidev.me.extextview.ExTextView
                 android:id="@+id/todolist_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-
                 android:layout_marginBottom="8dp"
                 android:text="할 일 텍스트"
                 android:textColor="#0365BC"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/todolist_switch"
-                app:layout_constraintStart_toEndOf="@+id/todolist_alram"
+                app:layout_constraintStart_toEndOf="@+id/todolist_checkBox"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Switch
