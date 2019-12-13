@@ -15,7 +15,7 @@ public class TodolistVo {
     }
 
 
-    public TodolistVo(int year, int month, int day, String groupName, String todolist_text, int taskcount, int checkcount) {
+    public TodolistVo(int year, int month, int day, String groupName, String todolist_text, int checkcount) {
         this.year = year;
         this.month = month;
         this.day = day;
@@ -25,13 +25,8 @@ public class TodolistVo {
         this.checkcount = checkcount;
     }
 
-    public TodolistVo(String todolist_text,int taskcount) {
+    public TodolistVo(String todolist_text) {
         this.todolist_text = todolist_text;
-        this.taskcount = taskcount;
-    }
-
-    public TodolistVo(String groupName) {
-        this.groupName = groupName;
     }
 
     public int getYear() {
