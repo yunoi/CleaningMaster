@@ -33,7 +33,7 @@ public class AlarmService extends Service {
                     .setSmallIcon(R.mipmap.ic_launcher)
                     //.setCategory(Notification.CATEGORY_SERVICE)
                     .build();
-            startForeground(1, notification);
+            startForeground(startId, notification);
         }
 
         Log.d(TAG, "Alarm");

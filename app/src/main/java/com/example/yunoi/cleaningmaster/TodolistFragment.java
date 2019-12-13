@@ -33,6 +33,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -56,6 +57,7 @@ public class TodolistFragment extends Fragment {
     private PendingIntent pender;
     private TextView tvDate;
     private int alarmId = 0;
+
     // 요일 관련 변수
     private boolean btnCheck = false;
     private TextView txtDayCheck;
@@ -157,7 +159,7 @@ public class TodolistFragment extends Fragment {
 
         return view;
     }
-
+////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
     private void alarmSettings() {
 
         final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_notify, null);
@@ -251,7 +253,39 @@ public class TodolistFragment extends Fragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        setAlarm();
+                        // 알람 시간 설정
+                        // api 버전별 설정
+                        if (Build.VERSION.SDK_INT < 23) {
+                            int getHour = timePicker.getCurrentHour();
+                            int getMinute = timePicker.getCurrentMinute();
+                            calendar.set(Calendar.HOUR_OF_DAY, getHour);
+                            calendar.set(Calendar.MINUTE, getMinute);
+                            calendar.set(Calendar.SECOND, 0);
+                        } else {
+                            int getHour = timePicker.getHour();
+                            int getMinute = timePicker.getMinute();
+                            calendar.set(Calendar.HOUR_OF_DAY, getHour);
+                            calendar.set(Calendar.MINUTE, getMinute);
+                            calendar.set(Calendar.SECOND, 0);
+                        }
+
+                        // 현재보다 이전이면 등록 못하도록
+                        if (calendar.before(Calendar.getInstance())) {
+                            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
+                            return;
+                        }
+                        alarmId = createID();
+                        alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                        //알람 시간 표시
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+                        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+                        intent.putExtra("title", "청소의 달인");
+                        intent.putExtra("text", "청소할 시간이군요!");
+                        intent.putExtra("id", alarmId);
+                        pender = PendingIntent.getBroadcast(getActivity(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pender);
+                        toastDisplay(String.valueOf(format.format(calendar.getTime())) + " 알림이 설정되었습니다.");
                         alertDialog.dismiss();
                     }
                 });
@@ -259,7 +293,7 @@ public class TodolistFragment extends Fragment {
         });
         alertDialog.show();
 
-    } // end of alarmSettings
+    } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
 
     //요일 버튼 이벤트
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -293,6 +327,13 @@ public class TodolistFragment extends Fragment {
         pickerDialog.show();
     }
 
+    // 알림 pendingIntent RequestCode 설정
+    public int createID(){
+        Date now = new Date();
+        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.KOREA).format(now));
+
+        return id;
+    }
     // 알람 등록
     private void setAlarm() {
         // 알람 시간 설정
@@ -317,6 +358,7 @@ public class TodolistFragment extends Fragment {
             return;
         }
 
+        alarmId = createID();
         alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
         //알람 시간 표시
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -325,9 +367,9 @@ public class TodolistFragment extends Fragment {
         intent.putExtra("title", "청소의 달인");
         intent.putExtra("text", "청소할 시간이군요!");
         intent.putExtra("id", alarmId);
-        pender = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pender = PendingIntent.getBroadcast(getActivity(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pender);
-        alarmId++;
+
         toastDisplay(String.valueOf(format.format(calendar.getTime())) + " 알림이 설정되었습니다.");
     }
 
