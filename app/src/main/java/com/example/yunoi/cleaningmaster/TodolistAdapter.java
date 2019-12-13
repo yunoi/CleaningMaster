@@ -38,6 +38,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private ArrayList<TodolistVo> list;
     private int checkcount=0;
     private static final String TAG="확인";
+    public static int exp=0;
 
     //생성자
     public TodolistAdapter(int layout, ArrayList<TodolistVo> list) {
@@ -116,6 +117,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         private boolean btnCheck = false;
         private TextView txtDayCheck;
 
+
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
 
@@ -128,6 +130,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             strikeThroughPainting = new StrikeThroughPainting(todolist_text);
 
 
+            //체크박스  true / false
             todolist_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -137,13 +140,26 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         strikeThroughPainting.color(Color.rgb(2, 72, 112))
                                 .strokeWidth(4).totalTime(10_0L).strikeThrough();
                         checkcount++;//체크 카운트
+                        exp+=100;
+
+                        //스낵바 설정(체크할 시 경험치 확인 스낵바)
+                        Snackbar snackbar=Snackbar.make(todo_linearLayout,"경험치가 적립되었습니다! \n 경헙치 :"+exp,Snackbar.LENGTH_SHORT);
+                        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                        View snackbarView=snackbar.getView();
+                        TextView tv=(TextView)snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                        tv.setTextColor(Color.WHITE);
+                        tv.setTextSize(16);
+                        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+                        snackbar.show();
+
 
                         //체크한 카운트가 만든 리스트와 맞을때
                         if (checkcount==TodolistFragment.taskcount){
 
+
                             Intent intent=new Intent(itemView.getContext(),ExpShowActivity.class);
                             startActivity(itemView.getContext(),intent,null);
-
+                            exp+=200;
                         }
 
 
