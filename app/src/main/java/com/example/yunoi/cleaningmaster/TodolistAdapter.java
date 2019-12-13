@@ -1,27 +1,22 @@
 package com.example.yunoi.cleaningmaster;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
 
@@ -38,11 +33,27 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private ArrayList<TodolistVo> list;
     private int checkcount=0;
     private static final String TAG="확인";
+    private alarmClickListener listener = null;
+
 
     //생성자
     public TodolistAdapter(int layout, ArrayList<TodolistVo> list) {
         this.layout = layout;
         this.list = list;
+    }
+
+    // 클릭 리스너 인터페이스
+    public interface alarmClickListener {
+        void onAlarmClick(View v, int position);
+        void onSwitchClick(View v, int position);
+    }
+
+    public void setAlarmClickListener(alarmClickListener listener){
+        this.listener = listener;
+    }
+
+    public void setSwitchClickListener(alarmClickListener listener){
+        this.listener = listener;
     }
 
     @NonNull
@@ -95,8 +106,25 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             }
         });
 
+        // 알람 설정 버튼 액션
+        customViewHolder.todolist_alram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener != null){
+                    listener.onAlarmClick(v, position);
+                }
+            }
+        });
 
-
+        // 반복알림 스위치 설정 버튼 액션
+        customViewHolder.todolist_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener != null){
+                    listener.onSwitchClick(v, position);
+                }
+            }
+        });
     }
 
     @Override
@@ -113,8 +141,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         private LinearLayout todo_linearLayout;
         private CheckBox todolist_checkBox;
         StrikeThroughPainting strikeThroughPainting;
-        private boolean btnCheck = false;
-        private TextView txtDayCheck;
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -147,8 +173,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         }
 
 
-
-
                     }else {
                         checkcount--;
                         strikeThroughPainting.clearStrikeThrough();
@@ -159,73 +183,9 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 }
             });
 
+        }   // end of constructor
 
-            todolist_alram = itemView.findViewById(R.id.todolist_alram);
 
-            todolist_alram.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final View dialogView = View.inflate(itemView.getContext(), R.layout.dialog_add_notify, null);
-                    final AlertDialog.Builder dlg = new AlertDialog.Builder(itemView.getContext());
-                    dlg.setView(dialogView);
-
-                    final Button btnMonday = dialogView.findViewById(R.id.btnMonday);
-                    final Button btnTuesday = dialogView.findViewById(R.id.btnTuesday);
-                    final Button btnWednesday = dialogView.findViewById(R.id.btnWednesday);
-                    final Button btnThursday = dialogView.findViewById(R.id.btnThursday);
-                    final Button btnFriday = dialogView.findViewById(R.id.btnFriday);
-                    final Button btnSaturday = dialogView.findViewById(R.id.btnSaturday);
-                    final Button btnSunday = dialogView.findViewById(R.id.btnSunday);
-                    txtDayCheck = dialogView.findViewById(R.id.txtDayCheck);
-
-                    btnMonday.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            btnBackGroundChange(btnMonday);
-                        }
-                    });
-
-                    dlg.setPositiveButton("확인", null);
-                    dlg.setNegativeButton("취소",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    Toast.makeText(itemView.getContext(), "취소되었습니다.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                    final AlertDialog alertDialog = dlg.create();
-                    alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-                            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                            button.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    Toast.makeText(itemView.getContext(), "알림 입력", Toast.LENGTH_SHORT).show();
-
-                                    alertDialog.dismiss();
-                                }
-                            });
-                        } // end of onShow
-                    });
-                    alertDialog.show();
-                }
-            });
-        }
-        //요일 버튼 이벤트
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-        private void btnBackGroundChange(Button btn) {
-            if(!btnCheck){
-                btn.setBackground(ContextCompat.getDrawable(itemView.getContext(),R.drawable.btndayofweek_btnon));
-                txtDayCheck.setText("매주 "+btn.getText().toString().trim()+"요일에 알람이 울립니다.");
-                btnCheck=true;
-            }else{
-                btn.setBackground(ContextCompat.getDrawable(itemView.getContext(),R.drawable.btndayofweek_btnoff));
-                txtDayCheck.setText("매일 알림");
-                btnCheck=false;
-            }
-        }
 
     } // end of customViewHolder class
 }

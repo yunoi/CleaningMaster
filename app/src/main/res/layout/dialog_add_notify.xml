@@ -28,7 +28,7 @@
             />
 
         <TextView
-            android:id="@+id/txtDate"
+            android:id="@+id/tvDate"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -189,27 +189,5 @@
             app:layout_constraintStart_toEndOf="@+id/btnSaturday"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/btnAlarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="알람 등록" />
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="알람 취소" />
-
-    </LinearLayout>
 
 </LinearLayout>
