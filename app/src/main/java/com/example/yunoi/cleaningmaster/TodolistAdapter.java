@@ -216,7 +216,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         strikeThroughPainting.clearStrikeThrough();
                     }
 
-                    Log.d(TAG,"체크 카운트 확인 : "+checkcount+" / 총 리스트 개수 : "+String.valueOf(TodolistFragment.taskcount));
 
                 }
             });
