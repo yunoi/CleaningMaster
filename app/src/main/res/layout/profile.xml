@@ -20,35 +20,47 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="닉네임" />
                 <TextView
                     android:id="@+id/txtNickName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="닉네임?" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="점수" />
                 <TextView
                     android:id="@+id/txtScore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="점수?" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="등급" />
                 <TextView
                     android:id="@+id/txtRank"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="등급?" />
             </LinearLayout>
 
@@ -63,6 +75,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="키" />
 
                 <TextView
@@ -70,6 +84,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="들어갈 키" />
             </LinearLayout>
 
@@ -84,6 +100,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="몸무게" />
 
                 <TextView
@@ -91,6 +109,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="들어갈 몸무게" />
             </LinearLayout>
 
@@ -105,6 +125,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="성별" />
 
                 <TextView
@@ -112,6 +134,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="들어갈 성별" />
             </LinearLayout>
 
@@ -126,6 +150,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="나이" />
 
                 <TextView
@@ -133,20 +159,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="#024873"
+                    android:textSize="20dp"
                     android:text="들어갈 나이" />
             </LinearLayout>
-            <Button
-                android:id="@+id/btnEditProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="프로필 수정"/>
-            <Button
-                android:id="@+id/btnDeleteProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="프로필 삭제"/>
+            <!--<Button-->
+                <!--android:id="@+id/btnEditProfile"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:text="프로필 수정"/>-->
+            <!--<Button-->
+                <!--android:id="@+id/btnDeleteProfile"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:text="프로필 삭제"/>-->
 
         </LinearLayout>
     </ScrollView>
