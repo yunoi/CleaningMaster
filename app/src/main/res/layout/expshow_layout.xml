@@ -85,7 +85,7 @@
 
 
     <ImageView
-        android:id="@+id/todo_Icon"
+        android:id="@+id/todo_medal"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@android:color/transparent"
@@ -98,6 +98,7 @@
         app:layout_constraintVertical_bias="0.84" />
 
     <ImageView
+        android:id="@+id/todo_celebration"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/fireworks"
@@ -110,4 +111,3 @@
 </android.support.constraint.ConstraintLayout>
 
 
-<!--icon 출처 <a href='https://pngtree.com/so/업적'>업적 png from pngtree.com</a> -->
