@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction ft;
     private Fragment pedomterFrgment;
     private Fragment pedomterBar;
-
+    private long backButtonTime=0;  // 뒤로가기 타이밍
     private SettingFragment settingFragment;
     private Fragment mainFragment;
     private Fragment profileFragment;
@@ -154,5 +154,17 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onBackPressed() {
+        long currentTime = System.currentTimeMillis();
+        long gapTime = currentTime - backButtonTime;
 
+        if(gapTime>=0 && gapTime <= 2000){
+            super.onBackPressed();
+        }else{
+            backButtonTime = currentTime;
+            Toast.makeText(this, "뒤로 가기를 한번 더 누르면 어플이 종료됩니다.",Toast.LENGTH_SHORT).show();
+        }
+
+    }
 }
