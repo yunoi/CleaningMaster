@@ -225,7 +225,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     } // end of customViewHolder class
 
-    //DB 삭제 부분
+    // 청소리스트 DB 삭제 부분
     public void deleteCleningArea(String text, Context context){
         db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
         db.execSQL("DELETE FROM cleaningTBL WHERE task='"+text+"';");

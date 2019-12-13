@@ -226,52 +226,33 @@ public class TodolistFragment extends Fragment {
             //요일별 선택 이벤트
             btnMonday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnMonday);
-                }
+                public void onClick(View v) { btnBackGroundChange(btnMonday); }
             });
             btnTuesday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnTuesday);
-
-                }
+                public void onClick(View v) { btnBackGroundChange(btnTuesday); }
             });
             btnWednesday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnWednesday);
-
-                }
+                public void onClick(View v) { btnBackGroundChange(btnWednesday); }
             });
             btnThursday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnThursday);
-
-                }
+                public void onClick(View v) { btnBackGroundChange(btnThursday); }
             });
             btnFriday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnFriday);
-
-                }
+                public void onClick(View v) { btnBackGroundChange(btnFriday); }
             });
             btnSaturday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnSaturday);
-
-                }
+                public void onClick(View v) { btnBackGroundChange(btnSaturday); }
             });
             btnSunday.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    btnBackGroundChange(btnSunday);
-
-                }
+                public void onClick(View v) { btnBackGroundChange(btnSunday); }
             });
+
             dlg.setPositiveButton("알림 설정", null);
             dlg.setNegativeButton("취소",
                     new DialogInterface.OnClickListener() {
@@ -346,7 +327,6 @@ public class TodolistFragment extends Fragment {
 
         private void toastDisplay (String s){
             Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-
         }
 
         // 날짜 선택 DatePicker Dialog 메소드
@@ -369,7 +349,7 @@ public class TodolistFragment extends Fragment {
 
             return id;
         }
-        // 알람 등록
+        // 알람 등록 모듈
         private void setAlarm () {
             // 알람 시간 설정
             // api 버전별 설정
