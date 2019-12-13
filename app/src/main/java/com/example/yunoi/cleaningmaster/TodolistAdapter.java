@@ -2,8 +2,10 @@ package com.example.yunoi.cleaningmaster;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -38,7 +40,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private ArrayList<TodolistVo> list;
     private int checkcount=0;
     private static final String TAG="확인";
-    public static int exp=0;
+    public static int score=0;
+    private SQLiteDatabase db;
 
     //생성자
     public TodolistAdapter(int layout, ArrayList<TodolistVo> list) {
@@ -61,6 +64,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public void onBindViewHolder(@NonNull final TodolistAdapter.CustomViewHolder customViewHolder, final int position) {
 
         customViewHolder.todolist_text.setText(list.get(position).getTodolist_text());
+
+
         final int taskCount=list.get(position).getTaskcount();
 
         //취소 버튼 액션
@@ -75,9 +80,10 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        String text=list.get(position).getTodolist_text();
                         list.remove(position);
                         notifyDataSetChanged();
+                        deleteCleningArea(text,v.getContext()); //DB 삭제부분
                         Snackbar snackbar=Snackbar.make(customViewHolder.todo_linearLayout,"삭제되었습니다!",Snackbar.LENGTH_SHORT);
 
                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
@@ -140,29 +146,44 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         strikeThroughPainting.color(Color.rgb(2, 72, 112))
                                 .strokeWidth(4).totalTime(10_0L).strikeThrough();
                         checkcount++;//체크 카운트
-                        exp+=100;
+                        score+=100;
 
                         //스낵바 설정(체크할 시 경험치 확인 스낵바)
-                        Snackbar snackbar=Snackbar.make(todo_linearLayout,"경험치가 적립되었습니다! \n 경헙치 :"+exp,Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar=Snackbar.make(todo_linearLayout,"경험치가 적립되었습니다! 조금만 더 힘내요!\n경험치 :"+score,Snackbar.LENGTH_SHORT);
                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                        Snackbar.SnackbarLayout layout=(Snackbar.SnackbarLayout) snackbar.getView();
+                        layout.setPadding(10,10,50,10);
                         View snackbarView=snackbar.getView();
                         TextView tv=(TextView)snackbarView.findViewById(android.support.design.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);
                         tv.setTextSize(16);
                         snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-                        snackbar.show();
+
 
 
                         //체크한 카운트가 만든 리스트와 맞을때
-                        if (checkcount==TodolistFragment.taskcount){
+                        if (checkcount==list.size()){
+
+                            score+=200;
+                            //스낵바 설정(체크할 시 경험치 확인 스낵바)
+                                tv.setText("축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+200exp)가 적립되었습니다!\n경험치 :"+ score);
+                                snackbar.setDuration(Snackbar.LENGTH_INDEFINITE);
+                                tv.setPadding(60,60,60,60);
+                                tv.setTextSize(16);
+                                tv.setMaxLines(3);
+
+                                snackbar.setAction("확인", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent=new Intent(itemView.getContext(),ExpShowActivity.class);
+                                        startActivity(itemView.getContext(),intent,null);
+                                    }
+                                });
 
 
-                            Intent intent=new Intent(itemView.getContext(),ExpShowActivity.class);
-                            startActivity(itemView.getContext(),intent,null);
-                            exp+=200;
                         }
 
-
+                        snackbar.show();
 
 
                     }else {
@@ -228,6 +249,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                     alertDialog.show();
                 }
             });
+
+
         }
         //요일 버튼 이벤트
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -244,4 +267,12 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         }
 
     } // end of customViewHolder class
+
+    //DB 삭제 부분
+    public void deleteCleningArea(String text, Context context){
+        db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
+        db.execSQL("DELETE FROM cleaningTBL WHERE task='"+text+"';");
+        Log.d(TAG,"DB 삭제됨");
+    }
+
 }

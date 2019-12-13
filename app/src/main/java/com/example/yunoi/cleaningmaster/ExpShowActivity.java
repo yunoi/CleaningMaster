@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
     ShineButton todo_shineButton;
     ImageView todo_medal;
     ImageView todo_celebration;
+    ProgressBarAnimation progressBarAnimation;;
 
 
     @Override
@@ -37,8 +40,21 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
         todo_medal=findViewById(R.id.todo_medal);
         todo_celebration=findViewById(R.id.todo_celebration);
 
+        int score=TodolistAdapter.score;
+        progressBarAnimation=new ProgressBarAnimation(todo_progessBar,0, score);
+        progressBarAnimation.setDuration(1000);
+        todo_txtCore.setText(String.valueOf(score));
+        todo_progessBar.startAnimation(progressBarAnimation);
 
-        
+
+        if (score>=1000 && score < 2000){
+
+
+
+        }
+
+
+
 
 
 
@@ -55,5 +71,26 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.todo_btnCancel: finish(); break;
 
         }
+    }
+
+    public class ProgressBarAnimation extends Animation {
+        CircleProgressBar circleProgressBar;
+        private float from;
+        private float  to;
+
+        public ProgressBarAnimation(CircleProgressBar circleProgressBar, float from, float to) {
+            super();
+            this.circleProgressBar = circleProgressBar;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            float value = from + (to - from) * interpolatedTime;
+            circleProgressBar.setProgress((int) value);
+        }
+
     }
 }

@@ -101,7 +101,6 @@ public class MainFragment extends Fragment {
                         } else {
                             list.add(str1);
                             insertNotifyArea(new NotifyVO(0, 0, 0, 0, 0, str1, null, null, null));
-                            insertCleaningArea(new TodolistVo(0, 0, 0, str1, null, 0, 0)); //CeaningTBL 저장 추가 by 채현
                             alertDialog.dismiss();
                         }
                     }
@@ -180,25 +179,14 @@ public class MainFragment extends Fragment {
         return list;
     }
 
-    //cleaningTBL 구역 정보 저장하기(insert) 1212 청소구역 저장 pm 4:42 by 채현
-    public void insertCleaningArea(TodolistVo todolistVo) {
-        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
-        int year = todolistVo.getYear();
-        int month = todolistVo.getMonth();
-        int day = todolistVo.getDay();
-        String todolist_text = todolistVo.getTodolist_text();
-        String groupName = todolistVo.getGroupName();
-        int taskcount = todolistVo.getTaskcount();
-        int checkcount = todolistVo.getCheckcount();
 
-        db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, taskCount, checkCount )" +
-                "VALUES (" + year + "," + month + "," + day + ",'" + groupName + "','" + todolist_text + "'," + taskcount + ", " + checkcount + " );");
-    }
+
+
 
     //cleaningTBL 구역 삭제하기 1212 pm 5:07 by 채현
     public void deleteTask(String groupName) {
 
-        db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
 
     }

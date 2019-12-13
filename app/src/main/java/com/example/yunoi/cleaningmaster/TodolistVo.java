@@ -9,9 +9,11 @@ public class TodolistVo {
     private String todolist_text;
     private int taskcount;
     private int checkcount;
+    private int score;
 
     public TodolistVo() {
     }
+
 
     public TodolistVo(int year, int month, int day, String groupName, String todolist_text, int taskcount, int checkcount) {
         this.year = year;
@@ -23,9 +25,9 @@ public class TodolistVo {
         this.checkcount = checkcount;
     }
 
-    public TodolistVo(String groupName, String todolist_text) {
-        this.groupName = groupName;
+    public TodolistVo(String todolist_text,int taskcount) {
         this.todolist_text = todolist_text;
+        this.taskcount = taskcount;
     }
 
     public TodolistVo(String groupName) {
@@ -86,5 +88,13 @@ public class TodolistVo {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }
