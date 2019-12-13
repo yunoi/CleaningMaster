@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, "cleaningMasterDB", null, 4);
     }
     // notifyTBL: 알림관련 테이블
-    // year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
+    // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
     // area 청소구역, task 청소내용, alarmSet 알림on/off, loop 반복여부
 
     // cleaningTBL: 청소, 점수, 달성 관련 테이블
@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // NickName 닉네임 , Score 점수, Rank 등급, , Gender 성별, Height 키, Weight 몸무게, Age 나이, CONSTRAINT PK_Customer PRIMARY KEY (NickName)
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE notifyTBL (year INTEGER, month INTEGER, day INTEGER, hour INTEGER, minute INTEGER, area TEXT, task TEXT, alarmSet TEXT, loop TEXT);");
+        db.execSQL("CREATE TABLE notifyTBL (alarmId INTEGER, year INTEGER, month INTEGER, day INTEGER, hour INTEGER, minute INTEGER, area TEXT, task TEXT, alarmSet TEXT, loop TEXT);");
         db.execSQL("CREATE TABLE cleaningTBL (year INTEGER, month INTEGER, day INTEGER, area TEXT, task TEXT,  taskCount INTEGER, checkCount INTEGER, score INTEGER);");
         db.execSQL("CREATE TABLE profileTBL (NickName TEXT PRIMARY KEY, Score INTEGER, Rank TEXT ,Gender TEXT, Height INTEGER, Weight INTEGER, Age INTEGER);");
     }

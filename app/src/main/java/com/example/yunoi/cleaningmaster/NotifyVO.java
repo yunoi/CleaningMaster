@@ -2,6 +2,7 @@ package com.example.yunoi.cleaningmaster;
 
 public class NotifyVO {
 
+    private int alarmId; // 알림리퀘스트번호
     private int year; //알림설정년
     private int month; //알림설정달
     private int day; //알림설정일
@@ -12,9 +13,7 @@ public class NotifyVO {
     private String alarmSet; //알림on/off
     private String loop; // 반복여부
 
-    //생성자
-
-
+    //청소구역 생성자
     public NotifyVO(int year, int month, int day, int hour, int minute, String area, String task, String alarmSet, String loop) {
         this.year = year;
         this.month = month;
@@ -26,6 +25,29 @@ public class NotifyVO {
         this.alarmSet = alarmSet;
         this.loop = loop;
     }
+
+    // 알림 등록 생성자
+    public NotifyVO(int alarmId, int year, int month, int day, int hour, int minute, String area, String task, String alarmSet, String loop) {
+        this.alarmId = alarmId;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.minute = minute;
+        this.area = area;
+        this.task = task;
+        this.alarmSet = alarmSet;
+        this.loop = loop;
+    }
+
+    public int getAlarmId() {
+        return alarmId;
+    }
+
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
+    }
+
     public int getYear() {
         return year;
     }
