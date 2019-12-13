@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -66,82 +67,128 @@
             android:layout_weight="1"
             android:text="매일 알림" />
     </LinearLayout>
-    <LinearLayout
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:layout_height="70dp"
         android:layout_gravity="center"
-        >
+        android:gravity="center"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
         <Button
             android:id="@+id/btnMonday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="월"
-            android:textSize="12sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnTuesday"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnTuesday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="화"
-            android:textSize="12sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnWednesday"
+            app:layout_constraintStart_toEndOf="@+id/btnMonday"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnWednesday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="수"
-            android:textSize="12sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnThursday"
+            app:layout_constraintStart_toEndOf="@+id/btnTuesday"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnThursday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="목"
-            android:textSize="12sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnFriday"
+            app:layout_constraintStart_toEndOf="@+id/btnWednesday"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnFriday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="금"
-            android:textSize="12sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSaturday"
+            app:layout_constraintStart_toEndOf="@+id/btnThursday"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnSaturday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="토"
-            android:textSize="12sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSunday"
+            app:layout_constraintStart_toEndOf="@+id/btnFriday"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnSunday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btndayofweek_btnoff"
             android:text="일"
-            android:textSize="12sp" />
-    </LinearLayout>
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnSaturday"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
