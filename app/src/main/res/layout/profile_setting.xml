@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="10dp"
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="키"
-            android:textSize="20dp" />
+            android:textColor="#024873"
+            android:textSize="20dp"/>
 
         <EditText
             android:id="@+id/edtHeight"
@@ -45,6 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:hint="000"
+            android:textColor="#024873"
+            android:textSize="20dp"
             android:inputType="number" />
 
         <TextView
@@ -52,7 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="cm"
-            android:textSize="20dp" />
+            android:textColor="#024873"
+            android:textSize="20dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -67,7 +72,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="몸무게"
-            android:textSize="20dp" />
+            android:textColor="#024873"
+            android:textSize="20dp"/>
 
         <EditText
             android:id="@+id/edtWeight"
@@ -75,6 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:hint="000.00"
+            android:textColor="#024873"
+            android:textSize="20dp"
             android:inputType="number" />
 
         <TextView
@@ -82,12 +90,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="kg"
+            android:textColor="#024873"
             android:textSize="20dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -95,7 +106,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="나이"
-            android:textSize="20dp" />
+            android:textColor="#024873"
+            android:textSize="20dp"/>
 
         <EditText
             android:id="@+id/edtAge"
@@ -103,6 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:hint="000"
+            android:textColor="#024873"
+            android:textSize="20dp"
             android:inputType="number" />
 
         <TextView
@@ -110,18 +124,29 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="세"
-            android:textSize="20dp" />
+            android:textColor="#024873"
+            android:textSize="20dp"/>
     </LinearLayout>
-    <Button
-        android:layout_marginTop="20dp"
-        android:id="@+id/btnProfileSave"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="프로필 저장"/>
-    <Button
-        android:layout_marginTop="20dp"
-        android:id="@+id/btnPass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="다음에 저장하기"/>
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnProfileSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="70dp"
+            android:text="프로필 저장"/>
+
+        <Button
+            android:id="@+id/btnPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:text="다음에 저장하기" />
+    </LinearLayout>
+
 </LinearLayout>
