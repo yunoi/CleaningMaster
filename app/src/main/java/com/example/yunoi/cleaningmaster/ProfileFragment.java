@@ -3,6 +3,7 @@ package com.example.yunoi.cleaningmaster;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -20,6 +21,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     TextView txtNickName, txtScore, txtRank, txtHeight, txtWeight, txtGender, txtAge;
@@ -119,6 +123,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         sqLiteDatabase.execSQL("DELETE FROM profileTBL;");
+                        SharedPreferences passTutorial = getActivity().getSharedPreferences("change",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = passTutorial.edit();
+                        int intoTuto = 0;
+                        editor.putInt("First",intoTuto);
+                        editor.commit();
                         Intent resetIntent = new Intent(getContext(), NickNameSetting.class);
                         startActivity(resetIntent);
                     }
