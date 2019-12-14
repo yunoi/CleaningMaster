@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -60,6 +61,7 @@ public class TodolistFragment extends Fragment {
     private TimePicker timePicker;
     private PendingIntent pender;
     private TextView tvDate;
+    private TextView tvTask;
     private int alarmId = 0;
 
     // 요일 관련 변수
@@ -160,6 +162,7 @@ public class TodolistFragment extends Fragment {
                             } else {
 
                                 insertCleaningArea(new TodolistVo(0, 0, 0, groupText, task,0));
+                                insertNotifyArea(new NotifyVO(groupText, task));
                                 selectCleaningArea(groupText);
                                 todolistAdapter.notifyDataSetChanged();
                                 Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
@@ -178,12 +181,16 @@ public class TodolistFragment extends Fragment {
             todolistAdapter.setAlarmClickListener(new TodolistAdapter.alarmClickListener() {
                 @Override
                 public void onAlarmClick(View v, int position) {
-                    alarmSettings();
+                    alarmSettings(position);
                 }
 
                 @Override
-                public void onSwitchClick(View v, int position) {
-
+                public void onSwitchClick(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        // The toggle is enabled
+                    } else {
+                        // The toggle is disabled
+                    }
                 }
             });
 
@@ -207,35 +214,92 @@ public class TodolistFragment extends Fragment {
             Log.d(TAG, "DB 저장됨");
         }
 
-        //저장된 DB 내용 가져오기 (할일,체크박스 true,false)
+        //leaningTBL 저장된 DB 내용 가져오기 (할일,체크박스 true,false)
         public void selectCleaningArea (String name){
             db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
             Cursor cursor;
-            cursor = db.rawQuery("SELECT task FROM cleaningTBL WHERE area="+"'"+name+"';", null);
+            cursor = db.rawQuery("SELECT task, checkCount FROM cleaningTBL WHERE area="+"'"+name+"';", null);
             list.clear();
             while (cursor.moveToNext()) {
 
-                list.add(new TodolistVo(cursor.getString(0)));
-                Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0));
+                list.add(new TodolistVo(cursor.getString(0), cursor.getInt(1)));
+                Log.d(TAG,"DB에서 select함");
 
             }
-
             todolistAdapter.notifyDataSetChanged();
             cursor.close();
             Log.d(TAG,"DB에서 select함");
         }
 
+        // notifyTBL 청소내용 입력 (insert of update)
+    public void insertNotifyArea(NotifyVO notifyVO) {
+        String area = notifyVO.getArea();
+        String task = notifyVO.getTask();
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        Cursor cursor;
+        cursor = db.rawQuery("SELECT task FROM notifyTBL WHERE area="+"'"+area+"';", null);
+        String curTask = null;
+        while(cursor.moveToNext()){
+            curTask = cursor.getString(0);
+        }
+        if(curTask == null){
+            db.execSQL("UPDATE notifyTBL SET task = '"+task+"' WHERE area = '"+ area +"';");
+        } else {
+            db.execSQL("INSERT INTO notifyTBL (area, task)" +
+                " VALUES ('"+area +"', '"+ task +"');");
+        }
+        cursor.close();
+    }
+        // 알림 설정
+        public void updateAlarm (NotifyVO notifyVO){
+            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+            int alarmId = notifyVO.getAlarmId();
+            int year = notifyVO.getYear();
+            int month = notifyVO.getMonth();
+            int day = notifyVO.getDay();
+            int hour = notifyVO.getHour();
+            int minute = notifyVO.getMinute();
+            String area = notifyVO.getArea();
+            String task = notifyVO.getTask();
+            String alarmSet = notifyVO.getAlarmSet();
+            String loop = notifyVO.getLoop();
+            db.execSQL("UPDATE notifyTBL SET alarmId = "+alarmId+", year = "+year+", month = "+month+", day = "+day+", hour = "+hour+", minute = "+minute+", alarmSet = '"+alarmSet+"', loop = '"+loop+"' WHERE area = '"+ area +"' AND task = '"+task+"';");
+            Log.d(TAG, "notifyTBL update");
+        }
+
+        // 알림 on/off
+//        public boolean turnAlarm() {
+//        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+//        Cursor cursor;
+//        cursor = db.rawQuery("SELECT task, checkCount FROM notifyTBL WHERE area="+"'"+name+"';", null);
+//        list.clear();
+//        while (cursor.moveToNext()) {
+//
+//            list.add(new TodolistVo(cursor.getString(0), cursor.getInt(1)));
+//            Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0)+", "+ cursor.getString(1)+", "+cursor.getInt(2));
+//
+//        }
+//
+//        todolistAdapter.notifyDataSetChanged();
+//        cursor.close();
+//        Log.d(TAG,"DB에서 select함");
+//        return true;
+//    }
+
+
 
 ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
-        private void alarmSettings () {
+        private void alarmSettings (int position) {
 
             final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_notify, null);
             final android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(getActivity());
             dlg.setView(dialogView);
+            tvTask = dialogView.findViewById(R.id.tvTask);
             timePicker =
                     dialogView.findViewById(R.id.timePicker);
             tvDate =
                     dialogView.findViewById(R.id.tvDate);
+            tvTask.setText(list.get(position).getTodolist_text());
             final ImageView ivCalendar = dialogView.findViewById(R.id.ivCalendar);
             final Button btnMonday = dialogView.findViewById(R.id.btnMonday);
             final Button btnTuesday = dialogView.findViewById(R.id.btnTuesday);
@@ -245,7 +309,8 @@ public class TodolistFragment extends Fragment {
             final Button btnSaturday = dialogView.findViewById(R.id.btnSaturday);
             final Button btnSunday = dialogView.findViewById(R.id.btnSunday);
             txtDayCheck = dialogView.findViewById(R.id.txtDayCheck);
-
+            //오늘 날짜 입력부분
+            tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR))+"-"+String.valueOf(calendar.get(Calendar.MONTH)+1)+"-"+String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
             // 날짜선택창 불러오기
             ivCalendar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -326,13 +391,19 @@ public class TodolistFragment extends Fragment {
                             alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
                             //알람 시간 표시
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-
+                            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm", Locale.getDefault());
+                            // 특정 문자가 반복될 경우 : '-' 가 반복된다.
+                            // split()을 이용해 '-'를 기준으로 문자열을 자른다.
+                            // split()은 지정한 문자를 기준으로 문자열을 잘라 배열로 반환한다.
+                            String date[] = String.valueOf(dbFormat.format(calendar.getTime())).split("-");
                             Intent intent = new Intent(getActivity(), AlarmReceiver.class);
                             intent.putExtra("title", "청소의 달인");
                             intent.putExtra("text", "청소할 시간이군요!");
                             intent.putExtra("id", alarmId);
                             pender = PendingIntent.getBroadcast(getActivity(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pender);
+                            NotifyVO notifyVO = new NotifyVO(alarmId, Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]), Integer.parseInt(date[3]), Integer.parseInt(date[4]), groupText, tvTask.getText().toString(), "on", null);
+                            updateAlarm (notifyVO);
                             toastDisplay(String.valueOf(format.format(calendar.getTime())) + " 알림이 설정되었습니다.");
                             alertDialog.dismiss();
                         }
@@ -377,7 +448,7 @@ public class TodolistFragment extends Fragment {
         // 알림 pendingIntent RequestCode 설정
         public int createID () {
             Date now = new Date();
-            int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.KOREA).format(now));
+            int id = Integer.parseInt(new SimpleDateFormat("MMddHHmmss", Locale.KOREA).format(now));
 
             return id;
         }

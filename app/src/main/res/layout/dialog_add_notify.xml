@@ -6,7 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
+    <TextView
+        android:id="@+id/tvTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="청소 내용"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        />
     <TimePicker
         android:id="@+id/timePicker"
         android:layout_width="match_parent"

@@ -9,7 +9,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper dbHelper = null;
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 4);
+        super(context, "cleaningMasterDB", null, 5);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분

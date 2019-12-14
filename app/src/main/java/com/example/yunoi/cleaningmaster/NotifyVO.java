@@ -14,16 +14,18 @@ public class NotifyVO {
     private String loop; // 반복여부
 
     //청소구역 생성자
-    public NotifyVO(int year, int month, int day, int hour, int minute, String area, String task, String alarmSet, String loop) {
+    public NotifyVO(int year, int month, int day, int hour, int minute, String area, String alarmSet, String loop) {
         this.year = year;
         this.month = month;
         this.day = day;
         this.hour = hour;
         this.minute = minute;
         this.area = area;
-        this.task = task;
         this.alarmSet = alarmSet;
         this.loop = loop;
+    }
+
+    public NotifyVO() {
     }
 
     // 알림 등록 생성자
@@ -38,6 +40,12 @@ public class NotifyVO {
         this.task = task;
         this.alarmSet = alarmSet;
         this.loop = loop;
+    }
+
+    // 청소구역과 청소내용
+    public NotifyVO(String area, String task) {
+        this.area = area;
+        this.task = task;
     }
 
     public int getAlarmId() {

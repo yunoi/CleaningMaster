@@ -29,6 +29,11 @@ public class TodolistVo {
         this.todolist_text = todolist_text;
     }
 
+    public TodolistVo(String todolist_text, int checkcount) {
+        this.todolist_text = todolist_text;
+        this.checkcount = checkcount;
+    }
+
     public int getYear() {
         return year;
     }

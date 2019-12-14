@@ -49,7 +49,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     // 클릭 리스너 인터페이스
     public interface alarmClickListener {
         void onAlarmClick(View v, int position);
-        void onSwitchClick(View v, int position);
+        void onSwitchClick(CompoundButton buttonView, boolean isChecked);
     }
 
     public void setAlarmClickListener(alarmClickListener listener){
@@ -122,13 +122,12 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 }
             }
         });
-
         // 반복알림 스위치 설정 버튼 액션
-        customViewHolder.todolist_switch.setOnClickListener(new View.OnClickListener() {
+        customViewHolder.todolist_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(listener != null){
-                    listener.onSwitchClick(v, position);
+                    listener.onSwitchClick(buttonView, isChecked);
                 }
             }
         });
@@ -143,10 +142,10 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
         private ImageButton todolist_alram;
         private ExTextView todolist_text;
-        private Switch todolist_switch;
         private SwipeLayout swipe_sample1;
         private LinearLayout todo_linearLayout;
         private CheckBox todolist_checkBox;
+        private Switch todolist_switch;
         StrikeThroughPainting strikeThroughPainting;
 
 

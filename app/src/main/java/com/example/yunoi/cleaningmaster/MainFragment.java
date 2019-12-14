@@ -103,7 +103,7 @@ public class MainFragment extends Fragment {
                             toastDisplay("청소구역을 입력해 주세요!");
                         } else {
                             if (preventDuplicateArea(str1)) {
-                                insertNotifyArea(new NotifyVO(0, 0, 0, 0, 0, str1, null, null, null));
+                                insertNotifyArea(new NotifyVO(0, 0, 0, 0, 0, str1, null, null));
                                 list.add(str1);
                                 toastDisplay(str1+"이(가) 추가되었습니다.");
                                 alertDialog.dismiss();
@@ -160,11 +160,10 @@ public class MainFragment extends Fragment {
         int hour = notifyVO.getHour();
         int minute = notifyVO.getMinute();
         String area = notifyVO.getArea();
-        String task = notifyVO.getTask();
         String alarmSet = notifyVO.getAlarmSet();
         String loop = notifyVO.getLoop();
-        db.execSQL("INSERT INTO notifyTBL (year, month, day, hour, minute, area, task, alarmSet, loop )" +
-                "VALUES (" + year + "," + month + "," + day + "," + hour + "," + minute + ", '" + area + "', '" + task + "','" + alarmSet + "','" + loop + "');");
+        db.execSQL("INSERT INTO notifyTBL (year, month, day, hour, minute, area, alarmSet, loop )" +
+                "VALUES (" + year + "," + month + "," + day + "," + hour + "," + minute + ", '" + area + "', '" + alarmSet + "','" + loop + "');");
 
     }
 
@@ -172,7 +171,7 @@ public class MainFragment extends Fragment {
     public ArrayList<String> getTotalArea() {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT area FROM notifyTBL;", null);
+        cursor = db.rawQuery("SELECT DISTINCT area FROM notifyTBL;", null);
         list.clear();
         while (cursor.moveToNext()) {
             list.add(cursor.getString(0));
@@ -361,6 +360,8 @@ public class MainFragment extends Fragment {
 
                 }
             });
+
+            // 청소구역 수정
             tvCleaning.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
