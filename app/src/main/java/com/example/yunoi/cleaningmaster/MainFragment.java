@@ -103,7 +103,7 @@ public class MainFragment extends Fragment {
                             toastDisplay("청소구역을 입력해 주세요!");
                         } else {
                             if (preventDuplicateArea(str1)) {
-                                insertNotifyArea(new NotifyVO(0, 0, 0, 0, 0, str1, null, null));
+                                insertMainCleaningArea(str1);
                                 list.add(str1);
                                 toastDisplay(str1+"이(가) 추가되었습니다.");
                                 alertDialog.dismiss();
@@ -152,18 +152,10 @@ public class MainFragment extends Fragment {
     }
 
     // 청소구역 입력 (insert)
-    public void insertNotifyArea(NotifyVO notifyVO) {
+    public void insertMainCleaningArea(String area) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        int year = notifyVO.getYear();
-        int month = notifyVO.getMonth();
-        int day = notifyVO.getDay();
-        int hour = notifyVO.getHour();
-        int minute = notifyVO.getMinute();
-        String area = notifyVO.getArea();
-        String alarmSet = notifyVO.getAlarmSet();
-        String loop = notifyVO.getLoop();
-        db.execSQL("INSERT INTO notifyTBL (year, month, day, hour, minute, area, alarmSet, loop )" +
-                "VALUES (" + year + "," + month + "," + day + "," + hour + "," + minute + ", '" + area + "', '" + alarmSet + "','" + loop + "');");
+        db.execSQL("INSERT INTO cleaningTBL ( area )" +
+                "VALUES ('"+ area +"');");
 
     }
 
@@ -171,7 +163,7 @@ public class MainFragment extends Fragment {
     public ArrayList<String> getTotalArea() {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT DISTINCT area FROM notifyTBL;", null);
+        cursor = db.rawQuery("SELECT DISTINCT area FROM cleaningTBL;", null);
         list.clear();
         while (cursor.moveToNext()) {
             list.add(cursor.getString(0));
@@ -184,7 +176,7 @@ public class MainFragment extends Fragment {
     public boolean preventDuplicateArea(String area) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT area FROM notifyTBL WHERE area = '" + area + "' limit 1;", null);
+        cursor = db.rawQuery("SELECT area FROM cleaningTBL WHERE area = '" + area + "' limit 1;", null);
 //        Log.d(TAG, cursor.getString(0));
         while(cursor.moveToNext()){
             if (!cursor.getString(0).equals("")) {
@@ -196,11 +188,11 @@ public class MainFragment extends Fragment {
         return true;
     }
 
-    //notifyTBL 청소 구역 삭제하기 1212 pm 5:07 by 채현 -> 1213 pm 9:42 by 윤해
+    //청소 구역 삭제하기 1212 pm 5:07 by 채현 -> 1213 pm 9:42 by 윤해
     public void deleteArea(String groupName) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        db.execSQL("DELETE FROM notifyTBL WHERE area='" + groupName + "';");
-        Log.d(TAG, "notifyTBL에서 청소구역 삭제됨");
+        db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
+        Log.d(TAG, "cleaningTBL에서 청소구역 삭제됨");
     }
 
     // 청소 구역 수정 (upadate)
@@ -243,7 +235,7 @@ public class MainFragment extends Fragment {
                             if (preventDuplicateArea(newArea)) {
                                 db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
                                 if (alerEdt.getText().toString() != "") {
-                                    db.execSQL("UPDATE notifyTBL SET area = '"
+                                    db.execSQL("UPDATE cleaningTBL SET area = '"
                                             + newArea + "' WHERE area = '"
                                             + curArea + "';");
                                 }
@@ -403,7 +395,7 @@ public class MainFragment extends Fragment {
                                         if (preventDuplicateArea(newArea)) {
                                             db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
                                             if (alerEdt.getText().toString() != "") {
-                                                db.execSQL("UPDATE notifyTBL SET area = '"
+                                                db.execSQL("UPDATE cleaningTBL SET area = '"
                                                         + newArea + "' WHERE area = '"
                                                         + curArea + "';");
                                             }
