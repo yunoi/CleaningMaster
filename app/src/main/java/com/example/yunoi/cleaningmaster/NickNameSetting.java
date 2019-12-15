@@ -51,7 +51,7 @@ public class NickNameSetting extends Activity {
                     } else {
                         //DB에 insert
                         sqLiteDatabase = DBHelper.getInstance(getApplicationContext()).getWritableDatabase();
-                        sqLiteDatabase.execSQL("INSERT INTO profileTBL VALUES('" + edtNickName.getText().toString() + "',0,null,null,0,0,0);");
+                        sqLiteDatabase.execSQL("INSERT INTO profileTBL VALUES('" + edtNickName.getText().toString() + "',0,'"+"초수"+"',null,0,0,0);");
                         cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL;", null);
                         cursor.moveToLast();
                         cursorData = cursor.getString(cursor.getColumnIndex("NickName"));

@@ -47,9 +47,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:hint="000"
+            android:inputType="numberDecimal"
             android:textColor="#024873"
-            android:textSize="20dp"
-            android:inputType="number" />
+            android:textSize="20dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -81,9 +81,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:hint="000.00"
+            android:inputType="numberDecimal"
             android:textColor="#024873"
-            android:textSize="20dp"
-            android:inputType="number" />
+            android:textSize="20dp" />
 
         <TextView
             android:layout_width="match_parent"

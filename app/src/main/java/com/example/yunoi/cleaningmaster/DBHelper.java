@@ -9,7 +9,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper dbHelper = null;
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 5);
+        super(context, "cleaningMasterDB", null, 6);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE notifyTBL (alarmId INTEGER, year INTEGER, month INTEGER, day INTEGER, hour INTEGER, minute INTEGER, area TEXT, task TEXT, alarmSet TEXT, loop TEXT);");
         db.execSQL("CREATE TABLE cleaningTBL (year INTEGER, month INTEGER, day INTEGER, area TEXT, task TEXT,  taskCount INTEGER, checkCount INTEGER, score INTEGER);");
-        db.execSQL("CREATE TABLE profileTBL (NickName TEXT PRIMARY KEY, Score INTEGER, Rank TEXT ,Gender TEXT, Height INTEGER, Weight INTEGER, Age INTEGER);");
+        db.execSQL("CREATE TABLE profileTBL (NickName TEXT PRIMARY KEY, Score INTEGER, Rank TEXT ,Gender TEXT, Height REAL, Weight REAL, Age INTEGER);");
     }
 
     @Override
