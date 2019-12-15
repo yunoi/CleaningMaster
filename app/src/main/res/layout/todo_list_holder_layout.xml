@@ -84,7 +84,7 @@
                 app:layout_constraintStart_toEndOf="@+id/todolist_checkBox"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Switch
+            <com.example.yunoi.cleaningmaster.CustomSwitch
                 android:id="@+id/todolist_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
