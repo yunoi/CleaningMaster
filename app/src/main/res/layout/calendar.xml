@@ -9,6 +9,8 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
         <ImageButton
@@ -17,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:background="@android:color/transparent"
-            android:src="@drawable/add" />
+            android:src="@drawable/backbutton" />
 
         <TextView
             android:id="@+id/tvMonth"
@@ -32,9 +34,9 @@
             android:id="@+id/ibNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:layout_weight="2"
-            android:src="@drawable/backbutton" />
+            android:background="@android:color/transparent"
+            android:src="@drawable/previous" />
     </LinearLayout>
 
     <GridView

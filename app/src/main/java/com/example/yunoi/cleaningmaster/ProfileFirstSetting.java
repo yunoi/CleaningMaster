@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +35,67 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
         edtAge = findViewById(R.id.edtAge);
         btnPass = findViewById(R.id.btnPass);
 
+        edtHeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String cost = s.toString().trim();
+
+                if(!cost.endsWith(".") && cost.contains(".")){
+                    String numberBeforeDecimal = cost.split("\\.")[0];
+                    String numberAfterDecimal = cost.split("\\.")[1];
+
+                    if(numberAfterDecimal.length() > 2){
+                        numberAfterDecimal = numberAfterDecimal.substring(0, 2);
+                    }
+                    cost = numberBeforeDecimal + "." + numberAfterDecimal;
+                }
+                edtHeight.removeTextChangedListener(this);
+                edtHeight.setText(cost);
+                edtHeight.setSelection(edtHeight.getText().toString().trim().length());
+                edtHeight.addTextChangedListener(this);
+            }
+        });
+        edtWeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String cost = s.toString().trim();
+
+                if(!cost.endsWith(".") && cost.contains(".")){
+                    String numberBeforeDecimal = cost.split("\\.")[0];
+                    String numberAfterDecimal = cost.split("\\.")[1];
+
+                    if(numberAfterDecimal.length() > 2){
+                        numberAfterDecimal = numberAfterDecimal.substring(0, 2);
+                    }
+                    cost = numberBeforeDecimal + "." + numberAfterDecimal;
+                }
+                edtWeight.removeTextChangedListener(this);
+                edtWeight.setText(cost);
+                edtWeight.setSelection(edtWeight.getText().toString().trim().length());
+                edtWeight.addTextChangedListener(this);
+            }
+        });
+
         btnFemale.setOnClickListener(this);
         btnMale.setOnClickListener(this);
         btnProfileSave.setOnClickListener(this);
@@ -53,8 +116,8 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                 Intent intent = getIntent();
                 String data = intent.getStringExtra("nickName");
 
-                int height = Integer.parseInt(edtHeight.getText().toString());
-                int weight = Integer.parseInt(edtWeight.getText().toString());
+                float height = Float.parseFloat(edtHeight.getText().toString());
+                float weight = Float.parseFloat(edtWeight.getText().toString());
                 int age = Integer.parseInt(edtAge.getText().toString());
                 cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL WHERE NickName = '" + data + "';", null);
                 if (cursor.getCount() != 0) {

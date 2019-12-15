@@ -56,8 +56,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         int cursorScore = cursor.getInt(cursor.getColumnIndex("Score"));
         String cursorRank = cursor.getString(cursor.getColumnIndex("Rank"));
         String cursorGender = cursor.getString(cursor.getColumnIndex("Gender"));
-        int cursorHeight = cursor.getInt(cursor.getColumnIndex("Height"));
-        int cursorWeight = cursor.getInt(cursor.getColumnIndex("Weight"));
+        float cursorHeight = cursor.getFloat(cursor.getColumnIndex("Height"));
+        float cursorWeight = cursor.getFloat(cursor.getColumnIndex("Weight"));
         int cursorAge = cursor.getInt(cursor.getColumnIndex("Age"));
 
         txtNickName.setText(cursorNickName);
