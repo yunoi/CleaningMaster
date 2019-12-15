@@ -1,5 +1,6 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,33 +36,44 @@ import static android.support.v4.content.ContextCompat.startActivity;
 
 public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.CustomViewHolder> {
 
+    private Context context;
+    private OnAlarmCheckedChangeListener mCallback;
     private int layout;
     private ArrayList<TodolistVo> list;
-    private int checkcount=0;
-    private static final String TAG="확인";
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
 
+    private static final String TAG = "Adapter";
+    private AlarmManager alarmManager;
+
+    // 커스텀 스위치 인터페이스
+    public interface OnAlarmCheckedChangeListener {
+        public void onAlarmStateChanged(TodolistVo item, int postionInList);
+    }
 
     //생성자
-    public TodolistAdapter(int layout, ArrayList<TodolistVo> list) {
+    public TodolistAdapter(int layout, ArrayList<TodolistVo> list, Context context, OnAlarmCheckedChangeListener callBack) {
         this.layout = layout;
         this.list = list;
+        this.context = context;
+        mCallback = callBack;
     }
 
     // 클릭 리스너 인터페이스
     public interface alarmClickListener {
         void onAlarmClick(View v, int position);
-        void onSwitchClick(View v, int position);
     }
-
 
     public void setAlarmClickListener(alarmClickListener listener){
+
         this.listener = listener;
     }
 
-    public void setSwitchClickListener(alarmClickListener listener){
-        this.listener = listener;
+    public void toggleSwitches(int position) {
+        Log.d(TAG, "toggleSwitches(position): " + position);
+        list.get(position).getAlarmState();
+        Log.d(TAG, "toggleSwitches(position): " + position);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -122,7 +133,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
                     if (isChecked==false){
                         Log.d(TAG,"눌렀던것 다시 false");
-//                        insertCheckFalse(customViewHolder.itemView.getContext(),0,taskText,TodolistFragment.groupText);
                         strikeThroughPainting.clearStrikeThrough();
                     }
                     if (isChecked==true){
@@ -202,30 +212,36 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             }
         });
 
-
-
-
         //취소 버튼 액션
         customViewHolder.swipe_sample1.setShowMode(SwipeLayout.ShowMode.LayDown);
         customViewHolder.swipe_sample1.findViewById(R.id.delete_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 //취소 알런트
-                final View alertDialogView=View.inflate(v.getContext(),R.layout.dialog_delete_layout,null);
-                AlertDialog.Builder builder=new AlertDialog.Builder(v.getContext(),R.style.MyDialogTheme);
+                final View alertDialogView = View.inflate(v.getContext(), R.layout.dialog_delete_layout, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyDialogTheme);
                 builder.setView(alertDialogView);
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String text=list.get(position).getTodolist_text();
+                        String text = list.get(position).getTodolist_text();
+
+//                        int[] alarmId = selectAlarmId(text);
+//                        if (alarmId[0] != 0 && alarmId[1] == 1) {
+//                            Intent intent = new Intent(context, AlarmReceiver.class);
+//                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId[0], intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//                            saveAlarmState(text);
+//                            alarmManager.cancel(pendingIntent);
+//                        }
+
                         list.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text,v.getContext()); //DB 삭제부분
-                        Snackbar snackbar=Snackbar.make(customViewHolder.todo_linearLayout,"삭제되었습니다!",Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(customViewHolder.todo_linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
 
                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-                        View snackbarView=snackbar.getView();
-                        TextView tv=(TextView)snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                        View snackbarView = snackbar.getView();
+                        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);
 
                         snackbarView.setBackgroundColor(Color.parseColor("#024873"));
@@ -234,7 +250,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
                     }
                 });
-                builder.setNegativeButton("취소",null);
+                builder.setNegativeButton("취소", null);
                 builder.show();
             }
         });
@@ -243,21 +259,22 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         customViewHolder.todolist_alram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(listener != null){
+                if (listener != null) {
                     listener.onAlarmClick(v, position);
                 }
             }
         });
 
-        // 반복알림 스위치 설정 버튼 액션
-        customViewHolder.todolist_switch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(listener != null){
-                    listener.onSwitchClick(v, position);
-                }
-            }
-        });
+        // 반복알림 스위치 설정 버튼 액션(예정)
+//        customViewHolder.todolist_switch.setCheckedProgrammatically(list.get(position).getAlarmState());
+
+//        customViewHolder.todolist_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                list.get(position).setAlarmState(b);
+//                mCallback.onAlarmStateChanged(list.get(position), position);
+//            }
+//        });
     }
 
     @Override
@@ -269,21 +286,19 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
         private ImageButton todolist_alram;
         private ExTextView todolist_text;
-        private Switch todolist_switch;
         private SwipeLayout swipe_sample1;
         private LinearLayout todo_linearLayout;
         private CheckBox todolist_checkBox;
-
-
+        private CustomSwitch todolist_switch;
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
+            todolist_alram = itemView.findViewById(R.id.todolist_alram);
+            todolist_text = itemView.findViewById(R.id.todolist_text);
+            todolist_switch = itemView.findViewById(R.id.todolist_switch);
+            swipe_sample1 = itemView.findViewById(R.id.swipe_sample1);
+            todo_linearLayout = itemView.findViewById(R.id.todo_linearLayout);
+            todolist_checkBox = itemView.findViewById(R.id.todolist_checkBox);
 
-            todolist_alram=itemView.findViewById(R.id.todolist_alram);
-            todolist_text=itemView.findViewById(R.id.todolist_text);
-            todolist_switch=itemView.findViewById(R.id.todolist_switch);
-            swipe_sample1=itemView.findViewById(R.id.swipe_sample1);
-            todo_linearLayout=itemView.findViewById(R.id.todo_linearLayout);
-            todolist_checkBox=itemView.findViewById(R.id.todolist_checkBox);
 
 
 
@@ -329,14 +344,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         snackbar.show();
     }
 
-    //DB 삭제 부분
-    public void deleteCleningArea(String text, Context context){
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        db.execSQL("DELETE FROM cleaningTBL WHERE task='"+text+"';");
-        Log.d(TAG,"DB 삭제됨");
-    }
-
-
     //DB 스코어 저장하기
     public void insertScore(int score,Context context){
         db = DBHelper.getInstance(context).getWritableDatabase();
@@ -364,8 +371,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         Log.d(TAG,"가져온 task : "+task);
         db.execSQL("UPDATE cleaningTBL SET year="+currentYear+", month ="+currentMonth+", day="+currentDay+", checkCount="+checkCount+" WHERE task ='"+task+"' AND area ='"+groupName+"' ;");
         Toast.makeText(context,"업데이트 저장되었습니다.",Toast.LENGTH_SHORT).show();
-
-
         Log.d(TAG,"저장된 시간 : "+currentYear+currentMonth+currentDay);
         Log.d(TAG,"저장된 체크 : "+checkCount);
     }
@@ -377,21 +382,50 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         Cursor cursor;
         cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE checkCount="+1+" AND year="+year+" AND month="+month+" AND day="+day+";", null);
         int size=cursor.getCount();
-
         cursor.close();
         return size;
     }
 
     //전체 저장 되어있는 리스트 사이즈
-    public int selectAllListSize(Context context){
+    public int selectAllListSize(Context context) {
         db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
         Cursor cursor;
         cursor = db.rawQuery("SELECT * FROM cleaningTBL ;", null);
-        int allSize=cursor.getCount();
+        int allSize = cursor.getCount();
         cursor.close();
         return allSize;
     }
 
+    // 청소리스트 DB 삭제 부분
+    public void deleteCleningArea(String text, Context context) {
+        db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
+        db.execSQL("DELETE FROM cleaningTBL WHERE task='" + text + "';");
+        Log.d(TAG, "DB 삭제됨");
+    }
+
+    // alarmId 불러오기
+    public int[] selectAlarmId(String text) {
+        db = DBHelper.getInstance(context).getWritableDatabase();
+        Cursor cursor;
+        cursor = db.rawQuery("SELECT _ID, alarmState FROM cleaningTBL WHERE task=" + "'" + text + "' limit 1;", null);
+        int[] alarmId = new int[2];
+        while (cursor.moveToNext()) {
+            alarmId[0] = cursor.getInt(0);
+            alarmId[1] = cursor.getInt(1);
+            Log.d(TAG, "alarmId select1: " + alarmId[0] + ", status1: " + alarmId[1]);
+
+        }
+        Log.d(TAG, "alarmId select2: " + alarmId[0] + ", status1: " + alarmId[1]);
+        cursor.close();
+        return alarmId;
+    }
+
+    // 알람 세팅 상태 해제
+    private void saveAlarmState(String task) {
+        db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
+        db.execSQL("UPDATE cleaningTBL SET alarmState = 0 WHERE task = '" + task + "';");
+        Log.d(TAG, "cleaningTBL alarmState set = 0");
+    }
 
 
 }

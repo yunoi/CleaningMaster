@@ -44,7 +44,9 @@
                 android:layout_margin="16dp"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text=""
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:text="청소구역"
                 android:textColor="#03658c"
                 android:textSize="20sp" />
 

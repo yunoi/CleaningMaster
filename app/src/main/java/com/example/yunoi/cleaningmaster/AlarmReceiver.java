@@ -10,10 +10,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import static android.app.Notification.VISIBILITY_PUBLIC;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -25,15 +21,14 @@ public class AlarmReceiver extends BroadcastReceiver {
     @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onReceive(Context context, Intent intent) {
-        alarmId = createID();
-        Intent rIntent = new Intent(context, AlarmService.class);
-        PendingIntent pend = PendingIntent.getActivity(context, alarmId, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(rIntent);
             String title = intent.getStringExtra("title");
             String text = intent.getStringExtra("text");
-            int id = intent.getIntExtra("id", 0);
+            alarmId = intent.getIntExtra("id", 0);
+            Intent rIntent = new Intent(context, AlarmService.class);
+            PendingIntent pend = PendingIntent.getActivity(context, alarmId, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            context.startForegroundService(rIntent);
             //NotificationManager 안드로이드 상태바에 메세지를 던지기위한 서비스 불러오고
             NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 //            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -50,13 +45,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                     .setVisibility(VISIBILITY_PUBLIC)
                     .setAutoCancel(true);
             WakeLocker.acquire(context);
-            notificationmanager.notify(id, builder.build());
+            notificationmanager.notify(alarmId, builder.build());
 
         } else {
-            context.startService(rIntent);
             String title = intent.getStringExtra("title");
             String text = intent.getStringExtra("text");
-            int id = intent.getIntExtra("id", 0);
+            alarmId = intent.getIntExtra("id", 0);
+            Intent rIntent = new Intent(context, AlarmService.class);
+            PendingIntent pend = PendingIntent.getActivity(context, alarmId, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            context.startService(rIntent);
             NotificationManager mNotificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationCompat.Builder mBuilder =
@@ -73,17 +70,17 @@ public class AlarmReceiver extends BroadcastReceiver {
                             .setVisibility(VISIBILITY_PUBLIC);
 
             WakeLocker.acquire(context);
-            mNotificationManager.notify(id, mBuilder.build());
+            mNotificationManager.notify(alarmId, mBuilder.build());
 
         }
 
         WakeLocker.release();
     }
     // 알림 pendingIntent RequestCode 설정
-    public int createID(){
-        Date now = new Date();
-        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.KOREA).format(now));
-
-        return id;
-    }
+//    public int createID(){
+//        Date now = new Date();
+//        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.KOREA).format(now));
+//
+//        return id;
+//    }
 }

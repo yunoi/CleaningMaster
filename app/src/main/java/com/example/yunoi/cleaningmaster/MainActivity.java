@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction ft;
     private Fragment pedomterFrgment;
     private Fragment pedomterBar;
+    private Fragment calendarFragment;
     private long backButtonTime=0;  // 뒤로가기 타이밍
     private SettingFragment settingFragment;
     private Fragment mainFragment;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         pedomterFrgment=new PedomterFrgment();
         pedomterBar=new PedomterBar();
         profileFragment=new ProfileFragment();
+        calendarFragment=new CalendarFragment();
 
         //191212 pm 03:40 다시 보지 않기 설정 안할 시 자동으로 도움말로 이동 by 재훈
         passTutorial = getSharedPreferences("change",MODE_PRIVATE);
@@ -94,7 +96,10 @@ public class MainActivity extends AppCompatActivity {
                    ft.commit();
 
                 break;
+                //달력 항목 첫번째 생성
             case 2:
+                ft.replace(R.id.coordinatorLayout,calendarFragment);
+                ft.commit();
 
                 break;
             case 3:
