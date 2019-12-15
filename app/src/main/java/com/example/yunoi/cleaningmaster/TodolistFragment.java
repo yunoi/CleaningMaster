@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -50,9 +52,12 @@ public class TodolistFragment extends Fragment {
     private ArrayList<TodolistVo> list = new ArrayList<TodolistVo>();
     private TodolistAdapter todolistAdapter;
     private LinearLayoutManager linearLayoutManager;
+    public static ConstraintLayout todo_constraintLayout;
 
-    private String groupText; //구역이름
+    public static String groupText; //구역이름
     private static final String TAG = "확인";
+    public static int score=0;
+
 
     // 알림 관련 변수
     private Calendar calendar = Calendar.getInstance(); // 캘린더 인스턴스 생성
@@ -66,25 +71,25 @@ public class TodolistFragment extends Fragment {
     private boolean btnCheck = false;
     private TextView txtDayCheck;
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+//        updateScore(view.getContext(),TodolistAdapter.score);
+//
+//        Log.d(TAG,"점수가 DB에 업데이트 되었습니다.");
+
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.todolist_fragment, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.todo_listView);
-//
-//        //현재 년,월,일
-//        Calendar calendar=Calendar.getInstance();
-//        Date date=calendar.getTime();
-//        String year=new SimpleDateFormat("YYYY").format(date);
-//        String month=new SimpleDateFormat("MM").format(date);
-//        String day=new SimpleDateFormat("dd").format(date);
-//
-//        final int currentYear=Integer.parseInt(year);
-//        final int currentMonth=Integer.parseInt(month);
-//        final int currentDay=Integer.parseInt(day);
-//
-//
-//        Log.d(TAG,"날짜 : "+currentYear+"년"+currentMonth+"월"+currentDay+"일");
+        todo_constraintLayout = view.findViewById(R.id.todo_constraintLayout);
+
+        insertLevelInit();
 
         //액션바 설정
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
@@ -130,6 +135,8 @@ public class TodolistFragment extends Fragment {
                 actionbar_todoText.setText(groupText);
             }
 
+
+
             //리싸이클러뷰 설정
             linearLayoutManager = new LinearLayoutManager(view.getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
@@ -137,7 +144,8 @@ public class TodolistFragment extends Fragment {
             todolistAdapter = new TodolistAdapter(R.layout.todo_list_holder_layout, list);
             recyclerView.setAdapter(todolistAdapter);
 
-            selectCleaningArea(groupText);
+            selectCleaningArea(groupText);//구역마다 저장한 할일들 가져오기
+            score=selectScore(view.getContext());
 
 
             //list 추가 버튼 -> 알런트 창 -> 확인 -> list 추가
@@ -160,9 +168,9 @@ public class TodolistFragment extends Fragment {
                             } else {
 
                                 insertCleaningArea(new TodolistVo(0, 0, 0, groupText, task,0));
-                                selectCleaningArea(groupText);
-                                todolistAdapter.notifyDataSetChanged();
                                 Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
+
+
                             }
 
 
@@ -188,10 +196,13 @@ public class TodolistFragment extends Fragment {
             });
 
 
-            return view;
-        }
 
-        //cleaningTBL 구역 저장하기(insert) (현재 년도, 월, 일, 구역, 할일,taskCount 나머지는 2개 checkCount,score 0 으로)
+            return view;
+        }//end of onCreatView
+
+    ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
+
+    //cleaningTBL 구역 저장하기(insert) (현재 년도, 월, 일, 구역, 할일,taskCount 나머지는 2개 checkCount,score 0 으로)
         public void insertCleaningArea (TodolistVo todolistVo){
             db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
             int year = todolistVo.getYear();
@@ -205,28 +216,84 @@ public class TodolistFragment extends Fragment {
             db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, taskCount, checkCount)" +
                     "VALUES (" + year + "," + month + "," + day + ",'" + groupName + "','" + todolist_text + "'," + taskcount + ", " + checkcount + ");");
             Log.d(TAG, "DB 저장됨");
+
+            list.add(new TodolistVo(todolist_text));
+            todolistAdapter.notifyDataSetChanged();
         }
 
         //저장된 DB 내용 가져오기 (할일,체크박스 true,false)
         public void selectCleaningArea (String name){
             db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
             Cursor cursor;
-            cursor = db.rawQuery("SELECT task FROM cleaningTBL WHERE area="+"'"+name+"';", null);
+            cursor = db.rawQuery("SELECT task,checkCount FROM cleaningTBL WHERE area="+"'"+name+"';", null);
             list.clear();
             while (cursor.moveToNext()) {
 
-                list.add(new TodolistVo(cursor.getString(0)));
-                Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0));
+                list.add(new TodolistVo(cursor.getString(0),cursor.getInt(1)));
+                Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0)+" / check 유,무 : "+cursor.getInt(1));
 
             }
-
             todolistAdapter.notifyDataSetChanged();
             cursor.close();
             Log.d(TAG,"DB에서 select함");
         }
 
+        //레벨 초기값 설정 (초수)
+        public void insertLevelInit(){
+            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+            String level="초수";
 
-////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
+            Cursor cursor;
+            cursor=db.rawQuery("SELECT * FROM profileTBL",null);
+            String nickname=null;
+            while (cursor.moveToNext()){
+
+                nickname=cursor.getString(0);
+            }
+            Log.d(TAG,"닉네임 확인 : "+nickname);
+
+
+            db.execSQL("UPDATE profileTBL SET Rank='"+level+"' WHERE NickName="+"'"+nickname+"'"+";");
+
+            cursor.close();
+
+            Log.d(TAG, "DB 레벨 업데이트 됨 , 초수");
+
+
+        }
+
+
+    //저장된 스코어 가져오기
+    public int selectScore(Context context){
+        db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
+        Cursor cursor1;
+        cursor1=db.rawQuery("SELECT * FROM profileTBL",null);
+        String nickname=null;
+        while (cursor1.moveToNext()){
+
+            nickname=cursor1.getString(0);
+        }
+        Log.d(TAG,"닉네임 확인 : "+nickname);
+
+        Cursor cursor;
+        cursor = db.rawQuery("SELECT Score FROM profileTBL WHERE NickName="+"'"+nickname+"';", null);
+        int score=0;
+        while (cursor.moveToNext()){
+            score=cursor.getInt(0);
+
+        }
+        cursor.close();
+        Log.d(TAG,"가져온 score : "+score);
+        return score;
+    }
+
+
+
+
+
+
+
+    ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
         private void alarmSettings () {
 
             final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_notify, null);
@@ -451,10 +518,6 @@ public class TodolistFragment extends Fragment {
 
 
 
-//db.execSQL("UPDATE cleaningTBL SET area="+"'"+groupName+"',"+"task="+"'"+todolist_text+"'"+" WHERE task=NULL ;");
-// db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, taskCount, checkCount)" +
-//                    "VALUES (" + year + "," + month + "," + day + ",'" + groupName + "','" + todolist_text + "'," + taskcount + ", " + checkcount+");");
 
-//db.execSQL("SELECT task FROM cleaningTBL WHERE area='"+groupName+"';");
 
 }
