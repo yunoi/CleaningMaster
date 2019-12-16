@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +43,8 @@ import java.util.Locale;
 import static android.content.Context.ALARM_SERVICE;
 
 
-public class TodolistFragment extends Fragment implements View.OnClickListener, TodolistAdapter.OnAlarmCheckedChangeListener {
+public class TodolistFragment
+        extends Fragment implements View.OnClickListener, TodolistAdapter.OnAlarmCheckedChangeListener, LoadAlarmsReceiver.OnAlarmsLoadedListener{
 
     View view;
     private SQLiteDatabase db;
@@ -63,6 +66,7 @@ public class TodolistFragment extends Fragment implements View.OnClickListener, 
     private int alarmId = 0;
     private int alarmOnOff = 0;
     private ArrayList<PendingIntent> intentArray = new ArrayList<>();
+    private LoadAlarmsReceiver mReceiver;
 
 
     // 요일 관련 변수
@@ -93,6 +97,12 @@ public class TodolistFragment extends Fragment implements View.OnClickListener, 
         this.context = context;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mReceiver = new LoadAlarmsReceiver(this);
+        Log.d(TAG, "onCreate");
+    }
 
     @Nullable
     @Override
@@ -307,6 +317,12 @@ public class TodolistFragment extends Fragment implements View.OnClickListener, 
 
     ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
     private void alarmSettings(final int position) {
+
+//
+//        AlarmUtils.checkAlarmPermissions(getActivity());
+//        final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
+//        startActivity(i);
+//        Log.d(TAG, "onCreateView, FloatingActionButton");
 
         final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_notify, null);
         final android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(getActivity());
@@ -641,4 +657,34 @@ public class TodolistFragment extends Fragment implements View.OnClickListener, 
         return alarmId;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
+        LoadAlarmsService.launchLoadAlarmsService(getContext());
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onAlarmsLoaded(ArrayList<TodolistVo> alarms) {
+        for (TodolistVo list : alarms) {
+            Log.d(getClass().getSimpleName(), list.toString());
+        }
+        todolistAdapter.setAlarms(alarms);
+        Log.d(TAG, "onAlarmsLoaded");
+    }
+
+    public static Intent launchIntent(Context context) {
+        final Intent i = new Intent(context, AlarmLandingPageActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return i;
+    }
 }
