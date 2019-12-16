@@ -86,14 +86,18 @@ public class TodolistFragment
         Log.d(TAG, "onCreate");
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        selectCleaningArea(groupText);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.todolist_fragment, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.todo_listView);
         todo_constraintLayout = view.findViewById(R.id.todo_constraintLayout);
-
-        insertLevelInit();
 
         //액션바 설정
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
@@ -228,101 +232,44 @@ public class TodolistFragment
         }
 
     //저장된 DB 내용 가져오기 (할일,체크박스 true,false)
-        public void selectCleaningArea (String name){
-            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-            Cursor cursor;
-            cursor = db.rawQuery("SELECT task,checkCount FROM cleaningTBL WHERE area="+"'"+name+"';", null);
-            list.clear();
-            while (cursor.moveToNext()) {
+    public void selectCleaningArea (String name){
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        Cursor cursor;
+        cursor = db.rawQuery("SELECT task,checkCount FROM cleaningTBL WHERE area="+"'"+name+"';", null);
+        list.clear();
+        while (cursor.moveToNext()) {
 
-                list.add(new TodolistVo(cursor.getString(0),cursor.getInt(1)));
-                Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0)+" / check 유,무 : "+cursor.getInt(1));
-
-            }
-            todolistAdapter.notifyDataSetChanged();
-            cursor.close();
-            Log.d(TAG,"DB에서 select함");
-        }
-
-        //레벨 초기값 설정 (초수)
-        public void insertLevelInit(){
-            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-            String level="초수";
-
-            Cursor cursor;
-            cursor=db.rawQuery("SELECT * FROM profileTBL",null);
-            String nickname=null;
-            while (cursor.moveToNext()){
-
-                nickname=cursor.getString(0);
-            }
-            Log.d(TAG,"닉네임 확인 : "+nickname);
-
-
-            db.execSQL("UPDATE profileTBL SET Rank='"+level+"' WHERE NickName="+"'"+nickname+"'"+";");
-
-            cursor.close();
-
-            Log.d(TAG, "DB 레벨 업데이트 됨 , 초수");
-
+            list.add(new TodolistVo(cursor.getString(0),cursor.getInt(1)));
+            Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0)+" / check 유,무 : "+cursor.getInt(1));
 
         }
-
+        todolistAdapter.notifyDataSetChanged();
+        cursor.close();
+        Log.d(TAG,"DB에서 select함");
+    }
 
     //저장된 스코어 가져오기
-    public int selectScore(Context context){
+    public int selectScore(Context context) {
         db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
         Cursor cursor1;
-        cursor1=db.rawQuery("SELECT * FROM profileTBL",null);
-        String nickname=null;
-        while (cursor1.moveToNext()){
+        cursor1 = db.rawQuery("SELECT * FROM profileTBL", null);
+        String nickname = null;
+        while (cursor1.moveToNext()) {
 
-            nickname=cursor1.getString(0);
+            nickname = cursor1.getString(0);
         }
-        Log.d(TAG,"닉네임 확인 : "+nickname);
+        Log.d(TAG, "닉네임 확인 : " + nickname);
 
         Cursor cursor;
-        cursor = db.rawQuery("SELECT Score FROM profileTBL WHERE NickName="+"'"+nickname+"';", null);
-        int score=0;
-        while (cursor.moveToNext()){
-            score=cursor.getInt(0);
-
-        }
-        cursor.close();
-        Log.d(TAG,"가져온 score : "+score);
-        return score;
-    }
-
-    // 알림 설정
-    public void updateAlarm(TodolistVo todolistVo) {
-        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        int alarmState = todolistVo.getAlarmState();
-        int year = todolistVo.getAlarmYear();
-        int month = todolistVo.getAlarmMonth();
-        int day = todolistVo.getAlarmDay();
-        int hour = todolistVo.getAlarmHour();
-        int minute = todolistVo.getAlarmMinute();
-        int loop = todolistVo.getLoop();
-        String area = todolistVo.getGroupName();
-        String task = todolistVo.getTodolist_text();
-        db.execSQL("UPDATE cleaningTBL SET alarmState = " + alarmState + ", alarmYear = " + year + ", alarmMonth = " + month + ", alarmDay = " + day + ", alarmHour = " + hour + ", AlarmMinute = " + minute + ", loop = " + loop + " WHERE area = '" + area + "' AND task = '" + task + "';");
-        Log.d(TAG, "cleaningTBL alarm update");
-    }
-
-    // alarmId 불러오기
-    public int selectAlarmId(String text) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT _ID FROM cleaningTBL WHERE task=" + "'" + text + "' limit 1;", null);
-        int alarmId = 0;
+        cursor = db.rawQuery("SELECT Score FROM profileTBL WHERE NickName=" + "'" + nickname + "';", null);
+        int score = 0;
         while (cursor.moveToNext()) {
-            alarmId = cursor.getInt(0);
-            Log.d(TAG, "alarmId select1: " + alarmId);
+            score = cursor.getInt(0);
 
         }
-        Log.d(TAG, "alarmId select2: " + alarmId);
         cursor.close();
-        return alarmId;
+        Log.d(TAG, "가져온 score : " + score);
+        return score;
     }
 
     private TodolistVo getAlarm() {
@@ -379,4 +326,13 @@ public class TodolistFragment
         Log.d(TAG, "onAlarmsLoaded");
     }
 
+    private void toastDisplay(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+    }
+
 }
+
+
+
+
+

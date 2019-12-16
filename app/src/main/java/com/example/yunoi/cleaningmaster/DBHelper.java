@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ENABLED = "alarmState";
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 12);
+        super(context, "cleaningMasterDB", null, 13);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
@@ -36,6 +36,8 @@ public class DBHelper extends SQLiteOpenHelper {
     // cleaningTBL: 청소, 점수, 달성 관련 테이블
     // year 달성년 , month 달성달, day 달성일, area 청소구역, task 청소내용, taskCount 청소리스트개수, checkCount 달성한 청소 갯수
 
+    // areaTBL : 구역 이름 만 (메인 리스트 만들때)
+
     // profileTBL: 프로필(키,몸무게 등) 관련 테이블
     // NickName 닉네임 , Score 점수, Rank 등급, , Gender 성별, Height 키, Weight 몸무게, Age 나이, CONSTRAINT PK_Customer PRIMARY KEY (NickName)
     @Override
@@ -43,16 +45,17 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE cleaningTBL (_id INTEGER PRIMARY KEY AUTOINCREMENT, year INTEGER, month INTEGER, day INTEGER, area TEXT, task TEXT, checkCount INTEGER, score INTEGER," +
                 " alarmState INTEGER, alarmYear INTEGER, alarmMonth INTEGER, alarmDay INTEGER, alarmHour INTEGER, alarmMinute INTEGER, time INTEGER, loop INTEGER," +
                 " mon INTEGER, tue INTEGER, wed INTEGER, thu INTEGER, fri INTEGER, sat INTEGER, sun INTEGER);");
-        db.execSQL("CREATE TABLE profileTBL (NickName TEXT PRIMARY KEY, Score INTEGER, Rank TEXT ,Gender TEXT, Height REAL, Weight REAL, Age INTEGER);");
         db.execSQL("CREATE TABLE areaTBL (area TEXT);");
+        db.execSQL("CREATE TABLE profileTBL (NickName TEXT PRIMARY KEY, Score INTEGER, Rank TEXT ,Gender TEXT, Height REAL, Weight REAL, Age INTEGER);");
+        db.execSQL("CREATE TABLE ischeckTBL (isCheckClear INTEGER);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS notifyTBL;");
         db.execSQL("DROP TABLE IF EXISTS cleaningTBL;");
-        db.execSQL("DROP TABLE IF EXISTS profileTBL;");
         db.execSQL("DROP TABLE IF EXISTS areaTBL;");
+        db.execSQL("DROP TABLE IF EXISTS profileTBL;");
+        db.execSQL("DROP TABLE IF EXISTS ischeckTBL;");
         onCreate(db);
     }
 

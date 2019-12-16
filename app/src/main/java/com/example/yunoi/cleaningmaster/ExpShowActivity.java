@@ -82,6 +82,7 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
 
             if (level.equals("중수")){
                 todo_txtCore.setText(String.valueOf(score));
+                todo_txtLevel.setText("중수");
             }else {
                 todo_txtCore.setText("레벨업!!!");
                 todo_txtLevel.setText("중수");
@@ -97,6 +98,7 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
 
             if (level.equals("고수")){
                 todo_txtCore.setText(String.valueOf(score));
+                todo_txtLevel.setText("고수");
             }else {
                 todo_txtCore.setText("레벨업!!!");
                 todo_txtLevel.setText("고수");
@@ -112,6 +114,7 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
 
             if (level.equals("마스터")){
                 todo_txtCore.setText(String.valueOf(score));
+                todo_txtLevel.setText("마스터");
             }else {
                 todo_txtCore.setText("레벨업!!! 고지가 얼마 안남았어여!!");
                 todo_txtLevel.setText("마스터");

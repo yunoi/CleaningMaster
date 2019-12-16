@@ -254,7 +254,6 @@ public class TodolistVo implements Parcelable{
         this.sun = sun;
     }
 
-
     ////////////////////////////////////////////////
     private TodolistVo(Parcel in) {
         Log.i(getClass().getSimpleName(), "Creating database...");
