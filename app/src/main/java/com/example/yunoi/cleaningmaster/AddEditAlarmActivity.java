@@ -106,7 +106,13 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         txtDayCheck = findViewById(R.id.txtDayCheck);
         //오늘 날짜 입력부분
         tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-
+        // 날짜선택창 불러오기
+        ivCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
 
         setDayCheckboxes(alarm);
 
@@ -181,15 +187,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             alarm.setTime(calendar.getTimeInMillis());
         }
 
-
-        // 날짜선택창 불러오기
-        ivCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-            }
-        });
-
         // 현재보다 이전이면 등록 못하도록
         if (calendar.before(Calendar.getInstance())) {
             toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
@@ -247,7 +244,10 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 // 데이터피커에서 선택한 날짜 처리 하는 부분
-                tvDate.setText(String.valueOf(format.format(calendar.getTime())));
+                tvDate.setText(String.valueOf(year +"-"+(monthOfYear+1)+"-"+dayOfMonth));
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear+1);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
         pickerDialog.show();

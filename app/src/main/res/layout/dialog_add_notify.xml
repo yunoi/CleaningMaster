@@ -38,12 +38,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="날짜" />
-                    <ImageView
-                    android:id="@+id/ivCalendar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_today_black_24dp" />
-
                     <TextView
                         android:id="@+id/tvDate"
                         android:layout_width="0px"
@@ -51,6 +45,11 @@
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:textStyle="bold" />
+                    <ImageView
+                    android:id="@+id/ivCalendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_today_black_24dp" />
 
                 </LinearLayout>
 
