@@ -32,7 +32,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
     View view;
     Calendar calendar;
 
-    public CalendarDAO[] items;
+    public ArrayList<CalendarDAO> items = new ArrayList<CalendarDAO>();
     public Calendar mCalendar;
     public int firstDay;
     public int mStartDay;
@@ -106,19 +106,18 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.ibNext:
                 setNextMonth();
-                setTvYearMonth();
                 calendarAdapter.notifyDataSetChanged();
+                setTvYearMonth();
                 break;
             case R.id.ibPrevious:
                 setPreviousMonth();
-                setTvYearMonth();
                 calendarAdapter.notifyDataSetChanged();
+                setTvYearMonth();
                 break;
         }
     }
 
     private void init() {
-        items = new CalendarDAO[42];
         mCalendar = Calendar.getInstance();
 
         recalculate();
@@ -219,12 +218,19 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetDayNumbers() {
-        for (int i = 0; i < 42; i++) {
-            int dayNum = (i + 1) - firstDay;
-            if (dayNum < 1 || dayNum > lastDay) {
-                dayNum = 0;
+        items.removeAll(items);
+        int dayNum=0;
+        for (int i = 0; i < 49; i++) {
+            if(i<7){
+                dayNum=-(i+1);
+            }else {
+                dayNum = ((i-7) +1) - firstDay;
+
+                if ((dayNum < 1) || dayNum > lastDay) {
+                    dayNum = 0;
+                }
             }
-            items[i] = new CalendarDAO(dayNum);
+            items.add(new CalendarDAO(dayNum));
         }
     }
 
