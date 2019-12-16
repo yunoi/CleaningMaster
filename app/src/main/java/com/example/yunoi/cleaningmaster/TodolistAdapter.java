@@ -53,6 +53,11 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private AlarmManager alarmManager;
 
     //생성자
+
+
+    public TodolistAdapter() {
+    }
+
     public TodolistAdapter(int layout, ArrayList<TodolistVo> list, Context context) {
         this.layout = layout;
         this.list = list;
@@ -357,7 +362,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         private SwipeLayout swipe_sample1;
         private LinearLayout todo_linearLayout;
         private CheckBox todolist_checkBox;
-        private CustomSwitch todolist_switch;
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);

@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static DBHelper dbHelper = null;
 
-    private static final String TABLE_NAME = "cleaningTBL";
+    private static final String TABLE_NAME = "alarmTBL";
 
     public static final String _ID = "_id";
     public static final String COL_TIME = "time";
@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ENABLED = "alarmState";
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 13);
+        super(context, "cleaningMasterDB", null, 14);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
@@ -48,6 +48,18 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE areaTBL (area TEXT);");
         db.execSQL("CREATE TABLE profileTBL (NickName TEXT PRIMARY KEY, Score INTEGER, Rank TEXT ,Gender TEXT, Height REAL, Weight REAL, Age INTEGER);");
         db.execSQL("CREATE TABLE ischeckTBL (isCheckClear INTEGER);");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (" +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_TIME + " INTEGER NOT NULL, " +
+                COL_LABEL + " TEXT, " +
+                COL_MON + " INTEGER NOT NULL, " +
+                COL_TUE + " INTEGER NOT NULL, " +
+                COL_WED + " INTEGER NOT NULL, " +
+                COL_THU + " INTEGER NOT NULL, " +
+                COL_FRI + " INTEGER NOT NULL, " +
+                COL_SAT + " INTEGER NOT NULL, " +
+                COL_SUN + " INTEGER NOT NULL, " +
+                COL_IS_ENABLED + " INTEGER NOT NULL)" );
     }
 
     @Override
@@ -56,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS areaTBL;");
         db.execSQL("DROP TABLE IF EXISTS profileTBL;");
         db.execSQL("DROP TABLE IF EXISTS ischeckTBL;");
+        db.execSQL("DROP TABLE IF EXISTS alarmTBL;");
         onCreate(db);
     }
 
@@ -77,7 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     long addAlarm(TodolistVo alarm) {
         Log.i(getClass().getSimpleName(), "addAlarm(Alarm alarm) ...");
-        return getWritableDatabase().insert("cleaningTBL", null, AlarmUtils.toContentValues(alarm));
+        return getWritableDatabase().insert("alarmTBL", null, AlarmUtils.toContentValues(alarm));
     }
 
     public int updateAlarm(TodolistVo alarm) {
@@ -85,7 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
         final String[] whereArgs = new String[] { Long.toString(alarm.getId()) };
         Log.i(getClass().getSimpleName(), "updateAlarm...");
         return getWritableDatabase()
-                .update("cleaningTBL", AlarmUtils.toContentValues(alarm), where, whereArgs);
+                .update("alarmTBL", AlarmUtils.toContentValues(alarm), where, whereArgs);
     }
 
     public int deleteAlarm(TodolistVo alarm) {
@@ -95,7 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
     int deleteAlarm(long id) {
         final String where = "_id" + "=?";
         final String[] whereArgs = new String[] { Long.toString(id) };
-        return getWritableDatabase().delete("cleaningTBL", where, whereArgs);
+        return getWritableDatabase().delete("alarmTBL", where, whereArgs);
     }
 
     public ArrayList<TodolistVo> getAlarms() {
@@ -103,7 +116,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = null;
 
         try{
-            c = getReadableDatabase().query("cleaningTBL", null, null, null, null, null, null);
+            c = getReadableDatabase().query("alarmTBL", null, null, null, null, null, null);
             return AlarmUtils.buildAlarmList(c);
         } finally {
             if (c != null && !c.isClosed()) c.close();
