@@ -60,7 +60,6 @@
         <activity android:name=".TutorialGuideActivity"></activity>
         <activity android:name=".ExpShowActivity"/>
         <activity android:name=".AddEditAlarmActivity" />
-        <activity android:name=".AlarmLandingPageActivity" />
     </application>
 
 </manifest>

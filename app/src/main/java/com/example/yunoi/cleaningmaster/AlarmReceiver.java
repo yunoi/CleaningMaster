@@ -25,7 +25,6 @@ import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.O;
-import static com.example.yunoi.cleaningmaster.AlarmLandingPageActivity.launchIntent;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -207,6 +206,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         return PendingIntent.getActivity(
                 ctx, alarm.notificationId(), launchIntent(ctx), FLAG_UPDATE_CURRENT
         );
+    }
+
+    public static Intent launchIntent(Context context) {
+        final Intent i = new Intent(context, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return i;
     }
 
     private static class ScheduleAlarm {
