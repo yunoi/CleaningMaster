@@ -58,6 +58,7 @@ public class TodolistFragment
     public static ConstraintLayout todo_constraintLayout;
     public static int score=0;
     public static String groupText; //구역이름
+    public static String taskText; //구역이름
     private static final String TAG = "TodolistFragment";
 
     @Retention(RetentionPolicy.SOURCE)
@@ -130,6 +131,7 @@ public class TodolistFragment
 
             if (getArguments() != null) {
                 groupText = getArguments().getString("groupText");
+                taskText = getArguments().getString("taskText");
                 actionbar_todoText.setText(groupText);
             }
 
@@ -151,6 +153,7 @@ public class TodolistFragment
         actionbar_todoBtnAddlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+
                 final View alertDialogView = View.inflate(v.getContext(), R.layout.dialog_add_todolist, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyDialogTheme);
                 builder.setView(alertDialogView);
@@ -193,6 +196,8 @@ public class TodolistFragment
         });
             return view;
         }//end of onCreatView
+
+
 
 
     ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
