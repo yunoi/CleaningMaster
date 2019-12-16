@@ -156,7 +156,6 @@ public class MainFragment extends Fragment {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         db.execSQL("INSERT INTO areaTBL ( area )" +
                 "VALUES ('"+ area +"');");
-
     }
 
     // 전체 청소구역 불러오기 (select)

@@ -38,12 +38,18 @@
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
-            android:exported="false"
-            />
+            android:exported="false">
+        </receiver>
+        <receiver android:name=".LoadAlarmsReceiver" />
+        <receiver android:name=".BootReceiver" android:enabled="true" android:exported="true">
+            <intent-filter android:priority="${bootPriority}">
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
         <service
-            android:name=".AlarmService"
-            android:enabled="true"
-            />
+            android:name=".LoadAlarmsService"
+            android:enabled="true">
+        </service>
         <!-- 191212 am 10:20 닉네임 액티비티 생성- by 재훈 -->
         <activity android:name=".NickNameSetting" />
         <!-- 191212 am 11:10 프로필 설정 액티비티 생성- by 재훈 -->
@@ -53,6 +59,8 @@
             <!--android:label="@string/app_name"></activity>-->
         <activity android:name=".TutorialGuideActivity"></activity>
         <activity android:name=".ExpShowActivity"/>
+        <activity android:name=".AddEditAlarmActivity" />
+        <activity android:name=".AlarmLandingPageActivity" />
     </application>
 
 </manifest>

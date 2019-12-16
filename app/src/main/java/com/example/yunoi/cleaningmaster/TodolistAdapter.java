@@ -11,7 +11,12 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import lib.mozidev.me.extextview.ExTextView;
 import lib.mozidev.me.extextview.StrikeThroughPainting;
@@ -37,29 +43,20 @@ import static android.support.v4.content.ContextCompat.startActivity;
 public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.CustomViewHolder> {
 
     private Context context;
-    private OnAlarmCheckedChangeListener mCallback;
     private int layout;
     private ArrayList<TodolistVo> list;
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
+    private String[] mDays;
     private int checkSize;
-
-
-
     private static final String TAG = "Adapter";
     private AlarmManager alarmManager;
 
-    // 커스텀 스위치 인터페이스
-    public interface OnAlarmCheckedChangeListener {
-        public void onAlarmStateChanged(TodolistVo item, int postionInList);
-    }
-
     //생성자
-    public TodolistAdapter(int layout, ArrayList<TodolistVo> list, Context context, OnAlarmCheckedChangeListener callBack) {
+    public TodolistAdapter(int layout, ArrayList<TodolistVo> list, Context context) {
         this.layout = layout;
         this.list = list;
         this.context = context;
-        mCallback = callBack;
     }
 
     // 클릭 리스너 인터페이스
@@ -70,13 +67,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public void setAlarmClickListener(alarmClickListener listener) {
 
         this.listener = listener;
-    }
-
-    public void toggleSwitches(int position) {
-        Log.d(TAG, "toggleSwitches(position): " + position);
-        list.get(position).getAlarmState();
-        Log.d(TAG, "toggleSwitches(position): " + position);
-        notifyDataSetChanged();
     }
 
     @NonNull
@@ -95,7 +85,16 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         final StrikeThroughPainting strikeThroughPainting = new StrikeThroughPainting(customViewHolder.todolist_text);
         final String taskText = list.get(position).getTodolist_text();
 
-        final int isCheckClear=selectIsCheckClear(context);
+        if (mDays == null) {
+            mDays = context.getResources().getStringArray(R.array.days_abbreviated);
+        }
+
+        final TodolistVo alarm = list.get(position);
+
+        customViewHolder.todolist_text.setText(taskText + "\n" + AlarmUtils.getReadableTime(alarm.getTime())
+                + " " + AlarmUtils.getAmPm(alarm.getTime()));
+//        +" "+buildSelectedDays(alarm)
+        final int isCheckClear = selectIsCheckClear(context);
 
         customViewHolder.todolist_text.setText(taskText);
         final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
@@ -130,6 +129,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
                 Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
 
+
                 if (check == 1) {
                     //누른 값이 체크가 되어있으면 리턴
 
@@ -149,6 +149,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         View snackbarView = snackbar.getView();
                         TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);
+                        tv.setMaxLines(3);
                         tv.setTextSize(16);
                         snackbarView.setBackgroundColor(Color.parseColor("#024873"));
                         snackbar.show();
@@ -256,29 +257,27 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = list.get(position).getTodolist_text();
-//                        int[] alarmId = selectAlarmId(text);
-//                        if (alarmId[0] != 0 && alarmId[1] == 1) {
-//                            Intent intent = new Intent(context, AlarmReceiver.class);
-//                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId[0], intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                            saveAlarmState(text);
-//                            alarmManager.cancel(pendingIntent);
-//                        }
 
+                        //Cancel any pending notifications for this alarm
+                        AlarmReceiver.cancelReminderAlarm(context, alarm);
                         list.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text, v.getContext()); //DB 삭제부분
-                        Snackbar snackbar = Snackbar.make(customViewHolder.todo_linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
+                        final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);
 
+                        Snackbar snackbar = Snackbar.make(customViewHolder.todo_linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
                         View snackbarView = snackbar.getView();
                         TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);
 
                         snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-
                         snackbar.show();
 
+                        LoadAlarmsService.launchLoadAlarmsService(context);
+
                     }
+
                 });
                 builder.setNegativeButton("취소", null);
                 builder.show();
@@ -295,22 +294,61 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             }
         });
 
-        // 반복알림 스위치 설정 버튼 액션(예정)
-//        customViewHolder.todolist_switch.setCheckedProgrammatically(list.get(position).getAlarmState());
-
-//        customViewHolder.todolist_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                list.get(position).setAlarmState(b);
-//                mCallback.onAlarmStateChanged(list.get(position), position);
-//            }
-//        });
-    }
+        customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Context c = view.getContext();
+                final Intent launchEditAlarmIntent =
+                        AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
+                                c, AddEditAlarmActivity.EDIT_ALARM
+                        );
+                launchEditAlarmIntent.putExtra(AddEditAlarmActivity.ALARM_EXTRA, alarm);
+                c.startActivity(launchEditAlarmIntent);
+            }
+        });
+    }   // end of onBindViewHolder
 
     @Override
     public int getItemCount() {
         return list != null ? list.size() : 0;
     }
+
+    private Spannable buildSelectedDays(TodolistVo alarm) {
+
+        final int numDays = 7;
+        final SparseBooleanArray days = alarm.getDays();
+
+        final SpannableStringBuilder builder = new SpannableStringBuilder();
+        ForegroundColorSpan span;
+
+        int startIndex, endIndex;
+        for (int i = 0; i < numDays; i++) {
+
+            startIndex = builder.length();
+
+            final String dayText = mDays[i];
+            builder.append(dayText);
+            builder.append(" ");
+
+            endIndex = startIndex + dayText.length();
+
+            final boolean isSelected = days.valueAt(i);
+            if (isSelected) {
+                span = new ForegroundColorSpan(Color.RED);
+                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        return builder;
+
+    }
+
+    public void setAlarms(ArrayList<TodolistVo> alarms) {
+        Log.d(TAG, "setAlarms");
+        list = alarms;
+        notifyDataSetChanged();
+    }
+
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -325,7 +363,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             super(itemView);
             todolist_alram = itemView.findViewById(R.id.todolist_alram);
             todolist_text = itemView.findViewById(R.id.todolist_text);
-//            todolist_switch = itemView.findViewById(R.id.todolist_switch);
             swipe_sample1 = itemView.findViewById(R.id.swipe_sample1);
             todo_linearLayout = itemView.findViewById(R.id.todo_linearLayout);
             todolist_checkBox = itemView.findViewById(R.id.todolist_checkBox);
@@ -348,11 +385,14 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         final int currentYear = Integer.parseInt(year);
         final int currentMonth = Integer.parseInt(month);
         final int currentDay = Integer.parseInt(day);
+
         Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
+
         TodolistFragment.score += 100;
+
         //체크시 줄 생기는것
         strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                        .strokeWidth(4).totalTime(10_0L).strikeThrough();
+                .strokeWidth(4).totalTime(10_0L).strikeThrough();
         //체크 True DB저장 , 스코어 저장
         insertScore(TodolistFragment.score, context);
         insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
@@ -361,8 +401,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     }
 
     //스낵바 설정 함수화
-    public void stnackBar(String txt){
-        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, txt+TodolistFragment.score, Snackbar.LENGTH_SHORT);
+    public void stnackBar(String txt) {
+        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, txt + TodolistFragment.score, Snackbar.LENGTH_SHORT);
         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
         layout.setPadding(10, 10, 50, 10);
@@ -371,9 +411,9 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         tv.setTextColor(Color.WHITE);
         tv.setTextSize(16);
         snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+
         snackbar.show();
     }
-
 
 
     //DB 스코어 저장하기
@@ -426,7 +466,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         cursor = db.rawQuery("SELECT * FROM cleaningTBL ;", null);
         int allSize = cursor.getCount();
         cursor.close();
-        Log.d(TAG,"총 리스트 사이즈 : "+allSize);
+        Log.d(TAG, "총 리스트 사이즈 : " + allSize);
         return allSize;
     }
 
@@ -446,53 +486,29 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     }
 
     //isCheckClear 가져오기
-    public int selectIsCheckClear(Context context){
+    public int selectIsCheckClear(Context context) {
         db = DBHelper.getInstance(context).getWritableDatabase();
         Cursor cursor;
-        cursor=db.rawQuery("SELECT * FROM ischeckTBL",null);
-        int ischeckClear=0;
-        while (cursor.moveToNext()){
-            ischeckClear=cursor.getInt(0);
+        cursor = db.rawQuery("SELECT * FROM ischeckTBL", null);
+        int ischeckClear = 0;
+        while (cursor.moveToNext()) {
+            ischeckClear = cursor.getInt(0);
         }
-        Log.d(TAG,"ischeckClear 확인 : "+ischeckClear);
+        Log.d(TAG, "ischeckClear 확인 : " + ischeckClear);
 
         return ischeckClear;
     }
+
     //체크정보 가져오기
-    public int selectIsCheck(Context context,String groupName,String task){
+    public int selectIsCheck(Context context, String groupName, String task) {
         db = DBHelper.getInstance(context).getWritableDatabase();
         Cursor cursor;
-        cursor=db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE task='"+task+"' AND area='"+groupName+"';",null);
-        int count=0;
-        while (cursor.moveToNext()){
-            count=cursor.getInt(0);
-        }
-        return  count;
-    }
-
-    // alarmId 불러오기
-    public int[] selectAlarmId(String text) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT _ID, alarmState FROM cleaningTBL WHERE task=" + "'" + text + "' limit 1;", null);
-        int[] alarmId = new int[2];
+        cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE task='" + task + "' AND area='" + groupName + "';", null);
+        int count = 0;
         while (cursor.moveToNext()) {
-            alarmId[0] = cursor.getInt(0);
-            alarmId[1] = cursor.getInt(1);
-            Log.d(TAG, "alarmId select1: " + alarmId[0] + ", status1: " + alarmId[1]);
-
+            count = cursor.getInt(0);
         }
-        Log.d(TAG, "alarmId select2: " + alarmId[0] + ", status1: " + alarmId[1]);
-        cursor.close();
-        return alarmId;
+        return count;
     }
-
-    // 알람 세팅 상태 해제
-    private void saveAlarmState(String task) {
-        db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
-        db.execSQL("UPDATE cleaningTBL SET alarmState = 0 WHERE task = '" + task + "';");
-        Log.d(TAG, "cleaningTBL alarmState set = 0");
-    }
-
 
 }
