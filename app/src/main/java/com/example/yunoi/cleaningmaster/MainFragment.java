@@ -154,7 +154,7 @@ public class MainFragment extends Fragment {
     // 청소구역 입력 (insert)
     public void insertMainCleaningArea(String area) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        db.execSQL("INSERT INTO cleaningTBL ( area )" +
+        db.execSQL("INSERT INTO areaTBL ( area )" +
                 "VALUES ('"+ area +"');");
 
     }
@@ -163,7 +163,7 @@ public class MainFragment extends Fragment {
     public ArrayList<String> getTotalArea() {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT DISTINCT area FROM cleaningTBL;", null);
+        cursor = db.rawQuery("SELECT DISTINCT area FROM areaTBL;", null);
         list.clear();
         while (cursor.moveToNext()) {
             list.add(cursor.getString(0));
@@ -176,7 +176,7 @@ public class MainFragment extends Fragment {
     public boolean preventDuplicateArea(String area) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getReadableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT area FROM cleaningTBL WHERE area = '" + area + "' limit 1;", null);
+        cursor = db.rawQuery("SELECT area FROM areaTBL WHERE area = '" + area + "' limit 1;", null);
 //        Log.d(TAG, cursor.getString(0));
         while(cursor.moveToNext()){
             if (!cursor.getString(0).equals("")) {
@@ -191,7 +191,7 @@ public class MainFragment extends Fragment {
     //청소 구역 삭제하기 1212 pm 5:07 by 채현 -> 1213 pm 9:42 by 윤해
     public void deleteArea(String groupName) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
+        db.execSQL("DELETE FROM areaTBL WHERE area='" + groupName + "';");
         Log.d(TAG, "cleaningTBL에서 청소구역 삭제됨");
     }
 
@@ -235,7 +235,7 @@ public class MainFragment extends Fragment {
                             if (preventDuplicateArea(newArea)) {
                                 db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
                                 if (alerEdt.getText().toString() != "") {
-                                    db.execSQL("UPDATE cleaningTBL SET area = '"
+                                    db.execSQL("UPDATE areaTBL SET area = '"
                                             + newArea + "' WHERE area = '"
                                             + curArea + "';");
                                 }
@@ -395,7 +395,7 @@ public class MainFragment extends Fragment {
                                         if (preventDuplicateArea(newArea)) {
                                             db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
                                             if (alerEdt.getText().toString() != "") {
-                                                db.execSQL("UPDATE cleaningTBL SET area = '"
+                                                db.execSQL("UPDATE areaTBL SET area = '"
                                                         + newArea + "' WHERE area = '"
                                                         + curArea + "';");
                                             }

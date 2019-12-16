@@ -247,4 +247,6 @@ public class TodolistVo {
     public void setSun(int sun) {
         this.sun = sun;
     }
+
+
 }

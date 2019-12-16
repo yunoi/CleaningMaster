@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:layout_gravity="center"
-                android:src="@drawable/delete"
+                app:srcCompat="@drawable/delete"
                 android:clickable="true"
                 />
 
@@ -48,55 +48,95 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/addalram"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/alram" />
+
+            <ImageButton
+                android:id="@+id/todolist_alramReapt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/alarmrepeat" />
 
             <CheckBox
                 android:id="@+id/todolist_checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/todolist_text"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/todolist_alram"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <lib.mozidev.me.extextview.ExTextView
                 android:id="@+id/todolist_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
+                android:gravity="center"
                 android:text="할 일 텍스트"
                 android:textColor="#0365BC"
                 android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/todolist_switch"
+                app:layout_constraintEnd_toStartOf="@+id/todolist_alram"
                 app:layout_constraintStart_toEndOf="@+id/todolist_checkBox"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.example.yunoi.cleaningmaster.CustomSwitch
-                android:id="@+id/todolist_switch"
+            <TextView
+                android:id="@+id/todolist_alramClocktxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="8dp"
-                android:thumb="@drawable/thumb"
-                android:track="@drawable/track"
+                android:text="알람설정 시간"
+                android:textColor="#024873"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/todolist_alramReaptTxt"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/todolist_text"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/todolist_alramReaptTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:text="알람설정 반복상태"
+                android:textSize="14sp"
+                android:textColor="#024873"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/todolist_alramClocktxt"
+                app:layout_constraintTop_toBottomOf="@+id/todolist_text"
+                android:visibility="gone"
+
+                />
+
+
 
         </android.support.constraint.ConstraintLayout>
     </com.daimajia.swipe.SwipeLayout>
