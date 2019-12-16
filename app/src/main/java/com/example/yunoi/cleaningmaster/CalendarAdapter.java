@@ -99,20 +99,20 @@ public class CalendarAdapter extends BaseAdapter {
 //        Log.d("tbl2",cursor1.getString(cursor1.getCount()));
         int size=cursor.getCount();
         int size2=cursor1.getCount();
-        int cursorDay=cursor1.getInt(cursor1.getColumnIndex("day"));
+//        int cursorDay=cursor1.getInt(cursor1.getColumnIndex("day"));
         Log.d("tbl4",String.valueOf(size));
         Log.d("tbl5",String.valueOf(size2));
         cursor.close();
         cursor1.close();
-        if((size==size2)&&(cursorDay==iToday)){
+        if((size==size2)){
             ivListResult.setVisibility(View.VISIBLE);
             ivListResult.setImageResource(R.drawable.add);
             ivListResult.setAlpha(50);
-        }else if(size!=size2&&(cursorDay==iToday)){
+        }else if(size!=size2){
             ivListResult.setVisibility(View.VISIBLE);
             ivListResult.setImageResource(R.drawable.backbutton);
             ivListResult.setAlpha(50);
-        }else if(size2==0&&(cursorDay==iToday)){
+        }else if(size2==0){
             ivListResult.setVisibility(View.INVISIBLE);
         }
         if (item.getDay() < 0) {
