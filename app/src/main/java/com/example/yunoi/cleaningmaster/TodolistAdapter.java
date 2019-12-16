@@ -161,75 +161,87 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
                     //누른 값이 체크가 안되어있으면 체크 업데이트!
                     if (isChecked) {
-                        int ischeckCount = selectIsCheck(context, TodolistFragment.groupText, taskText);
-                        if (isCheckClear == 1 && ischeckCount == 1) {
+                            int ischeckCount=selectIsCheck(context,TodolistFragment.groupText,taskText);
+                            if (isCheckClear==1 && ischeckCount==1){
+                                    Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
+                                    strikeThroughPainting.color(Color.rgb(2, 72, 112))
+                                            .strokeWidth(4).totalTime(10_0L).strikeThrough();
 
-                            Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
-                            strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                                    .strokeWidth(4).totalTime(10_0L).strikeThrough();
+                                    Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
+                                    snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+                                    layout.setPadding(20, 5, 5, 5);
+                                    View snackbarView = snackbar.getView();
+                                    TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                    tv.setTextColor(Color.WHITE);
+                                    tv.setTextSize(16);
+                                    snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+                                    snackbar.show();
+                                return;
 
-                            Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
-                            snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-                            Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                            layout.setPadding(20, 5, 5, 5);
-                            View snackbarView = snackbar.getView();
-                            TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-                            tv.setTextColor(Color.WHITE);
-                            tv.setTextSize(16);
-                            snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-                            snackbar.show();
-                            return;
+                            }
+                            checkBoxTrue(strikeThroughPainting, context, taskText);
+                            checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
+                            Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
+                            Log.d(TAG, "실시간 리스트 사이즈 : " + allListSize);
+                            //스낵바 설정(체크할 시 경험치 확인 스낵바)
+                            stnackBar("경험치가 적립되었습니다!(+100xp)\n경험치 :");
 
-                        }
-                        checkBoxTrue(strikeThroughPainting, context, taskText);
-                        checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
-                        Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
-                        Log.d(TAG, "실시간 리스트 사이즈 : " + allListSize);
-                        //스낵바 설정(체크할 시 경험치 확인 스낵바)
-                        stnackBar("경험치가 적립되었습니다!(+100xp)\n경험치 :");
+                            Intent intent = new Intent(context, ExpShowActivity.class);
+                            if (TodolistFragment.score==1000){
+                                startActivity(context, intent, null);
 
-                        if (isCheckClear == 1) {
-                            return;
-                        }
+                            }else if (TodolistFragment.score==2000){
 
-                        //체크한 카운트가 만든 리스트와 맞을때
-                        if (checkSize == allListSize) {
-                            insertIsCheckClear(context);//다완료할때 1집어늠.
-                            TodolistFragment.score += 200;
+                                startActivity(context, intent, null);
 
-                            Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+200exp)가 적립되었습니다!\n경험치 :" + TodolistFragment.score, Snackbar.LENGTH_INDEFINITE);
-                            snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-                            Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                            layout.setPadding(10, 10, 50, 10);
-                            View snackbarView = snackbar.getView();
-                            TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-                            tv.setTextColor(Color.WHITE);
-                            tv.setTextSize(16);
-                            tv.setMaxLines(3);
-                            tv.setTextSize(16);
-                            tv.setPadding(60, 60, 60, 60);
-                            snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+                            }else if (TodolistFragment.score==3000){
+
+                                startActivity(context, intent, null);
+                            }
+
+                            if (isCheckClear==1){
+                                return;
+                            }
+                            //체크한 카운트가 만든 리스트와 맞을때
+                            if (checkSize == allListSize) {
+                                insertIsCheckClear(context);//다완료할때 1집어늠.
+                                TodolistFragment.score += 200;
+
+                                Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+200exp)가 적립되었습니다!\n경험치 :" + TodolistFragment.score, Snackbar.LENGTH_INDEFINITE);
+                                snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                                Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+                                layout.setPadding(10, 10, 50, 10);
+                                View snackbarView = snackbar.getView();
+                                TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                tv.setTextColor(Color.WHITE);
+                                tv.setTextSize(16);
+                                tv.setMaxLines(3);
+                                tv.setTextSize(16);
+                                tv.setPadding(60, 60, 60, 60);
+                                snackbarView.setBackgroundColor(Color.parseColor("#024873"));
 
 
-                            snackbar.setAction("확인", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(context, ExpShowActivity.class);
-                                    startActivity(context, intent, null);
-                                    insertScore(TodolistFragment.score, context);
-                                }
-                            });
+                                snackbar.setAction("확인", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(context, ExpShowActivity.class);
+                                        insertScore(TodolistFragment.score, context);
+                                        startActivity(context, intent, null);
+                                    }
+                                });
 
-                            snackbar.show();
+                                snackbar.show();
 
-                        }
+                            }
 
-                    } else {
+                    }else{
+
                         strikeThroughPainting.clearStrikeThrough();
                     }
-                }  // end of if (check == 0)
+                }
 
-            }   // end of onCheckedChanged
+            }
         });
 
         //취소 버튼 액션
