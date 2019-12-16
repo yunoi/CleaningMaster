@@ -1,6 +1,15 @@
 package com.example.yunoi.cleaningmaster;
 
-public class TodolistVo {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.IntDef;
+import android.util.Log;
+import android.util.SparseBooleanArray;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+public class TodolistVo implements Parcelable{
 
     private int _id; // 기본키 자동증가
     private int year;   // 달성년
@@ -24,9 +33,6 @@ public class TodolistVo {
     private int fri;
     private int sat;
     private int sun;
-
-    public TodolistVo() {
-    }
 
     public TodolistVo(int checkcount) {
         this.checkcount = checkcount;
@@ -248,5 +254,198 @@ public class TodolistVo {
         this.sun = sun;
     }
 
+    ////////////////////////////////////////////////
+    private TodolistVo(Parcel in) {
+        Log.i(getClass().getSimpleName(), "Creating database...");
+        id = in.readLong();
+        time = in.readLong();
+        label = in.readString();
+        allDays = in.readSparseBooleanArray();
+        isEnabled = in.readByte() != 0;
 
+        //ADD VALUE
+        isSnooze = in.readByte() != 0;
+        colorTitle = in.readString();
+    }
+
+    public static final Parcelable.Creator<TodolistVo> CREATOR = new Parcelable.Creator<TodolistVo>() {
+        @Override
+        public TodolistVo createFromParcel(Parcel in) {
+            return new TodolistVo(in);
+        }
+
+        @Override
+        public TodolistVo[] newArray(int size) {
+            return new TodolistVo[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeLong(time);
+        parcel.writeString(label);
+        parcel.writeSparseBooleanArray(allDays);
+        parcel.writeByte((byte) (isEnabled ? 1 : 0));
+
+        //ADD VALUE
+        parcel.writeByte((byte) (isSnooze ? 1 : 0));
+        parcel.writeString(colorTitle);
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({MON,TUE,WED,THU,FRI,SAT,SUN})
+    @interface Days{}
+    public static final int MON = 1;
+    public static final int TUE = 2;
+    public static final int WED = 3;
+    public static final int THU = 4;
+    public static final int FRI = 5;
+    public static final int SAT = 6;
+    public static final int SUN = 7;
+
+    private static final long NO_ID = -1;
+
+    private long id;
+    private long time;
+    private String label;
+    private SparseBooleanArray allDays;
+    private boolean isEnabled;
+    private boolean isSnooze;
+    private String colorTitle;
+
+    public TodolistVo() {
+        this(NO_ID);
+    }
+
+    public TodolistVo(long id) {
+        this(id, System.currentTimeMillis());
+    }
+
+    public TodolistVo(long id, long time, @Days int... days) {
+        this(id, time, null, days);
+    }
+
+    public TodolistVo(long id, long time, String label, @Days int... days) {
+        this.id = id;
+        this.time = time;
+        this.label = label;
+        this.allDays = buildDaysArray(days);
+    }
+
+
+    //ADD VALUE
+    public TodolistVo(long id, long time, String label, boolean isSnooze, String colorTitle, @Days int... days ) {
+        this.id = id;
+        this.time = time;
+        this.label = label;
+        this.allDays = buildDaysArray(days);
+        this.isSnooze = isSnooze;
+        this.colorTitle = colorTitle;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setDay(@Days int day, boolean isAlarmed) {
+        allDays.append(day, isAlarmed);
+    }
+
+    public SparseBooleanArray getDays() {
+        return allDays;
+    }
+
+    public boolean getDay(@Days int day){
+        return allDays.get(day);
+    }
+
+    public void setIsEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public String toString() {
+        return "Alarm{" +
+                "id=" + id +
+                ", time=" + time +
+                ", label='" + label + '\'' +
+                ", allDays=" + allDays +
+                ", isEnabled=" + isEnabled + "}'";
+    }
+
+
+
+
+    public int notificationId() {
+        final long id = getId();
+        return (int) (id^(id>>>32));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + (int) (id^(id>>>32));
+        result = 31 * result + (int) (time^(time>>>32));
+        result = 31 * result + label.hashCode();
+        for(int i = 0; i < allDays.size(); i++) {
+            result = 31 * result + (allDays.valueAt(i)? 1 : 0);
+        }
+        return result;
+    }
+
+    private static SparseBooleanArray buildDaysArray(@Days int... days) {
+
+        final SparseBooleanArray array = buildBaseDaysArray();
+
+        for (@Days int day : days) {
+            array.append(day, true);
+        }
+
+        return array;
+
+    }
+
+    private static SparseBooleanArray buildBaseDaysArray() {
+
+        final int numDays = 7;
+
+        final SparseBooleanArray array = new SparseBooleanArray(numDays);
+
+        array.put(MON, false);
+        array.put(TUE, false);
+        array.put(WED, false);
+        array.put(THU, false);
+        array.put(FRI, false);
+        array.put(SAT, false);
+        array.put(SUN, false);
+
+        return array;
+
+    }
 }

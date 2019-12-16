@@ -4,6 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.yunoi.cleaningmaster"
+        manifestPlaceholders = [bootPriority:"999"]
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 1

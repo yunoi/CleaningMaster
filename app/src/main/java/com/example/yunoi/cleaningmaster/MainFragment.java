@@ -3,6 +3,7 @@ package com.example.yunoi.cleaningmaster;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -156,7 +157,6 @@ public class MainFragment extends Fragment {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         db.execSQL("INSERT INTO areaTBL ( area )" +
                 "VALUES ('"+ area +"');");
-
     }
 
     // 전체 청소구역 불러오기 (select)
@@ -423,4 +423,5 @@ public class MainFragment extends Fragment {
     public void toastDisplay(String s) {
         Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
+
 }
