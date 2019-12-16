@@ -60,6 +60,12 @@
         <activity android:name=".TutorialGuideActivity"></activity>
         <activity android:name=".ExpShowActivity"/>
         <activity android:name=".AddEditAlarmActivity" />
+        <receiver android:enabled="true" android:exported="false" android:label="Device Event Receiver" android:name="com.example.yunoi.cleaningmaster.InitActionReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DATE_CHANGED">
+                </action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

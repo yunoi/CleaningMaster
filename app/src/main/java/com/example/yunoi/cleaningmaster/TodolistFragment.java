@@ -58,6 +58,7 @@ public class TodolistFragment
     public static ConstraintLayout todo_constraintLayout;
     public static int score=0;
     public static String groupText; //구역이름
+    public static String taskText; //구역이름
     private static final String TAG = "TodolistFragment";
 
     @Retention(RetentionPolicy.SOURCE)
@@ -138,6 +139,7 @@ public class TodolistFragment
 
             if (getArguments() != null) {
                 groupText = getArguments().getString("groupText");
+                taskText = getArguments().getString("taskText");
                 actionbar_todoText.setText(groupText);
             }
 
@@ -159,29 +161,7 @@ public class TodolistFragment
         actionbar_todoBtnAddlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-//                final View alertDialogView = View.inflate(v.getContext(), R.layout.dialog_add_todolist, null);
-//                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyDialogTheme);
-//                builder.setView(alertDialogView);
-//                builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                        EditText alerEdt = alertDialogView.findViewById(R.id.alert_todolist_alerEdt);
-//                        String task = alerEdt.getText().toString();
-//                        if (task.equals("")) {
-//                            Toast.makeText(v.getContext(), "할 일을 적어주세요!", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            insertCleaningArea(new TodolistVo(0, 0, 0, groupText, task, 0, 0));
-//                            selectCleaningArea(groupText);
-//                            todolistAdapter.notifyDataSetChanged();
-//                            Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//
-//                    }
-//                });
-//                builder.setNegativeButton("취소", null);
-//                builder.show();
+
                 AlarmUtils.checkAlarmPermissions(getActivity());
                 final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
                 startActivity(i);
@@ -213,23 +193,23 @@ public class TodolistFragment
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
         Log.d(TAG, "onStop");
     }
-    ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
-        //cleaningTBL 구역 저장하기(insert) (현재 년도, 월, 일, 구역, 할일,taskCount 나머지는 2개 checkCount,score 0 으로)
-        public void insertCleaningArea(TodolistVo todolistVo) {
-            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-            int year = todolistVo.getYear();
-            int month = todolistVo.getMonth();
-            int day = todolistVo.getDay();
-            String todolist_text = todolistVo.getTodolist_text();
-            String groupName = todolistVo.getGroupName();
-            int checkcount = todolistVo.getCheckcount();
-            int state = todolistVo.getAlarmState();
-            db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, checkCount, alarmState)" +
-                    " VALUES (" + year + ", " + month + ", " + day + ", '" + groupName + "', '" + todolist_text + "', "+ checkcount + ", " + state + ");");
-            list.add(new TodolistVo(todolist_text));
-            todolistAdapter.notifyDataSetChanged();
-            Log.d(TAG, "DB 저장됨");
-        }
+//    ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
+//        //cleaningTBL 구역 저장하기(insert) (현재 년도, 월, 일, 구역, 할일,taskCount 나머지는 2개 checkCount,score 0 으로)
+//        public void insertCleaningArea(TodolistVo todolistVo) {
+//            db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+//            int year = todolistVo.getYear();
+//            int month = todolistVo.getMonth();
+//            int day = todolistVo.getDay();
+//            String todolist_text = todolistVo.getTodolist_text();
+//            String groupName = todolistVo.getGroupName();
+//            int checkcount = todolistVo.getCheckcount();
+//            int state = todolistVo.getAlarmState();
+//            db.execSQL("INSERT INTO cleaningTBL (year, month, day, area, task, checkCount, alarmState)" +
+//                    " VALUES (" + year + ", " + month + ", " + day + ", '" + groupName + "', '" + todolist_text + "', "+ checkcount + ", " + state + ");");
+//            list.add(new TodolistVo(todolist_text));
+//            todolistAdapter.notifyDataSetChanged();
+//            Log.d(TAG, "DB 저장됨");
+//        }
 
     //저장된 DB 내용 가져오기 (할일,체크박스 true,false)
     public void selectCleaningArea (String name){

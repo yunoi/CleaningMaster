@@ -28,6 +28,7 @@ public final class AddEditAlarmFragment extends Fragment implements View.OnClick
     private TextView tvDate;
     private ImageView ivCalendar;
     private Button btnOk, btnCancel;
+    public static String taskText;
     private Calendar calendar = Calendar.getInstance(); // 캘린더 인스턴스 생성
 
     // 요일 관련 변수
@@ -76,6 +77,8 @@ public final class AddEditAlarmFragment extends Fragment implements View.OnClick
         cbSun = v.findViewById(R.id.cbSunday);
         txtDayCheck = v.findViewById(R.id.txtDayCheck);
 //        tvTask.setText(list.get(position).getTodolist_text());
+
+        taskText=alerEdt.getText().toString().trim();
 
         setDayCheckboxes(alarm);
         //오늘 날짜 입력부분
