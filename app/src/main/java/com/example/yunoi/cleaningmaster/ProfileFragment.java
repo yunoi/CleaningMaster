@@ -130,6 +130,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         editor.commit();
                         Intent resetIntent = new Intent(getContext(), NickNameSetting.class);
                         startActivity(resetIntent);
+                        getActivity().finish();
                     }
                 });
                 deleteCheck.setNegativeButton("취소",null);
