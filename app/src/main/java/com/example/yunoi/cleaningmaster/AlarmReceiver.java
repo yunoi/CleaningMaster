@@ -1,86 +1,245 @@
 package com.example.yunoi.cleaningmaster;
 
-import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.media.RingtoneManager;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 
-import static android.app.Notification.VISIBILITY_PUBLIC;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import static android.app.NotificationManager.IMPORTANCE_HIGH;
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.KITKAT;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.os.Build.VERSION_CODES.O;
+import static com.example.yunoi.cleaningmaster.AlarmLandingPageActivity.launchIntent;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = "AlarmReceiver";
-    private int alarmId = 0;
+    private static final String CHANNEL_ID = "alarm_channel";
+    private static final String BUNDLE_EXTRA = "bundle_extra";
+    private static final String ALARM_KEY = "alarm_key";
 
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @SuppressLint("InvalidWakeLockTag")
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String title = intent.getStringExtra("title");
-            String text = intent.getStringExtra("text");
-            alarmId = intent.getIntExtra("id", 0);
-            Intent rIntent = new Intent(context, AlarmService.class);
-            PendingIntent pend = PendingIntent.getActivity(context, alarmId, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-            context.startForegroundService(rIntent);
-            //NotificationManager 안드로이드 상태바에 메세지를 던지기위한 서비스 불러오고
-            NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification.Builder builder = new Notification.Builder(context);
-            builder.setSmallIcon(R.drawable.ic_launcher_background)
-                    .setWhen(System.currentTimeMillis())
-                    .setContentTitle(title)
-                    .setContentText(text)
-                    .setChannelId("Alarm")
-                    .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                    .setFullScreenIntent(pend, true)
-                    .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-                    .setContentIntent(pend)
-                    .setVisibility(VISIBILITY_PUBLIC)
-                    .setAutoCancel(true);
-            WakeLocker.acquire(context);
-            notificationmanager.notify(alarmId, builder.build());
-
-        } else {
-            String title = intent.getStringExtra("title");
-            String text = intent.getStringExtra("text");
-            alarmId = intent.getIntExtra("id", 0);
-            Intent rIntent = new Intent(context, AlarmService.class);
-            PendingIntent pend = PendingIntent.getActivity(context, alarmId, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-            context.startService(rIntent);
-            NotificationManager mNotificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setContentTitle(title)
-                            .setContentText(text)
-                            .setPriority(NotificationCompat.PRIORITY_HIGH)
-                            .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                            .setFullScreenIntent(pend, true)
-                            .setContentIntent(pend)
-                            .setAutoCancel(true)
-                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-                            .setVisibility(VISIBILITY_PUBLIC);
-
-            WakeLocker.acquire(context);
-            mNotificationManager.notify(alarmId, mBuilder.build());
-
+        final TodolistVo alarm = intent.getBundleExtra(BUNDLE_EXTRA).getParcelable(ALARM_KEY);
+        if(alarm == null) {
+            Log.e(TAG, "Alarm is null", new NullPointerException());
+            return;
         }
 
-        WakeLocker.release();
+        final int id = alarm.notificationId();
+
+        final NotificationManager manager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        createNotificationChannel(context);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.addalram);
+        builder.setColor(ContextCompat.getColor(context, R.color.colorAccent));
+        builder.setContentTitle(context.getString(R.string.app_name));
+        builder.setContentText(alarm.getLabel());
+        builder.setTicker(alarm.getLabel());
+        builder.setVibrate(new long[] {500,500,500});
+        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        builder.setContentIntent(launchAlarmLandingPage(context, alarm));
+        builder.setAutoCancel(true);
+        builder.setPriority(Notification.PRIORITY_HIGH);
+
+        manager.notify(id, builder.build());
+
+        //Reset Alarm manually
+        setReminderAlarm(context, alarm);
     }
-    // 알림 pendingIntent RequestCode 설정
-//    public int createID(){
-//        Date now = new Date();
-//        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.KOREA).format(now));
-//
-//        return id;
-//    }
+
+    //Convenience method for setting a notification
+    public static void setReminderAlarm(Context context, TodolistVo alarm) {
+        Log.i(TAG, "setReminderAlarm 1...");
+        //Check whether the alarm is set to run on any days
+        if(!AlarmUtils.isAlarmActive(alarm)) {
+            //If alarm not set to run on any days, cancel any existing notifications for this alarm
+            cancelReminderAlarm(context, alarm);
+            return;
+        }
+
+        final Calendar nextAlarmTime = getTimeForNextAlarm(alarm);
+        alarm.setTime(nextAlarmTime.getTimeInMillis());
+
+        final Intent intent = new Intent(context, AlarmReceiver.class);
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(ALARM_KEY, alarm);
+        intent.putExtra(BUNDLE_EXTRA, bundle);
+
+        final PendingIntent pIntent = PendingIntent.getBroadcast(
+                context,
+                alarm.notificationId(),
+                intent,
+                FLAG_UPDATE_CURRENT
+        );
+
+        ScheduleAlarm.with(context).schedule(alarm, pIntent);
+    }
+
+    public static void setReminderAlarms(Context context, ArrayList<TodolistVo> alarms) {
+        Log.i(TAG, "setReminderAlarms 2...");
+        for(TodolistVo alarm : alarms) {
+            setReminderAlarm(context, alarm);
+        }
+    }
+
+    /**
+     * Calculates the actual time of the next alarm/notification based on the user-set time the
+     * alarm should sound each day, the days the alarm is set to run, and the current time.
+     * @param alarm Alarm containing the daily time the alarm is set to run and days the alarm
+     *              should run
+     * @return A Calendar with the actual time of the next alarm.
+     */
+    private static Calendar getTimeForNextAlarm(TodolistVo alarm) {
+        Log.i(TAG, "getTimeForNextAlarm...");
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(alarm.getTime());
+
+        final long currentTime = System.currentTimeMillis();
+        final int startIndex = getStartIndexFromTime(calendar);
+
+        int count = 0;
+        boolean isAlarmSetForDay;
+
+        final SparseBooleanArray daysArray = alarm.getDays();
+
+        do {
+            final int index = (startIndex + count) % 7;
+            isAlarmSetForDay =
+                    daysArray.valueAt(index) && (calendar.getTimeInMillis() > currentTime);
+            if(!isAlarmSetForDay) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                count++;
+            }
+        } while(!isAlarmSetForDay && count < 7);
+
+        return calendar;
+
+    }
+
+    public static void cancelReminderAlarm(Context context, TodolistVo alarm) {
+        Log.i(TAG, "cancelReminderAlarm...");
+        final Intent intent = new Intent(context, AlarmReceiver.class);
+        final PendingIntent pIntent = PendingIntent.getBroadcast(
+                context,
+                alarm.notificationId(),
+                intent,
+                FLAG_UPDATE_CURRENT
+        );
+
+        final AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(pIntent);
+    }
+
+    private static int getStartIndexFromTime(Calendar c) {
+        Log.i(TAG, "getStartIndexFromTime...");
+        final int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+        int startIndex = 0;
+        switch (dayOfWeek) {
+            case Calendar.MONDAY:
+                startIndex = 0;
+                break;
+            case Calendar.TUESDAY:
+                startIndex = 1;
+                break;
+            case Calendar.WEDNESDAY:
+                startIndex = 2;
+                break;
+            case Calendar.THURSDAY:
+                startIndex = 3;
+                break;
+            case Calendar.FRIDAY:
+                startIndex = 4;
+                break;
+            case Calendar.SATURDAY:
+                startIndex = 5;
+                break;
+            case Calendar.SUNDAY:
+                startIndex = 6;
+                break;
+        }
+
+        return startIndex;
+
+    }
+
+    private static void createNotificationChannel(Context ctx) {
+        Log.i(TAG, "createNotificationChannel...");
+        if(SDK_INT < O) return;
+
+        final NotificationManager mgr = ctx.getSystemService(NotificationManager.class);
+        if(mgr == null) return;
+
+        final String name = "channelName";
+        if(mgr.getNotificationChannel(name) == null) {
+            final NotificationChannel channel =
+                    new NotificationChannel(CHANNEL_ID, name, IMPORTANCE_HIGH);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[] {500,500,500});
+            channel.setBypassDnd(true);
+            mgr.createNotificationChannel(channel);
+        }
+    }
+
+    private static PendingIntent launchAlarmLandingPage(Context ctx, TodolistVo alarm) {
+        return PendingIntent.getActivity(
+                ctx, alarm.notificationId(), launchIntent(ctx), FLAG_UPDATE_CURRENT
+        );
+    }
+
+    private static class ScheduleAlarm {
+
+        @NonNull
+        private final Context ctx;
+        @NonNull private final AlarmManager am;
+
+        private ScheduleAlarm(@NonNull AlarmManager am, @NonNull Context ctx) {
+            Log.i(TAG, "ScheduleAlarm 1...");
+            this.am = am;
+            this.ctx = ctx;
+        }
+
+        static ScheduleAlarm with(Context context) {
+            Log.i(TAG, "ScheduleAlarm 2...");
+            final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if(am == null) {
+                throw new IllegalStateException("AlarmManager is null");
+            }
+            return new ScheduleAlarm(am, context);
+        }
+
+        void schedule(TodolistVo alarm, PendingIntent pi) {
+            Log.i(TAG, "ScheduleAlarm 3...");
+            if(SDK_INT > LOLLIPOP) {
+                am.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm.getTime(), launchAlarmLandingPage(ctx, alarm)), pi);
+            } else if(SDK_INT > KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, alarm.getTime(), pi);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, alarm.getTime(), pi);
+            }
+        }
+
+    }
 }

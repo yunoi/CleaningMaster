@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -23,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,6 +37,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +48,7 @@ import static android.content.Context.ALARM_SERVICE;
 
 
 public class TodolistFragment
-        extends Fragment implements View.OnClickListener, TodolistAdapter.OnAlarmCheckedChangeListener, LoadAlarmsReceiver.OnAlarmsLoadedListener{
+        extends Fragment implements LoadAlarmsReceiver.OnAlarmsLoadedListener {
 
     View view;
     private SQLiteDatabase db;
@@ -56,40 +60,18 @@ public class TodolistFragment
     public static String groupText; //구역이름
     private static final String TAG = "TodolistFragment";
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({EDIT_ALARM,ADD_ALARM,UNKNOWN})
+    @interface Mode{}
+    public static final int EDIT_ALARM = 1;
+    public static final int ADD_ALARM = 2;
+    public static final int UNKNOWN = 0;
 
-    // 알림 관련 변수
-    private Calendar calendar = Calendar.getInstance(); // 캘린더 인스턴스 생성
-    private AlarmManager alarmManager;
-    private TimePicker timePicker;
-    private TextView tvDate;
-    private TextView tvTask;
-    private int alarmId = 0;
-    private int alarmOnOff = 0;
-    private ArrayList<PendingIntent> intentArray = new ArrayList<>();
+    public static final String ALARM_EXTRA = "alarm_extra";
+    public static final String MODE_EXTRA = "mode_extra";
+    private Context context;
     private LoadAlarmsReceiver mReceiver;
 
-
-    // 요일 관련 변수
-    private boolean[] btnCheck = new boolean[]{false, false, false, false, false, false, false};
-    private final static int NO_LOOP = 0;
-    private final static int MON = 1;
-    private final static int TUE = 2;
-    private final static int WED = 3;
-    private final static int THU = 4;
-    private final static int FRI = 5;
-    private final static int SAT = 6;
-    private final static int SUN = 7;
-    private int setLoop = 0;
-    private TextView txtDayCheck;
-    private CheckBox cbMonday;
-    private CheckBox cbTuesday;
-    private CheckBox cbWednesday;
-    private CheckBox cbThursday;
-    private CheckBox cbFriday;
-    private CheckBox cbSaturday;
-    private CheckBox cbSunday;
-
-    private Context context;
 
     @Override
     public void onAttach(Context context) {
@@ -161,56 +143,72 @@ public class TodolistFragment
             linearLayoutManager = new LinearLayoutManager(view.getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
 
-            todolistAdapter = new TodolistAdapter(R.layout.todo_list_holder_layout, list, context, this);
+            todolistAdapter = new TodolistAdapter(R.layout.todo_list_holder_layout, list, context);
             recyclerView.setAdapter(todolistAdapter);
 
             selectCleaningArea(groupText);//구역마다 저장한 할일들 가져오기
             score=selectScore(view.getContext());
 
 
-        //list 추가 버튼 -> 알런트 창 -> 확인 -> list 추가
+        //list 추가 + todolist 알람 설정
 
         actionbar_todoBtnAddlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
-                final View alertDialogView = View.inflate(v.getContext(), R.layout.dialog_add_todolist, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyDialogTheme);
-                builder.setView(alertDialogView);
-                builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        EditText alerEdt = alertDialogView.findViewById(R.id.alert_todolist_alerEdt);
-                        String task = alerEdt.getText().toString();
-                        if (task.equals("")) {
-                            Toast.makeText(v.getContext(), "할 일을 적어주세요!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            insertCleaningArea(new TodolistVo(0, 0, 0, groupText, task, 0, 0));
-                            selectCleaningArea(groupText);
-                            todolistAdapter.notifyDataSetChanged();
-                            Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }
-                });
-                builder.setNegativeButton("취소", null);
-                builder.show();
-
+//                final View alertDialogView = View.inflate(v.getContext(), R.layout.dialog_add_todolist, null);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyDialogTheme);
+//                builder.setView(alertDialogView);
+//                builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        EditText alerEdt = alertDialogView.findViewById(R.id.alert_todolist_alerEdt);
+//                        String task = alerEdt.getText().toString();
+//                        if (task.equals("")) {
+//                            Toast.makeText(v.getContext(), "할 일을 적어주세요!", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            insertCleaningArea(new TodolistVo(0, 0, 0, groupText, task, 0, 0));
+//                            selectCleaningArea(groupText);
+//                            todolistAdapter.notifyDataSetChanged();
+//                            Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//
+//                    }
+//                });
+//                builder.setNegativeButton("취소", null);
+//                builder.show();
+                AlarmUtils.checkAlarmPermissions(getActivity());
+                final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
+                startActivity(i);
             }
         });
 
-        // todolist 알람 설정
         todolistAdapter.setAlarmClickListener(new TodolistAdapter.alarmClickListener() {
             @Override
             public void onAlarmClick(View v, int position) {
-                alarmSettings(position);
+
+
             }
         });
             return view;
         }//end of onCreatView
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
+        LoadAlarmsService.launchLoadAlarmsService(getContext());
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        Log.d(TAG, "onStop");
+    }
     ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
         //cleaningTBL 구역 저장하기(insert) (현재 년도, 월, 일, 구역, 할일,taskCount 나머지는 2개 checkCount,score 0 으로)
         public void insertCleaningArea(TodolistVo todolistVo) {
@@ -295,336 +293,6 @@ public class TodolistFragment
         return score;
     }
 
-    // 알림 on/off
-//        public boolean turnAlarm() {
-//        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-//        Cursor cursor;
-//        cursor = db.rawQuery("SELECT task, checkCount FROM notifyTBL WHERE area="+"'"+name+"';", null);
-//        list.clear();
-//        while (cursor.moveToNext()) {
-//
-//            list.add(new TodolistVo(cursor.getString(0), cursor.getInt(1)));
-//            Log.d(TAG,"DB에서 select함 내용 : "+ cursor.getString(0)+", "+ cursor.getString(1)+", "+cursor.getInt(2));
-//
-//        }
-//
-//        todolistAdapter.notifyDataSetChanged();
-//        cursor.close();
-//        Log.d(TAG,"DB에서 select함");
-//        return true;
-//    }
-
-
-    ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
-    private void alarmSettings(final int position) {
-
-//
-//        AlarmUtils.checkAlarmPermissions(getActivity());
-//        final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
-//        startActivity(i);
-//        Log.d(TAG, "onCreateView, FloatingActionButton");
-
-        final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_notify, null);
-        final android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(getActivity());
-        dlg.setView(dialogView);
-        tvTask = dialogView.findViewById(R.id.tvTask);
-        timePicker =
-                dialogView.findViewById(R.id.timePicker);
-        tvDate =
-                dialogView.findViewById(R.id.tvDate);
-        tvTask.setText(list.get(position).getTodolist_text());
-        final ImageView ivCalendar = dialogView.findViewById(R.id.ivCalendar);
-
-        cbMonday = dialogView.findViewById(R.id.cbMonday);
-        cbTuesday = dialogView.findViewById(R.id.cbTuesday);
-        cbWednesday = dialogView.findViewById(R.id.cbWednesday);
-        cbThursday = dialogView.findViewById(R.id.cbThursday);
-        cbFriday = dialogView.findViewById(R.id.cbFriday);
-        cbSaturday = dialogView.findViewById(R.id.cbSaturday);
-        cbSunday = dialogView.findViewById(R.id.cbSunday);
-        txtDayCheck = dialogView.findViewById(R.id.txtDayCheck);
-        //오늘 날짜 입력부분
-        tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        // 날짜선택창 불러오기
-        ivCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-
-            }
-        });
-
-        //요일별 선택 이벤트
-//        btnMonday.setOnClickListener(this);
-//        btnTuesday.setOnClickListener(this);
-//        btnWednesday.setOnClickListener(this);
-//        btnThursday.setOnClickListener(this);
-//        btnFriday.setOnClickListener(this);
-//        btnSaturday.setOnClickListener(this);
-//        btnSunday.setOnClickListener(this);
-
-        dlg.setPositiveButton("알림 설정", null);
-        dlg.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,
-                                        int which) {
-                        toastDisplay("취소되었습니다.");
-                    }
-                });
-        final android.app.AlertDialog alertDialog = dlg.create();
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button button = alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // 알람 시간 설정
-                        // api 버전별 설정
-                        if (Build.VERSION.SDK_INT < 23) {
-                            int getHour = timePicker.getCurrentHour();
-                            int getMinute = timePicker.getCurrentMinute();
-                            calendar.set(Calendar.HOUR_OF_DAY, getHour);
-                            calendar.set(Calendar.MINUTE, getMinute);
-                            calendar.set(Calendar.SECOND, 0);
-                        } else {
-                            int getHour = timePicker.getHour();
-                            int getMinute = timePicker.getMinute();
-                            calendar.set(Calendar.HOUR_OF_DAY, getHour);
-                            calendar.set(Calendar.MINUTE, getMinute);
-                            calendar.set(Calendar.SECOND, 0);
-                        }
-
-                        // 현재보다 이전이면 등록 못하도록
-                        if (calendar.before(Calendar.getInstance())) {
-                            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
-                            return;
-                        }
-                        alarmId = selectAlarmId(list.get(position).getTodolist_text());
-                        alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-                        //알람 시간 표시
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm", Locale.getDefault());
-                        String date[] = String.valueOf(dbFormat.format(calendar.getTime())).split("-");
-
-                        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-                        intent.putExtra("title", "청소의 달인");
-                        intent.putExtra("text", "청소할 시간이군요!");
-                        intent.putExtra("id", alarmId);
-                        // Receiver 설정
-                        PendingIntent pender = PendingIntent.getBroadcast(getActivity(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 120*1000,  pender); // 반복알림
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pender); // 알람 설정
-                        intentArray.add(pender);
-                        TodolistVo todolistVo = new TodolistVo (groupText, tvTask.getText().toString(), 1, Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]), Integer.parseInt(date[3]), Integer.parseInt(date[4]), 0);
-                        updateAlarm(todolistVo);
-                        toastDisplay(String.valueOf(format.format(calendar.getTime())) + " 알림이 설정되었습니다.");
-                        alertDialog.dismiss();
-                    }
-                });
-            } // end of onShow
-        });
-        alertDialog.show();
-
-    } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
-
-    // 알람 등록 모듈
-//    private void setAlarm() {
-//        // 알람 시간 설정
-//        // api 버전별 설정
-//        if (Build.VERSION.SDK_INT < 23) {
-//            int getHour = timePicker.getCurrentHour();
-//            int getMinute = timePicker.getCurrentMinute();
-//            calendar.set(Calendar.HOUR_OF_DAY, getHour);
-//            calendar.set(Calendar.MINUTE, getMinute);
-//            calendar.set(Calendar.SECOND, 0);
-//        } else {
-//            int getHour = timePicker.getHour();
-//            int getMinute = timePicker.getMinute();
-//            calendar.set(Calendar.HOUR_OF_DAY, getHour);
-//            calendar.set(Calendar.MINUTE, getMinute);
-//            calendar.set(Calendar.SECOND, 0);
-//        }
-//
-//        // 현재보다 이전이면 등록 못하도록
-//        if (calendar.before(Calendar.getInstance())) {
-//            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
-//            return;
-//        }
-//
-//        alarmId = createID();
-//        alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-//        //알람 시간 표시
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-//
-//        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-//        intent.putExtra("title", "청소의 달인");
-//        intent.putExtra("text", "청소할 시간이군요!");
-//        intent.putExtra("id", alarmId);
-//        pender = PendingIntent.getBroadcast(getActivity(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 120*1000,  pender);
-//        toastDisplay(String.valueOf(format.format(calendar.getTime())) + " 알림이 설정되었습니다.");
-//    }
-
-    // 알람 취소
-//    public void cancelAlarm(int alarmId) {
-//        Log.d(TAG, "cancelAlarm: " + alarmId);
-//        Intent intent = new Intent(context, AlarmReceiver.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        alarmManager.cancel(pendingIntent);
-//        Log.d(TAG, "cancelAlarm: " + alarmId);
-//    }
-
-    //요일 버튼 이벤트
-    @Override
-    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.btnMonday:
-//                if (!btnCheck[0]) {
-//                    btnMonday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnMonday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnMonday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[0] = true;
-//                } else {
-//                    btnMonday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("월", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[0] = false;
-//                }
-//                break;
-//            case R.id.btnTuesday:
-//                if (!btnCheck[1]) {
-//                    btnTuesday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnTuesday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnTuesday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[1] = true;
-//                } else {
-//                    btnTuesday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("화", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[1] = false;
-//                }
-//                break;
-//            case R.id.btnWednesday:
-//                if (!btnCheck[2]) {
-//                    btnWednesday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnWednesday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnWednesday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[2] = true;
-//                } else {
-//                    btnWednesday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("수", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[2] = false;
-//                }
-//                break;
-//            case R.id.btnThursday:
-//                if (!btnCheck[3]) {
-//                    btnThursday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnThursday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnThursday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[3] = true;
-//                } else {
-//                    btnThursday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("목", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[3] = false;
-//                }
-//                break;
-//            case R.id.btnFriday:
-//                if (!btnCheck[4]) {
-//                    btnFriday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnFriday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnFriday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[4] = true;
-//                } else {
-//                    btnFriday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("금", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[4] = false;
-//                }
-//                break;
-//            case R.id.btnSaturday:
-//                if (!btnCheck[5]) {
-//                    btnSaturday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnSaturday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnSaturday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[5] = true;
-//                } else {
-//                    btnSaturday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("토", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[5] = false;
-//                }
-//                break;
-//            case R.id.btnSunday:
-//                if (!btnCheck[6]) {
-//                    btnSunday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnon));
-//                    if (days != null) {
-//                        txtDayCheck.setText("매주 " + days + " " + btnSunday.getText().toString().trim() + "요일에 알람이 울립니다.");
-//                    } else {
-//                        days = btnSunday.getText().toString().trim();
-//                        txtDayCheck.setText("매주 " + days + "요일에 알람이 울립니다.");
-//                    }
-//                    btnCheck[6] = true;
-//                } else {
-//                    btnSunday.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btndayofweek_btnoff));
-//                    txtDayCheck.setText("매주 " + days.replaceAll("일", "") + "요일에 알람이 울립니다.");
-//                    btnCheck[6] = false;
-//                }
-//                break;
-//        }
-    }
-
-    private void toastDisplay(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-    }
-
-    // 날짜 선택 DatePicker Dialog 메소드
-    private void showDialog() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // 데이터피커에서 선택한 날짜 처리 하는 부분
-                tvDate.setText(String.valueOf(format.format(calendar.getTime())));
-            }
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
-
-        pickerDialog.show();
-    }
-
-    // 알림 pendingIntent RequestCode 설정
-//    public int createID() {
-//        Date now = new Date();
-//        int id = Integer.parseInt(new SimpleDateFormat("MMddHHmmss", Locale.KOREA).format(now));
-//
-//        return id;
-//    }
-
-    @Override
-    public void onAlarmStateChanged(TodolistVo item, int postionInList) {
-//        alarmOnOff = item.getState() ? 1 : 0;
-
-    }
-
     // 알림 설정
     public void updateAlarm(TodolistVo todolistVo) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
@@ -657,20 +325,49 @@ public class TodolistFragment
         return alarmId;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
-        LoadAlarmsService.launchLoadAlarmsService(getContext());
-        Log.d(TAG, "onStart");
+    private TodolistVo getAlarm() {
+        switch (getMode()) {
+            case EDIT_ALARM:
+                return getActivity().getIntent().getParcelableExtra(ALARM_EXTRA);
+            case ADD_ALARM:
+                final long id = DBHelper.getInstance(getActivity()).addAlarm();
+                LoadAlarmsService.launchLoadAlarmsService(getActivity());
+                return new TodolistVo(id);
+            case UNKNOWN:
+            default:
+                throw new IllegalStateException("Mode supplied as intent extra for " +
+                        AddEditAlarmActivity.class.getSimpleName() + " must match value in " +
+                        Mode.class.getSimpleName());
+        }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-        Log.d(TAG, "onStop");
+    private @Mode int getMode() {
+        final @Mode int mode = getActivity().getIntent().getIntExtra(MODE_EXTRA, UNKNOWN);
+        return mode;
+    }
+
+    private String getToolbarTitle() {
+        String titleResId;
+        switch (getMode()) {
+            case EDIT_ALARM:
+                titleResId = "edit_alarm";
+                break;
+            case ADD_ALARM:
+                titleResId = "add_alarm";
+                break;
+            case UNKNOWN:
+            default:
+                throw new IllegalStateException("Mode supplied as intent extra for " +
+                        AddEditAlarmActivity.class.getSimpleName() + " must match value in " +
+                        Mode.class.getSimpleName());
+        }
+        return titleResId;
+    }
+
+    public static Intent buildAddEditAlarmActivityIntent(Context context, @Mode int mode) {
+        final Intent i = new Intent(context, AddEditAlarmActivity.class);
+        i.putExtra(MODE_EXTRA, mode);
+        return i;
     }
 
     @Override
@@ -682,9 +379,4 @@ public class TodolistFragment
         Log.d(TAG, "onAlarmsLoaded");
     }
 
-    public static Intent launchIntent(Context context) {
-        final Intent i = new Intent(context, AlarmLandingPageActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        return i;
-    }
 }

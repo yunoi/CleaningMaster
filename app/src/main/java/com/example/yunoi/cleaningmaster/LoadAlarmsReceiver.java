@@ -1,11 +1,9 @@
-package com.example.yunoi.alarmpracticeyeonseo.service;
+package com.example.yunoi.cleaningmaster;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import com.example.yunoi.alarmpracticeyeonseo.model.Alarm;
 
 import java.util.ArrayList;
 
@@ -23,7 +21,7 @@ public final class LoadAlarmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(getClass().getSimpleName(), "onReceive ...");
-        final ArrayList<Alarm> alarms =
+        final ArrayList<TodolistVo> alarms =
                 intent.getParcelableArrayListExtra(LoadAlarmsService.ALARMS_EXTRA);
         mListener.onAlarmsLoaded(alarms);
     }
@@ -33,7 +31,7 @@ public final class LoadAlarmsReceiver extends BroadcastReceiver {
     }
 
     public interface OnAlarmsLoadedListener {
-        void onAlarmsLoaded(ArrayList<Alarm> alarms);
+        void onAlarmsLoaded(ArrayList<TodolistVo> alarms);
     }
 
 }

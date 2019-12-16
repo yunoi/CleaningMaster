@@ -1,4 +1,4 @@
-package com.example.yunoi.alarmpracticeyeonseo.ui;
+package com.example.yunoi.cleaningmaster;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,11 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-
-import com.example.yunoi.alarmpracticeyeonseo.R;
-import com.example.yunoi.alarmpracticeyeonseo.data.DatabaseHelper;
-import com.example.yunoi.alarmpracticeyeonseo.model.Alarm;
-import com.example.yunoi.alarmpracticeyeonseo.service.LoadAlarmsService;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,7 +33,7 @@ public class AddEditAlarmActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getToolbarTitle());
 
-        final Alarm alarm = getAlarm();
+        final TodolistVo alarm = getAlarm();
 
         if(getSupportFragmentManager().findFragmentById(R.id.edit_alarm_frag_container) == null) {
             getSupportFragmentManager()
@@ -49,14 +44,14 @@ public class AddEditAlarmActivity extends AppCompatActivity {
 
     }
 
-    private Alarm getAlarm() {
+    private TodolistVo getAlarm() {
         switch (getMode()) {
             case EDIT_ALARM:
                 return getIntent().getParcelableExtra(ALARM_EXTRA);
             case ADD_ALARM:
-                final long id = DatabaseHelper.getInstance(this).addAlarm();
+                final long id = DBHelper.getInstance(this).addAlarm();
                 LoadAlarmsService.launchLoadAlarmsService(this);
-                return new Alarm(id);
+                return new TodolistVo(id);
             case UNKNOWN:
             default:
                 throw new IllegalStateException("Mode supplied as intent extra for " +
@@ -74,10 +69,10 @@ public class AddEditAlarmActivity extends AppCompatActivity {
         String titleResId;
         switch (getMode()) {
             case EDIT_ALARM:
-                titleResId = "edit_alarm";
+                titleResId = "알림 수정";
                 break;
             case ADD_ALARM:
-                titleResId = "add_alarm";
+                titleResId = "알림 추가";
                 break;
             case UNKNOWN:
             default:

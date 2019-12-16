@@ -1,62 +1,46 @@
-package com.example.yunoi.alarmpracticeyeonseo.ui;
+package com.example.yunoi.cleaningmaster;
 
-import android.content.DialogInterface;
+import android.app.DatePickerDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Switch;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import com.example.yunoi.alarmpracticeyeonseo.R;
-import com.example.yunoi.alarmpracticeyeonseo.data.DatabaseHelper;
-import com.example.yunoi.alarmpracticeyeonseo.model.Alarm;
-import com.example.yunoi.alarmpracticeyeonseo.service.AlarmReceiver;
-import com.example.yunoi.alarmpracticeyeonseo.service.LoadAlarmsService;
-import com.example.yunoi.alarmpracticeyeonseo.util.ViewUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
-public final class AddEditAlarmFragment extends Fragment {
+public final class AddEditAlarmFragment extends Fragment implements View.OnClickListener {
 
-    private TimePicker mTimePicker;
-    private EditText mLabel;
-    private CheckBox mMon, mTues, mWed, mThurs, mFri, mSat, mSun;
+    EditText alerEdt;
+    private TimePicker timePicker;
+    private TextView tvDate;
+    private ImageView ivCalendar;
+    private Button btnOk, btnCancel;
+    private Calendar calendar = Calendar.getInstance(); // 캘린더 인스턴스 생성
 
+    // 요일 관련 변수
+    private TextView txtDayCheck;
+    private CheckBox cbMon;
+    private CheckBox cbTue;
+    private CheckBox cbWed;
+    private CheckBox cbThu;
+    private CheckBox cbFri;
+    private CheckBox cbSat;
+    private CheckBox cbSun;
 
-    /**
-     * Add for branch DBSnoozeColorAdd 2019,12,11 by YS
-     * about isSnooze,colorTitle
-     * "ADD VALUE"
-     */
-    private Switch edit_alarm_snooze;
-    private static final int[] colorTitle_Id = {
-            R.id.edit_alarm_color_softRed,
-            R.id.edit_alarm_color_lightOrange,
-            R.id.edit_alarm_color_softOrange,
-            R.id.edit_alarm_color_slightlyCyan,
-            R.id.edit_alarm_color_slightlyGreen,
-            R.id.edit_alarm_color_green,
-            R.id.edit_alarm_color_strongCyan,
-            R.id.edit_alarm_color_blue,
-            R.id.edit_alarm_color_moderateBlue,
-            R.id.edit_alarm_color_moderateViolet,
-            R.id.edit_alarm_color_black};
-    private RadioGroup edit_alarm_rdo_g;
-    private RadioButton[] colorTitle = new RadioButton[colorTitle_Id.length];
-
-    public static Fragment newInstance(Alarm alarm) {
+    public static Fragment newInstance(TodolistVo alarm) {
 
         Bundle args = new Bundle();
         args.putParcelable(AddEditAlarmActivity.ALARM_EXTRA, alarm);
@@ -70,183 +54,144 @@ public final class AddEditAlarmFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        final View v = inflater.inflate(R.layout.fragment_add_edit_alarm, container, false);
+        final View v = inflater.inflate(R.layout.dialog_add_notify, container, false);
 
         setHasOptionsMenu(true);
 
-        final Alarm alarm = getAlarm();
+        final TodolistVo alarm = getAlarm();
 
-        mTimePicker = (TimePicker) v.findViewById(R.id.edit_alarm_time_picker);
-        ViewUtils.setTimePickerTime(mTimePicker, alarm.getTime());
+        alerEdt = v.findViewById(R.id.alert_todolist_alerEdt);
+        timePicker = v.findViewById(R.id.timePicker);
+        tvDate = v.findViewById(R.id.tvDate);
+        ivCalendar = v.findViewById(R.id.ivCalendar);
+        btnOk = v.findViewById(R.id.btnOk);
+        btnCancel = v.findViewById(R.id.btnCancel);
 
-        mLabel = (EditText) v.findViewById(R.id.edit_alarm_label);
-        mLabel.setText(alarm.getLabel());
-
-        mMon = (CheckBox) v.findViewById(R.id.edit_alarm_mon);
-        mTues = (CheckBox) v.findViewById(R.id.edit_alarm_tues);
-        mWed = (CheckBox) v.findViewById(R.id.edit_alarm_wed);
-        mThurs = (CheckBox) v.findViewById(R.id.edit_alarm_thurs);
-        mFri = (CheckBox) v.findViewById(R.id.edit_alarm_fri);
-        mSat = (CheckBox) v.findViewById(R.id.edit_alarm_sat);
-        mSun = (CheckBox) v.findViewById(R.id.edit_alarm_sun);
+        cbMon = v.findViewById(R.id.cbMonday);
+        cbTue = v.findViewById(R.id.cbTuesday);
+        cbWed = v.findViewById(R.id.cbWednesday);
+        cbThu = v.findViewById(R.id.cbThursday);
+        cbFri = v.findViewById(R.id.cbFriday);
+        cbSat = v.findViewById(R.id.cbSaturday);
+        cbSun = v.findViewById(R.id.cbSunday);
+        txtDayCheck = v.findViewById(R.id.txtDayCheck);
+//        tvTask.setText(list.get(position).getTodolist_text());
 
         setDayCheckboxes(alarm);
-
-        //ADD VALUE
-        edit_alarm_snooze = (Switch) v.findViewById(R.id.edit_alarm_snooze);
-        edit_alarm_snooze.setChecked(alarm.isSnooze());
-        edit_alarm_rdo_g = (RadioGroup) v.findViewById(R.id.edit_alarm_rdo_g);
-        for (int i = 0; i < colorTitle_Id.length; i++) {
-            colorTitle[i] = (RadioButton) v.findViewById(colorTitle_Id[i]);
-        }
-        setDayCheckColorTitle(alarm);
-
+        //오늘 날짜 입력부분
+        tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        // 날짜선택창 불러오기
+        ivCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
+        btnOk.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
         return v;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.edit_alarm_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_save:
-                save();
-                break;
-            case R.id.action_delete:
-                delete();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private Alarm getAlarm() {
+    private TodolistVo getAlarm() {
         return getArguments().getParcelable(AddEditAlarmActivity.ALARM_EXTRA);
     }
 
-    private void setDayCheckboxes(Alarm alarm) {
-        mMon.setChecked(alarm.getDay(Alarm.MON));
-        mTues.setChecked(alarm.getDay(Alarm.TUES));
-        mWed.setChecked(alarm.getDay(Alarm.WED));
-        mThurs.setChecked(alarm.getDay(Alarm.THURS));
-        mFri.setChecked(alarm.getDay(Alarm.FRI));
-        mSat.setChecked(alarm.getDay(Alarm.SAT));
-        mSun.setChecked(alarm.getDay(Alarm.SUN));
+    private void setDayCheckboxes(TodolistVo alarm) {
+        cbMon.setChecked(alarm.getDay(TodolistVo.MON));
+        cbTue.setChecked(alarm.getDay(TodolistVo.TUE));
+        cbWed.setChecked(alarm.getDay(TodolistVo.WED));
+        cbThu.setChecked(alarm.getDay(TodolistVo.THU));
+        cbFri.setChecked(alarm.getDay(TodolistVo.FRI));
+        cbSat.setChecked(alarm.getDay(TodolistVo.SAT));
+        cbSun.setChecked(alarm.getDay(TodolistVo.SUN));
     }
 
-    private void setDayCheckColorTitle(Alarm alarm) {
-        if(alarm.getColorTitle()==null){
-            alarm.setColorTitle("softRed");
+
+    ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
+    private void alarmSettings() {
+
+        final TodolistVo alarm = getAlarm();
+
+        // 알람 시간 설정
+        // api 버전별 설정
+        if (Build.VERSION.SDK_INT < 23) {
+            int getHour = timePicker.getCurrentHour();
+            int getMinute = timePicker.getCurrentMinute();
+            calendar.set(Calendar.HOUR_OF_DAY, getHour);
+            calendar.set(Calendar.MINUTE, getMinute);
+            calendar.set(Calendar.SECOND, 0);
+            alarm.setTime(calendar.getTimeInMillis());
+        } else {
+            int getHour = timePicker.getHour();
+            int getMinute = timePicker.getMinute();
+            calendar.set(Calendar.HOUR_OF_DAY, getHour);
+            calendar.set(Calendar.MINUTE, getMinute);
+            calendar.set(Calendar.SECOND, 0);
+            alarm.setTime(calendar.getTimeInMillis());
         }
-        switch (alarm.getColorTitle()) {
-            case "lightOrange":
-                colorTitle[1].setChecked(true);
-                break;
-            case "pink":
-                colorTitle[2].setChecked(true);
-                break;
-            case "softOrange":
-                colorTitle[3].setChecked(true);
-                break;
-            case "slightlyCyan":
-                colorTitle[4].setChecked(true);
-                break;
-            case "slightlyGreen":
-                colorTitle[5].setChecked(true);
-                break;
-            case "green":
-                colorTitle[6].setChecked(true);
-                break;
-            case "strongCyan":
-                colorTitle[7].setChecked(true);
-                break;
-            case "blue":
-                colorTitle[8].setChecked(true);
-                break;
-            case "moderateBlue":
-                colorTitle[9].setChecked(true);
-                break;
-            case "moderateViolet":
-                colorTitle[10].setChecked(true);
-                break;
-            case "black":
-                colorTitle[11].setChecked(true);
-                break;
-            case "softRed":
-            default:
-                colorTitle[0].setChecked(true);
-                break;
+
+        // 현재보다 이전이면 등록 못하도록
+        if (calendar.before(Calendar.getInstance())) {
+            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
+            return;
         }
-    }
 
-    private void save() {
+        // 요일 설정
+        alarm.setDay(TodolistVo.MON, cbMon.isChecked());
+        alarm.setDay(TodolistVo.TUE, cbTue.isChecked());
+        alarm.setDay(TodolistVo.WED, cbWed.isChecked());
+        alarm.setDay(TodolistVo.THU, cbThu.isChecked());
+        alarm.setDay(TodolistVo.FRI, cbFri.isChecked());
+        alarm.setDay(TodolistVo.SAT, cbSat.isChecked());
+        alarm.setDay(TodolistVo.SUN, cbSun.isChecked());
 
-        final Alarm alarm = getAlarm();
+        final int rowsUpdated = DBHelper.getInstance(getContext()).updateAlarm(alarm);
+//        final int messageId = (rowsUpdated == 1) ? R.string.update_complete : R.string.update_failed;
 
-        final Calendar time = Calendar.getInstance();
-        time.set(Calendar.MINUTE, ViewUtils.getTimePickerMinute(mTimePicker));
-        time.set(Calendar.HOUR_OF_DAY, ViewUtils.getTimePickerHour(mTimePicker));
-        alarm.setTime(time.getTimeInMillis());
-
-        alarm.setLabel(mLabel.getText().toString());
-
-        alarm.setDay(Alarm.MON, mMon.isChecked());
-        alarm.setDay(Alarm.TUES, mTues.isChecked());
-        alarm.setDay(Alarm.WED, mWed.isChecked());
-        alarm.setDay(Alarm.THURS, mThurs.isChecked());
-        alarm.setDay(Alarm.FRI, mFri.isChecked());
-        alarm.setDay(Alarm.SAT, mSat.isChecked());
-        alarm.setDay(Alarm.SUN, mSun.isChecked());
-
-        //ADD VALUE
-        alarm.setSnooze(edit_alarm_snooze.isChecked());
-        alarm.setColorTitle("lightOrange");
-
-        final int rowsUpdated = DatabaseHelper.getInstance(getContext()).updateAlarm(alarm);
-        final int messageId = (rowsUpdated == 1) ? R.string.update_complete : R.string.update_failed;
-
-        Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "알림이 설정되었습니다.", Toast.LENGTH_SHORT).show();
 
         AlarmReceiver.setReminderAlarm(getContext(), alarm);
-
         getActivity().finish();
 
+    } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnOk:
+                alarmSettings();
+                break;
+            case R.id.btnCancel:
+                toastDisplay("취소되었습니다.");
+                delete();
+                break;
+
+        }
+    }
+    private void toastDisplay(String s) {
+        Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+    }
+
+    // 날짜 선택 DatePicker Dialog 메소드
+    private void showDialog() {
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // 데이터피커에서 선택한 날짜 처리 하는 부분
+                tvDate.setText(String.valueOf(format.format(calendar.getTime())));
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
+
+        pickerDialog.show();
     }
 
     private void delete() {
+        final TodolistVo alarm = getAlarm();
 
-        final Alarm alarm = getAlarm();
+        //Cancel any pending notifications for this alarm
+        AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
 
-        final AlertDialog.Builder builder =
-                new AlertDialog.Builder(getContext(), R.style.DeleteAlarmDialogTheme);
-        builder.setTitle(R.string.delete_dialog_title);
-        builder.setMessage(R.string.delete_dialog_content);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                //Cancel any pending notifications for this alarm
-                AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
-
-                final int rowsDeleted = DatabaseHelper.getInstance(getContext()).deleteAlarm(alarm);
-                int messageId;
-                if (rowsDeleted == 1) {
-                    messageId = R.string.delete_complete;
-                    Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
-                    LoadAlarmsService.launchLoadAlarmsService(getContext());
-                    getActivity().finish();
-                } else {
-                    messageId = R.string.delete_failed;
-                    Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        builder.setNegativeButton(R.string.no, null);
-        builder.show();
-
+        final int rowsDeleted = DBHelper.getInstance(getContext()).deleteAlarm(alarm);
+        getActivity().finish();
     }
-
 }
