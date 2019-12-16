@@ -162,7 +162,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                     if (isChecked) {
                             int ischeckCount=selectIsCheck(context,TodolistFragment.groupText,taskText);
                             if (isCheckClear==1 && ischeckCount==1){
-
                                     Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
                                     strikeThroughPainting.color(Color.rgb(2, 72, 112))
                                             .strokeWidth(4).totalTime(10_0L).strikeThrough();
@@ -187,10 +186,22 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                             //스낵바 설정(체크할 시 경험치 확인 스낵바)
                             stnackBar("경험치가 적립되었습니다!(+100xp)\n경험치 :");
 
+                            Intent intent = new Intent(context, ExpShowActivity.class);
+                            if (TodolistFragment.score==1000){
+                                startActivity(context, intent, null);
+
+                            }else if (TodolistFragment.score==2000){
+
+                                startActivity(context, intent, null);
+
+                            }else if (TodolistFragment.score==3000){
+
+                                startActivity(context, intent, null);
+                            }
+
                             if (isCheckClear==1){
                                 return;
                             }
-
                             //체크한 카운트가 만든 리스트와 맞을때
                             if (checkSize == allListSize) {
                                 insertIsCheckClear(context);//다완료할때 1집어늠.
@@ -214,8 +225,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(context, ExpShowActivity.class);
-                                        startActivity(context, intent, null);
                                         insertScore(TodolistFragment.score, context);
+                                        startActivity(context, intent, null);
                                     }
                                 });
 
@@ -228,9 +239,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         strikeThroughPainting.clearStrikeThrough();
                     }
                 }
-
-
-
 
             }
         });
