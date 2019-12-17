@@ -31,17 +31,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class AddEditAlarmActivity extends AppCompatActivity implements View.OnClickListener, LoadAlarmsReceiver.OnAlarmsLoadedListener{
+public class AddEditAlarmActivity extends AppCompatActivity implements View.OnClickListener, LoadAlarmsReceiver.OnAlarmsLoadedListener {
 
     public static final String ALARM_EXTRA = "alarm_extra";
     public static final String MODE_EXTRA = "mode_extra";
     public static final String TAG = "AddEditAlarmActivity";
 
 
-
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({EDIT_ALARM,ADD_ALARM,UNKNOWN})
-    @interface Mode{}
+    @IntDef({EDIT_ALARM, ADD_ALARM, UNKNOWN})
+    @interface Mode {
+    }
+
     public static final int EDIT_ALARM = 1;
     public static final int ADD_ALARM = 2;
     public static final int UNKNOWN = 0;
@@ -103,9 +104,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         cbSat = findViewById(R.id.cbSaturday);
         cbSun = findViewById(R.id.cbSunday);
         txtDayCheck = findViewById(R.id.txtDayCheck);
-
-        setDayCheckboxes(alarm);
-
         //오늘 날짜 입력부분
         tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         // 날짜선택창 불러오기
@@ -115,13 +113,16 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
                 showDialog();
             }
         });
+
+        setDayCheckboxes(alarm);
+
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
     }
 
 
-
-    private @Mode int getMode() {
+    private @Mode
+    int getMode() {
         final @Mode int mode = getIntent().getIntExtra(MODE_EXTRA, UNKNOWN);
         return mode;
     }
@@ -167,6 +168,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         final TodolistVo alarm = getAlarm();
 
 //        alarm.setLabel();
+
         // 알람 시간 설정
         // api 버전별 설정
         if (Build.VERSION.SDK_INT < 23) {
@@ -242,10 +244,12 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 // 데이터피커에서 선택한 날짜 처리 하는 부분
-                tvDate.setText(String.valueOf(format.format(calendar.getTime())));
+                tvDate.setText(String.valueOf(year +"-"+(monthOfYear+1)+"-"+dayOfMonth));
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear+1);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
-
         pickerDialog.show();
     }
 
