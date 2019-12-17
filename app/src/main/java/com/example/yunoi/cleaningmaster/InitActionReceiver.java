@@ -1,5 +1,7 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,24 +16,20 @@ import java.util.Date;
 public class InitActionReceiver extends BroadcastReceiver {
 
     private SQLiteDatabase db;
+
+    public InitActionReceiver() {
+        super();
+    }
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
 
-        //현재 년,월,일
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        String year = new SimpleDateFormat("YYYY").format(date);
-        String month = new SimpleDateFormat("MM").format(date);
-        String day = new SimpleDateFormat("dd").format(date);
-
-        final int currentYear = Integer.parseInt(year);
-        final int currentMonth = Integer.parseInt(month);
-        final int yesterDay = Integer.parseInt(day);
-
-
         if (Intent.ACTION_DATE_CHANGED.equals(action)) {
             // 날짜가 변경된 경우 해야 될 작업을 한다.
+
+
             updateIsCheckTBL(context);
             insertCheck(context);
 
@@ -48,6 +46,7 @@ public class InitActionReceiver extends BroadcastReceiver {
         db = DBHelper.getInstance(context).getWritableDatabase();
         db.execSQL("UPDATE cleaningTBL SET checkCount=0 ;");
     }
+
 
 
 

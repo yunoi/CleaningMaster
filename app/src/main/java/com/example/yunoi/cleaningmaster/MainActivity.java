@@ -1,6 +1,7 @@
 package com.example.yunoi.cleaningmaster;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -31,9 +32,26 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mainFragment;
     private Fragment profileFragment;
     private static final String TAG = "MainActivity";
+    private InitActionReceiver InitActionReceiver;
+    private IntentFilter intentFilter;
+
     //191212 am 11:20 도움말 이동에 관련된 SharedPreferences by 재훈
     SharedPreferences passTutorial;
     int tutorialState;
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        intentFilter=new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_DATE_CHANGED);
+        registerReceiver(InitActionReceiver,intentFilter);
+
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         pedomterBar=new PedomterBar();
         profileFragment=new ProfileFragment();
         calendarFragment=new CalendarFragment();
+
+        //채현 브로드캐스트 추가 데이터 초기화 부분!
+        InitActionReceiver=new InitActionReceiver();
 
         //191212 pm 03:40 다시 보지 않기 설정 안할 시 자동으로 도움말로 이동 by 재훈
         passTutorial = getSharedPreferences("change",MODE_PRIVATE);

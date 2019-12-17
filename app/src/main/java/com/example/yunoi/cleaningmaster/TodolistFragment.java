@@ -61,6 +61,7 @@ public class TodolistFragment
     public static String taskText; //구역이름
     private static final String TAG = "TodolistFragment";
 
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({EDIT_ALARM,ADD_ALARM,UNKNOWN})
     @interface Mode{}
@@ -91,6 +92,8 @@ public class TodolistFragment
         view = inflater.inflate(R.layout.todolist_fragment, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.todo_listView);
         todo_constraintLayout = view.findViewById(R.id.todo_constraintLayout);
+
+
 
         //액션바 설정
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();

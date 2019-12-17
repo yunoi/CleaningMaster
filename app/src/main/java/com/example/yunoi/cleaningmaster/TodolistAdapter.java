@@ -168,6 +168,15 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                     if (isChecked) {
                             int ischeckCount=selectIsCheck(context,TodolistFragment.groupText,taskText);
                             if (isCheckClear==1 && ischeckCount==1){
+//                                    if (check == 1) {
+//                                        //true
+//                                        strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                                                .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//                                        customViewHolder.todolist_checkBox.setChecked(true);
+//                                    } else if (check == 0) {
+//                                        //false
+//                                        customViewHolder.todolist_checkBox.setChecked(false);
+//                                    }
                                     Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
                                     strikeThroughPainting.color(Color.rgb(2, 72, 112))
                                             .strokeWidth(4).totalTime(10_0L).strikeThrough();
@@ -182,6 +191,9 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                                     tv.setTextSize(16);
                                     snackbarView.setBackgroundColor(Color.parseColor("#024873"));
                                     snackbar.show();
+
+
+
                                 return;
 
                             }
@@ -467,7 +479,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public int selectAllListSize(Context context) {
         db = DBHelper.getInstance(context).getWritableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT * FROM cleaningTBL ;", null);
+        cursor = db.rawQuery("SELECT * FROM cleaningTBL;", null);
         int allSize = cursor.getCount();
         cursor.close();
         Log.d(TAG, "총 리스트 사이즈 : " + allSize);
