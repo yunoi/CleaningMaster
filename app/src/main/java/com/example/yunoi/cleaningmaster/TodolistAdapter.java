@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +45,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     private Context context;
     private int layout;
-    private ArrayList<TodolistVo> list;
+//    private ArrayList<TodolistVo> list;
+    private ArrayList<TodolistVo> alarmList = new ArrayList<>();
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
     private String[] mDays;
@@ -58,10 +60,10 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public TodolistAdapter() {
     }
 
-    public TodolistAdapter(int layout, ArrayList<TodolistVo> list, Context context) {
-        this.layout = layout;
-        this.list = list;
+    public TodolistAdapter(Context context, int layout, ArrayList<TodolistVo> alarmList) {
         this.context = context;
+        this.layout = layout;
+        this.alarmList = alarmList;
     }
 
     // 클릭 리스너 인터페이스
@@ -87,87 +89,90 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     @Override
     public void onBindViewHolder(@NonNull final TodolistAdapter.CustomViewHolder customViewHolder, final int position) {
         final Context context = customViewHolder.itemView.getContext();
-        final StrikeThroughPainting strikeThroughPainting = new StrikeThroughPainting(customViewHolder.todolist_text);
-        final String taskText = list.get(position).getTodolist_text();
+
+        final String taskText = alarmList.get(position).getTodolist_text();
 
         if (mDays == null) {
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
 
-        final TodolistVo alarm = list.get(position);
-
-        customViewHolder.todolist_text.setText(taskText + "\n" + AlarmUtils.getReadableTime(alarm.getTime())
-                + " " + AlarmUtils.getAmPm(alarm.getTime()));
-//        +" "+buildSelectedDays(alarm)
-        final int isCheckClear = selectIsCheckClear(context);
-
+        final TodolistVo alarm = alarmList.get(position);
         customViewHolder.todolist_text.setText(taskText);
-        final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
+        customViewHolder.todolist_alramClocktxt.setText(AlarmUtils.getReadableTime(alarm.getTime()) + " " + AlarmUtils.getAmPm(alarm.getTime()));
+//        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
 
-        //체크 유무를 가져옴.!!!
-        final int check = list.get(position).getCheckcount();
-        if (check == 1) {
-            //true
-            strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                    .strokeWidth(4).totalTime(10_0L).strikeThrough();
-            customViewHolder.todolist_checkBox.setChecked(true);
-        } else if (check == 0) {
-            //false
-            customViewHolder.todolist_checkBox.setChecked(false);
-        }
+        Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
+//
+//        final int isCheckClear = selectIsCheckClear(context);
+//
+//        final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
 
-
-        //체크박스  true / false 클릭 리스너
-        customViewHolder.todolist_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //현재 년,월,일
-                Calendar calendar = Calendar.getInstance();
-                Date date = calendar.getTime();
-                String year = new SimpleDateFormat("YYYY").format(date);
-                String month = new SimpleDateFormat("MM").format(date);
-                String day = new SimpleDateFormat("dd").format(date);
-
-                final int currentYear = Integer.parseInt(year);
-                final int currentMonth = Integer.parseInt(month);
-                final int currentDay = Integer.parseInt(day);
-
-                Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
+//        //체크 유무를 가져옴.!!!
+//        final int check = list.get(position).getCheckcount();
+//        if (check == 1) {
+//            //true
+//            strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                    .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//            customViewHolder.todolist_checkBox.setChecked(true);
+//        } else if (check == 0) {
+//            //false
+//            customViewHolder.todolist_checkBox.setChecked(false);
+//        }
 
 
-                if (check == 1) {
-                    //누른 값이 체크가 되어있으면 리턴
-
-                    if (isChecked == false) {
-                        Log.d(TAG, "눌렀던것 다시 false");
-                        strikeThroughPainting.clearStrikeThrough();
-                    }
-                    if (isChecked == true) {
-                        Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
-                        strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                                .strokeWidth(4).totalTime(10_0L).strikeThrough();
-
-                        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
-                        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-                        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                        layout.setPadding(20, 5, 5, 5);
-                        View snackbarView = snackbar.getView();
-                        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-                        tv.setTextColor(Color.WHITE);
-                        tv.setMaxLines(3);
-                        tv.setTextSize(16);
-                        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-                        snackbar.show();
-
-                    }
-
-                }
-                if (check == 0) {
-
-                    //누른 값이 체크가 안되어있으면 체크 업데이트!
-                    if (isChecked) {
-                            int ischeckCount=selectIsCheck(context,TodolistFragment.groupText,taskText);
-                            if (isCheckClear==1 && ischeckCount==1){
+//        //체크박스  true / false 클릭 리스너
+//        customViewHolder.todolist_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                //현재 년,월,일
+//                Calendar calendar = Calendar.getInstance();
+//                Date date = calendar.getTime();
+//                String year = new SimpleDateFormat("YYYY").format(date);
+//                String month = new SimpleDateFormat("MM").format(date);
+//                String day = new SimpleDateFormat("dd").format(date);
+//
+//                final int currentYear = Integer.parseInt(year);
+//                final int currentMonth = Integer.parseInt(month);
+//                final int currentDay = Integer.parseInt(day);
+//
+//                Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
+//
+//
+//                if (check == 1) {
+//                    //누른 값이 체크가 되어있으면 리턴
+//
+//                    if (isChecked == false) {
+//                        Log.d(TAG, "눌렀던것 다시 false");
+//                        strikeThroughPainting.clearStrikeThrough();
+//                    }
+//                    if (isChecked == true) {
+//                        Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
+//                        strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                                .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//
+//                        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
+//                        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+//                        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+//                        layout.setPadding(20, 5, 5, 5);
+//                        View snackbarView = snackbar.getView();
+//                        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+//                        tv.setTextColor(Color.WHITE);
+//                        tv.setMaxLines(3);
+//                        tv.setTextSize(16);
+//                        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+//                        snackbar.show();
+//
+//                    }
+//
+//                }
+//                if (check == 0) {
+//                    //누른 값이 체크가 안되어있으면 체크 업데이트!
+//
+//                    if (isChecked) {
+//
+//                        int ischeckCount=selectIsCheck(context,TodolistFragment.groupText,taskText);
+//
+//                            if (isCheckClear==1 && ischeckCount==1){
 //                                    if (check == 1) {
 //                                        //true
 //                                        strikeThroughPainting.color(Color.rgb(2, 72, 112))
@@ -177,89 +182,97 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 //                                        //false
 //                                        customViewHolder.todolist_checkBox.setChecked(false);
 //                                    }
-                                    Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
-                                    strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                                            .strokeWidth(4).totalTime(10_0L).strikeThrough();
-
-                                    Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
-                                    snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-                                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                                    layout.setPadding(20, 5, 5, 5);
-                                    View snackbarView = snackbar.getView();
-                                    TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-                                    tv.setTextColor(Color.WHITE);
-                                    tv.setTextSize(16);
-                                    snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-                                    snackbar.show();
-
-
-
-                                return;
-
-                            }
-                            checkBoxTrue(strikeThroughPainting, context, taskText);
-                            checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
-                            Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
-                            Log.d(TAG, "실시간 리스트 사이즈 : " + allListSize);
-                            //스낵바 설정(체크할 시 경험치 확인 스낵바)
-                            stnackBar("경험치가 적립되었습니다!(+100xp)\n경험치 :");
-
-                            Intent intent = new Intent(context, ExpShowActivity.class);
-                            if (TodolistFragment.score==1000){
-                                startActivity(context, intent, null);
-
-                            }else if (TodolistFragment.score==2000){
-
-                                startActivity(context, intent, null);
-
-                            }else if (TodolistFragment.score==3000){
-
-                                startActivity(context, intent, null);
-                            }
-
-                            if (isCheckClear==1){
-                                return;
-                            }
-                            //체크한 카운트가 만든 리스트와 맞을때
-                            if (checkSize == allListSize) {
-                                insertIsCheckClear(context);//다완료할때 1집어늠.
-                                TodolistFragment.score += 200;
-
-                                Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+200exp)가 적립되었습니다!\n경험치 :" + TodolistFragment.score, Snackbar.LENGTH_INDEFINITE);
-                                snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-                                Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                                layout.setPadding(10, 10, 50, 10);
-                                View snackbarView = snackbar.getView();
-                                TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-                                tv.setTextColor(Color.WHITE);
-                                tv.setTextSize(16);
-                                tv.setMaxLines(3);
-                                tv.setTextSize(16);
-                                tv.setPadding(60, 60, 60, 60);
-                                snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-
-
-                                snackbar.setAction("확인", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(context, ExpShowActivity.class);
-                                        insertScore(TodolistFragment.score, context);
-                                        startActivity(context, intent, null);
-                                    }
-                                });
-
-                                snackbar.show();
-
-                            }
-
-                    }else{
-
-                        strikeThroughPainting.clearStrikeThrough();
-                    }
-                }
-
-            }
-        });
+//                                    if (isChecked){
+//                                        customViewHolder.todolist_checkBox.setChecked(true);
+//                                        Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
+//                                        strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                                                .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//
+//                                        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
+//                                        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+//                                        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+//                                        layout.setPadding(20, 5, 5, 5);
+//                                        View snackbarView = snackbar.getView();
+//                                        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+//                                        tv.setTextColor(Color.WHITE);
+//                                        tv.setTextSize(16);
+//                                        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+//                                        snackbar.show();
+//
+//                                    }else {
+//                                        strikeThroughPainting.clearStrikeThrough();
+//                                        customViewHolder.todolist_checkBox.setChecked(false);
+//                                    }
+//
+//
+//
+//
+//                                return;
+//
+//                            }
+//                            checkBoxTrue(strikeThroughPainting, context, taskText);
+//                            checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
+//                            Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
+//                            Log.d(TAG, "실시간 리스트 사이즈 : " + allListSize);
+//                            //스낵바 설정(체크할 시 경험치 확인 스낵바)
+//                            stnackBar("경험치가 적립되었습니다!(+100xp)\n경험치 :");
+//
+//                            Intent intent = new Intent(context, ExpShowActivity.class);
+//                            if (TodolistFragment.score==1000){
+//                                startActivity(context, intent, null);
+//
+//                            }else if (TodolistFragment.score==2000){
+//
+//                                startActivity(context, intent, null);
+//
+//                            }else if (TodolistFragment.score==3000){
+//
+//                                startActivity(context, intent, null);
+//                            }
+//
+//                            if (isCheckClear==1){
+//                                return;
+//                            }
+//                            //체크한 카운트가 만든 리스트와 맞을때
+//                            if (checkSize == allListSize) {
+//                                insertIsCheckClear(context);//다완료할때 1집어늠.
+//                                TodolistFragment.score += 200;
+//
+//                                Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+200exp)가 적립되었습니다!\n경험치 :" + TodolistFragment.score, Snackbar.LENGTH_INDEFINITE);
+//                                snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+//                                Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+//                                layout.setPadding(10, 10, 50, 10);
+//                                View snackbarView = snackbar.getView();
+//                                TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+//                                tv.setTextColor(Color.WHITE);
+//                                tv.setTextSize(16);
+//                                tv.setMaxLines(3);
+//                                tv.setTextSize(16);
+//                                tv.setPadding(60, 60, 60, 60);
+//                                snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+//
+//
+//                                snackbar.setAction("확인", new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        Intent intent = new Intent(context, ExpShowActivity.class);
+//                                        insertScore(TodolistFragment.score, context);
+//                                        startActivity(context, intent, null);
+//                                    }
+//                                });
+//
+//                                snackbar.show();
+//
+//                            }
+//
+//                    }else{
+//
+//                        strikeThroughPainting.clearStrikeThrough();
+//                    }
+//                }
+//
+//            }
+//        });
 
         //취소 버튼 액션
         customViewHolder.swipe_sample1.setShowMode(SwipeLayout.ShowMode.LayDown);
@@ -273,11 +286,15 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String text = list.get(position).getTodolist_text();
+                        String text = alarmList.get(position).getTodolist_text();
 
-                        //Cancel any pending notifications for this alarm
+                        final TodolistVo alarm = alarmList.get(position);
+
+                        Log.d(TAG, "for alarm delete position : "+position);
+                        Log.d(TAG, "for alarm delete : "+alarmList.get(position).toString());
+                        // 알림삭제 (Cancel any pending notifications for this alarm)
                         AlarmReceiver.cancelReminderAlarm(context, alarm);
-                        list.remove(position);
+                        alarmList.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text, v.getContext()); //DB 삭제부분
                         final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);
@@ -327,45 +344,50 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     @Override
     public int getItemCount() {
-        return list != null ? list.size() : 0;
+        return alarmList != null ? alarmList.size() : 0;
     }
 
-    private Spannable buildSelectedDays(TodolistVo alarm) {
-
-        final int numDays = 7;
-        final SparseBooleanArray days = alarm.getDays();
-
-        final SpannableStringBuilder builder = new SpannableStringBuilder();
-        ForegroundColorSpan span;
-
-        int startIndex, endIndex;
-        for (int i = 0; i < numDays; i++) {
-
-            startIndex = builder.length();
-
-            final String dayText = mDays[i];
-            builder.append(dayText);
-            builder.append(" ");
-
-            endIndex = startIndex + dayText.length();
-
-            final boolean isSelected = days.valueAt(i);
-            if (isSelected) {
-                span = new ForegroundColorSpan(Color.RED);
-                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-
-        return builder;
-
-    }
+//    private Spannable buildSelectedDays(TodolistVo alarm) {
+//
+//        final int numDays = 7;
+//        final SparseBooleanArray days = alarm.getDays();
+//
+//        final SpannableStringBuilder builder = new SpannableStringBuilder();
+//        ForegroundColorSpan span;
+//
+//        int startIndex, endIndex;
+//        for (int i = 0; i < numDays; i++) {
+//
+//            startIndex = builder.length();
+//
+//            final String dayText = mDays[i];
+//            builder.append(dayText);
+//            builder.append(" ");
+//
+//            endIndex = startIndex + dayText.length();
+//
+//            final boolean isSelected = days.valueAt(i);
+//            if (isSelected) {
+//                span = new ForegroundColorSpan(Color.RED);
+//                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+//        }
+//
+//        return builder;
+//
+//    }
 
     public void setAlarms(ArrayList<TodolistVo> alarms) {
         Log.d(TAG, "setAlarms");
-        list = alarms;
+        alarmList = alarms;
         notifyDataSetChanged();
     }
 
+    private TodolistVo getAlarm() {
+        final long id = DBHelper.getInstance(context).addAlarm();
+        LoadAlarmsService.launchLoadAlarmsService(context);
+        return new TodolistVo(id);
+    }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -373,7 +395,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         private ExTextView todolist_text;
         private SwipeLayout swipe_sample1;
         private LinearLayout todo_linearLayout;
-        private CheckBox todolist_checkBox;
+        private TextView todolist_alramReaptTxt, todolist_alramClocktxt;
+
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -381,40 +404,39 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             todolist_text = itemView.findViewById(R.id.todolist_text);
             swipe_sample1 = itemView.findViewById(R.id.swipe_sample1);
             todo_linearLayout = itemView.findViewById(R.id.todo_linearLayout);
-            todolist_checkBox = itemView.findViewById(R.id.todolist_checkBox);
-
-
+            todolist_alramReaptTxt = itemView.findViewById(R.id.todolist_alramReaptTxt);
+            todolist_alramClocktxt = itemView.findViewById(R.id.todolist_alramClocktxt);
         }   // end of constructor
 
     } // end of customViewHolder class
 
     //checkBox True 인경우 함수화
-    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
-
-        //현재 년,월,일
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        String year = new SimpleDateFormat("YYYY").format(date);
-        String month = new SimpleDateFormat("MM").format(date);
-        String day = new SimpleDateFormat("dd").format(date);
-
-        final int currentYear = Integer.parseInt(year);
-        final int currentMonth = Integer.parseInt(month);
-        final int currentDay = Integer.parseInt(day);
-
-        Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
-
-        TodolistFragment.score += 100;
-
-        //체크시 줄 생기는것
-        strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                .strokeWidth(4).totalTime(10_0L).strikeThrough();
-        //체크 True DB저장 , 스코어 저장
-        insertScore(TodolistFragment.score, context);
-        insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
-
-
-    }
+//    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
+//
+//        //현재 년,월,일
+//        Calendar calendar = Calendar.getInstance();
+//        Date date = calendar.getTime();
+//        String year = new SimpleDateFormat("YYYY").format(date);
+//        String month = new SimpleDateFormat("MM").format(date);
+//        String day = new SimpleDateFormat("dd").format(date);
+//
+//        final int currentYear = Integer.parseInt(year);
+//        final int currentMonth = Integer.parseInt(month);
+//        final int currentDay = Integer.parseInt(day);
+//
+//        Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
+//
+//        TodolistFragment.score += 100;
+//
+//        //체크시 줄 생기는것
+//        strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//        //체크 True DB저장 , 스코어 저장
+//        insertScore(TodolistFragment.score, context);
+//        insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
+//
+//
+//    }
 
     //스낵바 설정 함수화
     public void stnackBar(String txt) {

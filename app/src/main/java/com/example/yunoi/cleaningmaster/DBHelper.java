@@ -149,7 +149,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public int updateAlarm(TodolistVo alarm) {
-        final String where = "_id" + "=?";
+        final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(alarm.getId()) };
         Log.i(getClass().getSimpleName(), "updateAlarm...");
         return getWritableDatabase()
@@ -161,7 +161,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     int deleteAlarm(long id) {
-        final String where = "_id" + "=?";
+        final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(id) };
         return getWritableDatabase().delete("alarmTBL", where, whereArgs);
     }

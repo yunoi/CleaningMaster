@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -37,7 +39,7 @@ import java.util.ArrayList;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements LoadAlarmsReceiver.OnAlarmsLoadedListener {
 
     private View view;
     private ListView listView;
@@ -48,7 +50,21 @@ public class MainFragment extends Fragment {
     private EditText alerEdt; // 청소구역추가 다이얼로그 내부 변수
     private int checkedPosition; // 리스트뷰의 포지션을 가져온다.
     private static final String TAG = "MainFragment";
+    private LoadAlarmsReceiver mReceiver;
+    private Context context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mReceiver = new LoadAlarmsReceiver(this);
+        Log.i(getClass().getSimpleName(), "onCreate ...");
+    }
 
     @Nullable
     @Override
@@ -422,6 +438,32 @@ public class MainFragment extends Fragment {
 
     public void toastDisplay(String s) {
         Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
+        LocalBroadcastManager.getInstance(context).registerReceiver(mReceiver, filter);
+        LoadAlarmsService.launchLoadAlarmsService(context);
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mReceiver);
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onAlarmsLoaded(ArrayList<TodolistVo> alarms) {
+        TodolistAdapter todolistAdapter = new TodolistAdapter();
+        for (TodolistVo list : alarms) {
+            Log.d(TAG, "onAlarmsLoaded. list: "+list.toString());
+        }
+        todolistAdapter.setAlarms(alarms);
+        Log.d(TAG, "onAlarmsLoaded");
     }
 
 }

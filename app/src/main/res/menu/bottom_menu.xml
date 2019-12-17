@@ -5,6 +5,11 @@
         android:icon="@drawable/ic_view_list_black_24dp"
         android:title="메인"
         />
+    <item android:id="@+id/action_1_1"
+        android:enabled="true"
+        android:icon="@drawable/ic_event_note_black_24dp"
+        android:title="오늘할일"
+        />
     <item android:id="@+id/action_2"
         android:enabled="true"
         android:icon="@drawable/ic_directions_walk_black_24dp"
