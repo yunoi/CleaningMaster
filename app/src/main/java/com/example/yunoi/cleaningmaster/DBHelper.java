@@ -91,7 +91,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return dbHelper;
     }
-    //PedTBL
+    //PedTBL 만보기
     public void insert(PedColumnVO pedColumnVO){
 
         int year=pedColumnVO.getYear();
@@ -136,7 +136,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return listData;
     }
-    //PedTBL
+    //PedTBL 만보기
 
     public long addAlarm() {
         Log.i(getClass().getSimpleName(), "addAlarm()...");

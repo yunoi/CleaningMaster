@@ -49,14 +49,11 @@ public class PedomterBar extends Fragment {
     // PedDBHelper pedDBHelper;
     private SQLiteDatabase sqLiteDatabase;
     private DBHelper dbHelper;
-
     String day;
     Intent intent;
     SQLiteDatabase db;
     ArrayList<PedColumnVO> list2 = new ArrayList<>();
-    ArrayList<Integer> dayList = new ArrayList<>();
-    ArrayList<String> stepList = new ArrayList<>();
-
+   // ArrayList<Integer> dayList = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,8 +63,8 @@ public class PedomterBar extends Fragment {
         chart = view.findViewById(R.id.chart1);
         BARENTRY = new ArrayList<>();
         BarEntryLabels = new ArrayList<>();
+        //AddValuesToBarEntryLabels();
         AddValuesToBARENTRY();
-        AddValuesToBarEntryLabels();
         Bardataset = new BarDataSet(BARENTRY, "걸음");
         // 데이터를 차트로 채운다 BarData 객체를 초기화한다
         BARDATA = new BarData(BarEntryLabels, Bardataset);
@@ -77,13 +74,15 @@ public class PedomterBar extends Fragment {
         chart.setData(BARDATA);
         // Y축으로 움직이는 속도 설정
         chart.animateY(3500);
-        chart.setDescription("테스트하기");
-        intent = new Intent();
-        activity.getIntent();
 
+        //chart.setDescription("테스트하기");
+
+ //       AddValuesToBarEntryLabels();
         return view;
 
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -129,8 +128,9 @@ public class PedomterBar extends Fragment {
     public void AddValuesToBARENTRY() {
         int cDay = calendar.get(Calendar.DAY_OF_MONTH);
         int bDay = cDay - 7;
+        ArrayList<Integer> dayList = new ArrayList<>();
+        ArrayList<String> stepList = new ArrayList<>();
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        ;
         //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
         Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN " + bDay + " AND " + cDay + "; ", null);
         //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
@@ -139,36 +139,65 @@ public class PedomterBar extends Fragment {
             dayList.add(Integer.parseInt(curDB2.getString(0)));
             stepList.add(curDB2.getString(1));
         }
+        for (int i = 0; i < stepList.size(); i++) {
+            // BarEntryLabels.add(String.valueOf(dayList.get(i)));
+            BARENTRY.add(new BarEntry(Float.parseFloat(stepList.get(i)), i));
+            // bar 생성 , 값 설정
+            Log.d("test:",stepList.get(i));
+        }
+        for(int i = 0 ; i < dayList.size(); i ++){
+            BarEntryLabels.add(String.valueOf(dayList.get(i)));
+        }
+ //       db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+
+   }
+//    public void AddValuesToBarEntryLabels(){
+//            // bar Label 설정 X축
+//        int cDay = calendar.get(Calendar.DAY_OF_MONTH);
+//        int bDay = cDay - 7;
+//        ArrayList<Integer> dayList = new ArrayList<>();
+//        ArrayList<String> stepList = new ArrayList<>();
+//        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+//        //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
+//        Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN " + bDay + " AND " + cDay + "; ", null);
+//        //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
+//        while (curDB2.moveToNext()) {
+//            // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
+//            dayList.add(Integer.parseInt(curDB2.getString(0)));
+//        }
+//        //       db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+//        for (int i = 0; i < dayList.size(); i++) {
+//            BarEntryLabels.add(String.valueOf(dayList.get(i)));
+//            // bar 생성 , 값 설정
+//            Log.d("test:",stepList.get(i));
+//        }
+//    }
+
+    public void  PedCursorData() {
+//        int cDay = calendar.get(Calendar.DAY_OF_MONTH);
+//        int bDay = cDay - 7;
+//        ArrayList<Integer> dayList = new ArrayList<>();
+//        ArrayList<String> stepList = new ArrayList<>();
+//        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+//        //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
+//        Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN " + bDay + " AND " + cDay + "; ", null);
+//        //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
+//        while (curDB2.moveToNext()) {
+//            // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
+//            dayList.add(Integer.parseInt(curDB2.getString(0)));
+//            stepList.add(curDB2.getString(1));
+//        }
+//        intent.putIntegerArrayListExtra("dayList", dayList);
+//        intent.putStringArrayListExtra("stepList", stepList);
+//        activity.startActivity(intent);
+//        Log.d("test", String.valueOf(list2));
         // intent = new Intent(activity.getApplicationContext(),PedomterSensor.class);
 //        Intent intent = new Intent(activity.MainActivity.this, PedomterBar.class);
 
-        intent.putIntegerArrayListExtra("dayList", dayList);
-        intent.putStringArrayListExtra("stepList", stepList);
-        startActivity(intent);
-        Log.d("test", String.valueOf(list2));
-
         //Intent intent = getIntent() => intent 로 부터 값을 받는다
-        Intent intent = activity.getIntent();
-
-        stepList = intent.getStringArrayListExtra("stepList");
-
-        for (int i = 0; i < stepList.size(); i++) {
-            BARENTRY.add(new BarEntry(Float.parseFloat(stepList.get(i)), i));
-            // bar 생성 , 값 설정
-        }
     }
-        public void AddValuesToBarEntryLabels(){
-            // bar Label 설정 X축
-            Intent intent = activity.getIntent();
-            ArrayList<Integer> dayList = new ArrayList<>();
-            dayList=intent.getIntegerArrayListExtra("dayList");
-            for(int i = 0 ; i < dayList.size() ; i ++ ){
-                BarEntryLabels.add(String.valueOf(dayList.get(i)));
 
-
-            }
-        }
-    }
+}
 
 
 
