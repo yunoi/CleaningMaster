@@ -126,8 +126,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
 
     private void setTvYearMonth() {
         String yearMonth = String.valueOf(currentYear) + "년 " + String.valueOf(currentMonth + 1) + "월";
-        Log.d("Date1", String.valueOf(currentYear));
-        Log.d("Date1", String.valueOf(currentMonth));
+//        Log.d("Date1", String.valueOf(currentYear));
+//        Log.d("Date1", String.valueOf(currentMonth));
         tvMonth.setText(yearMonth);
     }
 
@@ -138,9 +138,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
         firstDay = getFirstDay(dayOfWeek);
         mStartDay = mCalendar.getFirstDayOfWeek();
         currentYear = mCalendar.get(Calendar.YEAR);
-        Log.d("Date", String.valueOf(currentYear));
+//        Log.d("Date", String.valueOf(currentYear));
         currentMonth = mCalendar.get(Calendar.MONTH);
-        Log.d("Date", String.valueOf(currentMonth));
+//        Log.d("Date", String.valueOf(currentMonth));
         lastDay = getMonthLastDay(currentYear, currentMonth);
         startDay = getFirstDayOfWeek();
 

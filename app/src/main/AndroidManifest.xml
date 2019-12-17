@@ -36,6 +36,8 @@
             <intent-filter>
                 <action android:name="com.example.yunoi.cleaningmaster.MY_ACTION" />
             </intent-filter>
+
+
         </receiver>
 
         <!-- 191213 pm 03:33 알람 관련 리시버, 서비스 by 강윤해 -->
