@@ -116,11 +116,13 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
             ibMale.setBackgroundColor(Color.LTGRAY);
             ibFemale.setEnabled(false);
         }
+
         ibFemale.setOnClickListener(this);
         ibMale.setOnClickListener(this);
         btnProfileSave.setOnClickListener(this);
         btnPass.setOnClickListener(this);
-    }
+
+    }//end of onCre
 
     @Override
     public void onClick(View v) {
@@ -168,9 +170,9 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                     int age = Integer.parseInt(edtAge.getText().toString());
                     sqLiteDatabase.execSQL("UPDATE profileTBL SET Height = " + height + ", Weight = " + weight + ", Age = " +
                             age + " WHERE NickName = '" + cursorData + "';");
-                    cursor.close();
                 }
                 EndPage();
+                cursor.close();
                 break;
             case R.id.btnPass :
                 EndPage();

@@ -20,14 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
-    TextView txtNickName, txtScore, txtRank, txtHeight, txtWeight, txtGender, txtAge;
-//    Button btnEditProfile, btnDeleteProfile;
+    TextView txtNickName, txtScore, txtRank, txtHeight, txtWeight, txtAge;
+    ImageView ivGender;
     View view;
 
     SQLiteDatabase sqLiteDatabase;
@@ -44,7 +45,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         txtRank = view.findViewById(R.id.txtRank);
         txtHeight = view.findViewById(R.id.txtHeight);
         txtWeight = view.findViewById(R.id.txtWeight);
-        txtGender = view.findViewById(R.id.txtGender);
+        ivGender = view.findViewById(R.id.ivGender);
         txtAge = view.findViewById(R.id.txtAge);
 //        btnEditProfile = view.findViewById(R.id.btnEditProfile);
 //        btnDeleteProfile = view.findViewById(R.id.btnDeleteProfile);
@@ -63,7 +64,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         txtNickName.setText(cursorNickName);
         txtScore.setText(String.valueOf(cursorScore));
         txtRank.setText(String.valueOf(cursorRank));
-        txtGender.setText(cursorGender);
+        if(cursorGender.equals("남성")){
+            ivGender.setImageResource(R.drawable.man_96);
+        }else if (cursorGender.equals("여성")){
+            ivGender.setImageResource(R.drawable.woman_96);
+        }else {
+            ivGender.setImageResource(R.drawable.gender_96);
+        }
         txtHeight.setText(String.valueOf(cursorHeight));
         txtWeight.setText(String.valueOf(cursorWeight));
         txtAge.setText(String.valueOf(cursorAge));
@@ -144,4 +151,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sqLiteDatabase = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL;", null);
+        cursor.moveToLast();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+
 }
