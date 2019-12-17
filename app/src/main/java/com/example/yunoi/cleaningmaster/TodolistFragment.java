@@ -54,6 +54,7 @@ public class TodolistFragment
     View view;
     private SQLiteDatabase db;
     private ArrayList<TodolistVo> list = new ArrayList<TodolistVo>();
+    private ArrayList<TodolistVo> alarmList = new ArrayList<>();
     private TodolistAdapter todolistAdapter;
     private LinearLayoutManager linearLayoutManager;
     public static ConstraintLayout todo_constraintLayout;
@@ -148,7 +149,7 @@ public class TodolistFragment
         linearLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        todolistAdapter = new TodolistAdapter(R.layout.todo_list_holder_layout, list, context);
+        todolistAdapter = new TodolistAdapter(context, R.layout.todo_list_holder_layout, alarmList);
         recyclerView.setAdapter(todolistAdapter);
 
         selectCleaningArea(groupText);//구역마다 저장한 할일들 가져오기
@@ -187,13 +188,13 @@ public class TodolistFragment
                             insertCleaningArea(new TodolistVo(currentYear, currentMonth, currentDay, groupText, task, 0, 0));
                             Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
                         }
-
-
+                        alarmList.add(new TodolistVo(task));
+                        list.add(new TodolistVo(task));
                     }
                 });
                 builder.setNegativeButton("취소", null);
                 builder.show();
-
+                todolistAdapter.notifyDataSetChanged();
 //                Fragment fragment = new AddEditAlarmFragment(); // 알림설정 프래그먼트로
 //                getActivity().getSupportFragmentManager()
 //                        .beginTransaction()
@@ -209,15 +210,15 @@ public class TodolistFragment
             public void onAlarmClick(View v, int position) {
                 AlarmUtils.checkAlarmPermissions(getActivity());
 
-                final TodolistVo alarm = list.get(position);
-                Log.d(TAG, "SetAlarmClickListener.alarm : "+ list.get(position).toString());
+                final TodolistVo alarm = alarmList.get(position);
+                Log.d(TAG, "SetAlarmClickListener.alarm : "+ alarmList.get(position).toString());
                 final Intent launchEditAlarmIntent =
                         AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
-                                context, AddEditAlarmActivity.EDIT_ALARM
+                                context, AddEditAlarmActivity.ADD_ALARM
                         );
                 launchEditAlarmIntent.putExtra("task", task);
                 launchEditAlarmIntent.putExtra(AddEditAlarmActivity.ALARM_EXTRA, alarm);
-                context.startActivity(launchEditAlarmIntent);
+                startActivity(launchEditAlarmIntent);
 //                final Intent i = buildAddEditAlarmActivityIntent(getContext(), EDIT_ALARM);
 //
 //                startActivity(i);

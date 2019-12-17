@@ -45,7 +45,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     private Context context;
     private int layout;
-    private ArrayList<TodolistVo> list;
+//    private ArrayList<TodolistVo> list;
     private ArrayList<TodolistVo> alarmList = new ArrayList<>();
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
@@ -60,13 +60,10 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public TodolistAdapter() {
     }
 
-    public TodolistAdapter(int todaylist_holder_layout, ArrayList<TodayListVO> list) {
-    }
-
-    public TodolistAdapter(int layout, ArrayList<TodolistVo> list, Context context) {
-        this.layout = layout;
-        this.list = list;
+    public TodolistAdapter(Context context, int layout, ArrayList<TodolistVo> alarmList) {
         this.context = context;
+        this.layout = layout;
+        this.alarmList = alarmList;
     }
 
     // 클릭 리스너 인터페이스
@@ -92,27 +89,23 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     @Override
     public void onBindViewHolder(@NonNull final TodolistAdapter.CustomViewHolder customViewHolder, final int position) {
         final Context context = customViewHolder.itemView.getContext();
-        final StrikeThroughPainting strikeThroughPainting = new StrikeThroughPainting(customViewHolder.todolist_text);
-        final String taskText = list.get(position).getTodolist_text();
+
+        final String taskText = alarmList.get(position).getTodolist_text();
 
         if (mDays == null) {
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
 
-        final TodolistVo alarm = getAlarm();
-//                list.get(position);
-        alarm.setLabel(taskText);
-        alarmList.add(alarm);
-        Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
-
-//        customViewHolder.todolist_text.setText(taskText + "\n" + AlarmUtils.getReadableTime(alarm.getTime())
-//                + " " + AlarmUtils.getAmPm(alarm.getTime()));
-//        +" "+buildSelectedDays(alarm)
-
-        final int isCheckClear = selectIsCheckClear(context);
-
+        final TodolistVo alarm = alarmList.get(position);
         customViewHolder.todolist_text.setText(taskText);
-        final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
+        customViewHolder.todolist_alramClocktxt.setText(AlarmUtils.getReadableTime(alarm.getTime()) + " " + AlarmUtils.getAmPm(alarm.getTime()));
+//        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
+
+        Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
+//
+//        final int isCheckClear = selectIsCheckClear(context);
+//
+//        final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
 
 //        //체크 유무를 가져옴.!!!
 //        final int check = list.get(position).getCheckcount();
@@ -293,7 +286,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String text = list.get(position).getTodolist_text();
+                        String text = alarmList.get(position).getTodolist_text();
 
                         final TodolistVo alarm = alarmList.get(position);
 
@@ -302,7 +295,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         // 알림삭제 (Cancel any pending notifications for this alarm)
                         AlarmReceiver.cancelReminderAlarm(context, alarm);
                         alarmList.remove(position);
-                        list.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text, v.getContext()); //DB 삭제부분
                         final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);
@@ -352,38 +344,38 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     @Override
     public int getItemCount() {
-        return list != null ? list.size() : 0;
+        return alarmList != null ? alarmList.size() : 0;
     }
 
-    private Spannable buildSelectedDays(TodolistVo alarm) {
-
-        final int numDays = 7;
-        final SparseBooleanArray days = alarm.getDays();
-
-        final SpannableStringBuilder builder = new SpannableStringBuilder();
-        ForegroundColorSpan span;
-
-        int startIndex, endIndex;
-        for (int i = 0; i < numDays; i++) {
-
-            startIndex = builder.length();
-
-            final String dayText = mDays[i];
-            builder.append(dayText);
-            builder.append(" ");
-
-            endIndex = startIndex + dayText.length();
-
-            final boolean isSelected = days.valueAt(i);
-            if (isSelected) {
-                span = new ForegroundColorSpan(Color.RED);
-                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-
-        return builder;
-
-    }
+//    private Spannable buildSelectedDays(TodolistVo alarm) {
+//
+//        final int numDays = 7;
+//        final SparseBooleanArray days = alarm.getDays();
+//
+//        final SpannableStringBuilder builder = new SpannableStringBuilder();
+//        ForegroundColorSpan span;
+//
+//        int startIndex, endIndex;
+//        for (int i = 0; i < numDays; i++) {
+//
+//            startIndex = builder.length();
+//
+//            final String dayText = mDays[i];
+//            builder.append(dayText);
+//            builder.append(" ");
+//
+//            endIndex = startIndex + dayText.length();
+//
+//            final boolean isSelected = days.valueAt(i);
+//            if (isSelected) {
+//                span = new ForegroundColorSpan(Color.RED);
+//                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+//        }
+//
+//        return builder;
+//
+//    }
 
     public void setAlarms(ArrayList<TodolistVo> alarms) {
         Log.d(TAG, "setAlarms");
@@ -419,32 +411,32 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     } // end of customViewHolder class
 
     //checkBox True 인경우 함수화
-    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
-
-        //현재 년,월,일
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        String year = new SimpleDateFormat("YYYY").format(date);
-        String month = new SimpleDateFormat("MM").format(date);
-        String day = new SimpleDateFormat("dd").format(date);
-
-        final int currentYear = Integer.parseInt(year);
-        final int currentMonth = Integer.parseInt(month);
-        final int currentDay = Integer.parseInt(day);
-
-        Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
-
-        TodolistFragment.score += 100;
-
-        //체크시 줄 생기는것
-        strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                .strokeWidth(4).totalTime(10_0L).strikeThrough();
-        //체크 True DB저장 , 스코어 저장
-        insertScore(TodolistFragment.score, context);
-        insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
-
-
-    }
+//    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
+//
+//        //현재 년,월,일
+//        Calendar calendar = Calendar.getInstance();
+//        Date date = calendar.getTime();
+//        String year = new SimpleDateFormat("YYYY").format(date);
+//        String month = new SimpleDateFormat("MM").format(date);
+//        String day = new SimpleDateFormat("dd").format(date);
+//
+//        final int currentYear = Integer.parseInt(year);
+//        final int currentMonth = Integer.parseInt(month);
+//        final int currentDay = Integer.parseInt(day);
+//
+//        Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
+//
+//        TodolistFragment.score += 100;
+//
+//        //체크시 줄 생기는것
+//        strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//        //체크 True DB저장 , 스코어 저장
+//        insertScore(TodolistFragment.score, context);
+//        insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
+//
+//
+//    }
 
     //스낵바 설정 함수화
     public void stnackBar(String txt) {

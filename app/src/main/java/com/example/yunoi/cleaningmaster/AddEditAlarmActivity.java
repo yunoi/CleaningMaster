@@ -73,8 +73,9 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getToolbarTitle());
 
-        Intent intent = getIntent();
-        final TodolistVo alarm = intent.getParcelableExtra(ALARM_EXTRA);
+//        Intent intent = getIntent();
+//        final TodolistVo alarm = intent.getParcelableExtra(ALARM_EXTRA);
+        final TodolistVo alarm = getAlarm();
         Log.d(TAG, "onCreate. getAlarm() : "+alarm.toString());
 //
 //        if(getSupportFragmentManager().findFragmentById(R.id.edit_alarm_frag_container) == null) {
@@ -115,6 +116,8 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         Intent intent1 = getIntent();
         String task = intent1.getStringExtra("task");
         tvTask.setText(task);
+
+        setDayCheckboxes(alarm);
 
         alarmSettings();
 
@@ -206,7 +209,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         alarm.setDay(TodolistVo.SAT, cbSat.isChecked());
         alarm.setDay(TodolistVo.SUN, cbSun.isChecked());
 
-        setDayCheckboxes(alarm);
 
         final int rowsUpdated = DBHelper.getInstance(this).updateAlarm(alarm);
 //        final int messageId = (rowsUpdated == 1) ? R.string.update_complete : R.string.update_failed;
@@ -260,21 +262,21 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-//private TodolistVo getAlarm() {
-//    switch (getMode()) {
-//        case EDIT_ALARM:
-//            return getIntent().getParcelableExtra(ALARM_EXTRA);
-//        case ADD_ALARM:
-//            final long id = DBHelper.getInstance(this).addAlarm();
-//            LoadAlarmsService.launchLoadAlarmsService(this);
-//            return new TodolistVo(id);
-//        case UNKNOWN:
-//        default:
-//            throw new IllegalStateException("Mode supplied as intent extra for " +
-//                    AddEditAlarmActivity.class.getSimpleName() + " must match value in " +
-//                    Mode.class.getSimpleName());
-//    }
-//}
+private TodolistVo getAlarm() {
+    switch (getMode()) {
+        case EDIT_ALARM:
+            return getIntent().getParcelableExtra(ALARM_EXTRA);
+        case ADD_ALARM:
+            final long id = DBHelper.getInstance(this).addAlarm();
+            LoadAlarmsService.launchLoadAlarmsService(this);
+            return new TodolistVo(id);
+        case UNKNOWN:
+        default:
+            throw new IllegalStateException("Mode supplied as intent extra for " +
+                    AddEditAlarmActivity.class.getSimpleName() + " must match value in " +
+                    Mode.class.getSimpleName());
+    }
+}
 
 
 //    private void delete() {
