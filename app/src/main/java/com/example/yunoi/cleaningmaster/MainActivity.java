@@ -1,7 +1,9 @@
 package com.example.yunoi.cleaningmaster;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -31,9 +33,28 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mainFragment;
     private Fragment profileFragment;
     private static final String TAG = "MainActivity";
+    private InitActionReceiver InitActionReceiver;
+    private IntentFilter intentFilter;
+
     //191212 am 11:20 도움말 이동에 관련된 SharedPreferences by 재훈
     SharedPreferences passTutorial;
     int tutorialState;
+
+    TodayListFragment todayListFragment; //오늘할일 프레그먼트
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        intentFilter=new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_DATE_CHANGED);
+        registerReceiver(InitActionReceiver,intentFilter);
+
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +67,13 @@ public class MainActivity extends AppCompatActivity {
         mainFragment = new MainFragment();
         pedomterFrgment=new PedomterFrgment();
         pedomterBar=new PedomterBar();
+        todayListFragment=new TodayListFragment();
         profileFragment=new ProfileFragment();
         calendarFragment=new CalendarFragment();
+
+
+        //채현 브로드캐스트 추가 데이터 초기화 부분!
+        InitActionReceiver=new InitActionReceiver();
 
         //191212 pm 03:40 다시 보지 않기 설정 안할 시 자동으로 도움말로 이동 by 재훈
         passTutorial = getSharedPreferences("change",MODE_PRIVATE);
@@ -57,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+
         // bottomMenu를 변경했을 때 그것을 감지하여 해당된 프래그먼트를 세팅해주는 리스너
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -65,14 +92,17 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_1:
                         setOnChangeFragment(0);
                         break;
-                    case R.id.action_2:
+                    case R.id.action_1_1:
                         setOnChangeFragment(1);
                         break;
-                    case R.id.action_3:
+                    case R.id.action_2:
                         setOnChangeFragment(2);
                         break;
-                    case R.id.action_4:
+                    case R.id.action_3:
                         setOnChangeFragment(3);
+                        break;
+                    case R.id.action_4:
+                        setOnChangeFragment(4);
                         break;
                 }
                 return true;
@@ -91,18 +121,22 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.coordinatorLayout, mainFragment);
                 ft.commit();
                 break;
+            case 1:
+                ft.replace(R.id.coordinatorLayout, todayListFragment);
+                ft.commit();
+                break;
                 //성민이꺼
-            case 1:ft.replace(R.id.coordinatorLayout,pedomterFrgment);
+            case 2:ft.replace(R.id.coordinatorLayout,pedomterFrgment);
                    ft.commit();
 
                 break;
                 //달력 항목 첫번째 생성
-            case 2:
+            case 3:
                 ft.replace(R.id.coordinatorLayout,calendarFragment);
                 ft.commit();
 
                 break;
-            case 3:
+            case 4:
 
                 break;
 

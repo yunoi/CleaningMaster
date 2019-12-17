@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ENABLED = "alarmState";
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 14);
+        super(context, "cleaningMasterDB", null, 15);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
@@ -60,6 +60,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 COL_SAT + " INTEGER NOT NULL, " +
                 COL_SUN + " INTEGER NOT NULL, " +
                 COL_IS_ENABLED + " INTEGER NOT NULL)" );
+        db.execSQL("CREATE TABLE PedTBL (year INTEGER , month INTEGER , day INTEGER ,step TEXT , kcal TEXT ,PRIMARY KEY (year   ,month,   day))");
+
     }
 
     @Override
@@ -69,6 +71,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS profileTBL;");
         db.execSQL("DROP TABLE IF EXISTS ischeckTBL;");
         db.execSQL("DROP TABLE IF EXISTS alarmTBL;");
+        db.execSQL("DROP TABLE IF EXISTS PedTBL");
         onCreate(db);
     }
 

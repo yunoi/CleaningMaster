@@ -8,6 +8,7 @@ import android.util.SparseBooleanArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import com.example.yunoi.cleaningmaster.TodolistVo;
 
 public class TodolistVo implements Parcelable{
 

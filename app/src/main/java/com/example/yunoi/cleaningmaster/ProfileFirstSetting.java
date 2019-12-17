@@ -4,17 +4,22 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
 public class ProfileFirstSetting extends Activity implements View.OnClickListener {
-    Button btnMale, btnFemale, btnProfileSave, btnPass;
+    Button btnProfileSave, btnPass;
+    ImageButton ibMale,ibFemale;
     EditText edtHeight, edtWeight, edtAge;
 
     private DBHelper dbHelper;
@@ -27,8 +32,8 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
         Stetho.initializeWithDefaults(this);
         setContentView(R.layout.profile_setting);
 
-        btnMale = findViewById(R.id.btnMale);
-        btnFemale = findViewById(R.id.btnFemale);
+        ibMale = findViewById(R.id.ibMale);
+        ibFemale = findViewById(R.id.ibFemale);
         btnProfileSave = findViewById(R.id.btnProfileSave);
         edtHeight = findViewById(R.id.edtHeight);
         edtWeight = findViewById(R.id.edtWeight);
@@ -95,9 +100,24 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                 edtWeight.addTextChangedListener(this);
             }
         });
-
-        btnFemale.setOnClickListener(this);
-        btnMale.setOnClickListener(this);
+        sqLiteDatabase = DBHelper.getInstance(getApplicationContext()).getWritableDatabase();
+        Intent intent = getIntent();
+        String data = intent.getStringExtra("nickName");
+        cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL WHERE NickName = '" + data + "';", null);
+        if (cursor.getCount() != 0) {
+            cursor.moveToLast();
+        }
+        cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
+        String cursorGender = cursor.getString(cursor.getColumnIndex("Gender"));
+        if(cursorGender.equals("여성")){
+            ibFemale.setBackgroundColor(Color.LTGRAY);
+            ibMale.setEnabled(false);
+        }else if (cursorGender.equals("남성")){
+            ibMale.setBackgroundColor(Color.LTGRAY);
+            ibFemale.setEnabled(false);
+        }
+        ibFemale.setOnClickListener(this);
+        ibMale.setOnClickListener(this);
         btnProfileSave.setOnClickListener(this);
         btnPass.setOnClickListener(this);
     }
@@ -105,28 +125,51 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         sqLiteDatabase = DBHelper.getInstance(getApplicationContext()).getWritableDatabase();
+        Intent intent = getIntent();
+        String data = intent.getStringExtra("nickName");
+        cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL WHERE NickName = '" + data + "';", null);
+        if (cursor.getCount() != 0) {
+            cursor.moveToLast();
+        }
+        cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
+        String cursorGender = cursor.getString(cursor.getColumnIndex("Gender"));
         switch (v.getId()){
-            case R.id.btnFemale :
-                sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "여성" + "';");
+            case R.id.ibFemale :
+                if(cursorGender.equals("성별")){
+                    sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "여성" + "';");
+                    ibFemale.setBackgroundColor(Color.LTGRAY);
+                    ibMale.setEnabled(false);
+                }else {
+                    sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "성별" + "';");
+                    ibFemale.setBackgroundColor(Color.TRANSPARENT);
+                    ibMale.setEnabled(true);
+                }
                 break;
-            case R.id.btnMale :
-                sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "남성" + "';");
+            case R.id.ibMale :
+                if(cursorGender.equals("성별")){
+                    sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "남성" + "';");
+                    ibMale.setBackgroundColor(Color.LTGRAY);
+                    ibFemale.setEnabled(false);
+                }else {
+                    sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "성별" + "';");
+                    ibMale.setBackgroundColor(Color.TRANSPARENT);
+                    ibFemale.setEnabled(true);
+                }
+
                 break;
             case R.id.btnProfileSave :
-                Intent intent = getIntent();
-                String data = intent.getStringExtra("nickName");
-
-                float height = Float.parseFloat(edtHeight.getText().toString());
-                float weight = Float.parseFloat(edtWeight.getText().toString());
-                int age = Integer.parseInt(edtAge.getText().toString());
-                cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL WHERE NickName = '" + data + "';", null);
-                if (cursor.getCount() != 0) {
-                    cursor.moveToLast();
+                if(edtHeight.getText().toString().equals("")||edtWeight.getText().toString().equals("")||
+                        edtAge.getText().toString().equals("")){
+                    Toast.makeText(this,"공백이 있습니다. 입력하세요",Toast.LENGTH_SHORT).show();
+                    return;
+                }else{
+                    float height = Float.parseFloat(edtHeight.getText().toString());
+                    float weight = Float.parseFloat(edtWeight.getText().toString());
+                    int age = Integer.parseInt(edtAge.getText().toString());
+                    sqLiteDatabase.execSQL("UPDATE profileTBL SET Height = " + height + ", Weight = " + weight + ", Age = " +
+                            age + " WHERE NickName = '" + cursorData + "';");
+                    cursor.close();
                 }
-                cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
-                sqLiteDatabase.execSQL("UPDATE profileTBL SET Height = " + height + ", Weight = " + weight + ", Age = " +
-                        age + " WHERE NickName = '" + cursorData + "';");
-                cursor.close();
                 EndPage();
                 break;
             case R.id.btnPass :
@@ -135,8 +178,19 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
         }
     }
     private void EndPage() {
-        Intent intent = new Intent(ProfileFirstSetting.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        int cursorHeight = cursor.getInt(cursor.getColumnIndex("Height"));
+        int cursorWeight = cursor.getInt(cursor.getColumnIndex("Weight"));
+        int cursorAge = cursor.getInt(cursor.getColumnIndex("Age"));
+        String cursorGender = cursor.getString(cursor.getColumnIndex("Gender"));
+        if(cursorHeight == 0 || cursorWeight==0 || cursorAge==0 || cursorGender.equals("성별") ){
+            Intent intent = new Intent(ProfileFirstSetting.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            Fragment profileFragment = new ProfileFragment();
+            Bundle bundle = new Bundle();
+            profileFragment.setArguments(bundle);
+            finish();
+        }
     }
 }

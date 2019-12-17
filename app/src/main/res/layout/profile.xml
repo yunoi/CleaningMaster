@@ -9,7 +9,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="20dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -22,7 +22,7 @@
                     android:layout_weight="1"
                     android:textColor="#024873"
                     android:textSize="20dp"
-                    android:text="닉네임" />
+                    android:text="닉네임 :" />
                 <TextView
                     android:id="@+id/txtNickName"
                     android:layout_width="match_parent"
@@ -31,13 +31,14 @@
                     android:textColor="#024873"
                     android:textSize="20dp"
                     android:text="닉네임?" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:text="점수 :"
                     android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="점수" />
+                    android:textSize="20dp" />
                 <TextView
                     android:id="@+id/txtScore"
                     android:layout_width="match_parent"
@@ -51,9 +52,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:text="등급 :"
                     android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="등급" />
+                    android:textSize="20dp" />
                 <TextView
                     android:id="@+id/txtRank"
                     android:layout_width="match_parent"
@@ -67,7 +68,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
