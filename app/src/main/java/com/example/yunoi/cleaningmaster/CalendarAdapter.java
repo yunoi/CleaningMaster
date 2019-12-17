@@ -96,25 +96,38 @@ public class CalendarAdapter extends BaseAdapter {
         cursor.moveToFirst();
 //        Log.d("tbl1",cursor.getString(cursor.getCount()));
         Cursor cursor1 = db.rawQuery("SELECT * FROM cleaningTBL ;", null);
+        Cursor cursor2 = db.rawQuery("SELECT year,month,day FROM cleaningTBL ;", null);
+//        while (cursor2.moveToPosition(position-6)){
+////            item.getDay();
+//        }
+        cursor2.moveToFirst();
 //        Log.d("tbl2",cursor1.getString(cursor1.getCount()));
         int size=cursor.getCount();
         int size2=cursor1.getCount();
-//        int cursorDay=cursor1.getInt(cursor1.getColumnIndex("day"));
+        int cursorYear=cursor2.getInt(cursor2.getColumnIndex("year"));
+        int cursorMonth=cursor2.getInt(cursor2.getColumnIndex("month"));
+        int cursorDay=cursor2.getInt(cursor2.getColumnIndex("day"));
         Log.d("tbl4",String.valueOf(size));
         Log.d("tbl5",String.valueOf(size2));
+        Log.d("tbl6",String.valueOf(cursorYear));
+        Log.d("tbl7",String.valueOf(cursorMonth));
+        Log.d("tbl8",String.valueOf(cursorDay));
+        if((cursorYear<=year)&&(cursorMonth<=(month+1))&&(cursorDay<=iToday)&&(cursorDay==(position-6))){
+            if(size==size2){
+                ivListResult.setVisibility(View.VISIBLE);
+                ivListResult.setImageResource(R.drawable.add);
+                ivListResult.setAlpha(50);
+            }else if(size!=size2){
+                ivListResult.setVisibility(View.VISIBLE);
+                ivListResult.setImageResource(R.drawable.backbutton);
+                ivListResult.setAlpha(50);
+            }else if(size==0&&size2==0){
+                ivListResult.setVisibility(View.INVISIBLE);
+            }
+        }
         cursor.close();
         cursor1.close();
-        if((size==size2)){
-            ivListResult.setVisibility(View.VISIBLE);
-            ivListResult.setImageResource(R.drawable.add);
-            ivListResult.setAlpha(50);
-        }else if(size!=size2){
-            ivListResult.setVisibility(View.VISIBLE);
-            ivListResult.setImageResource(R.drawable.backbutton);
-            ivListResult.setAlpha(50);
-        }else if(size2==0){
-            ivListResult.setVisibility(View.INVISIBLE);
-        }
+        cursor2.close();
         if (item.getDay() < 0) {
             ivListResult.setVisibility(View.INVISIBLE);
             switch (item.getDay()) {

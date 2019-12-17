@@ -11,19 +11,21 @@
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnMale"
+        <ImageButton
+            android:id="@+id/ibMale"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="남" />
+            android:background="@android:color/transparent"
+            android:src="@drawable/man_96" />
 
-        <Button
-            android:id="@+id/btnFemale"
+        <ImageButton
+            android:id="@+id/ibFemale"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="여" />
+            android:background="@android:color/transparent"
+            android:src="@drawable/woman_96" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:hint="000"
+            android:hint="000.00"
             android:inputType="numberDecimal"
             android:textColor="#024873"
             android:textSize="20dp" />
