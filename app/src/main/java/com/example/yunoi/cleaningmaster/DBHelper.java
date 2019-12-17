@@ -88,15 +88,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public long addAlarm() {
         Log.i(getClass().getSimpleName(), "addAlarm()...");
-        return addAlarm(new TodolistVo());
+        return addAlarm(new AlarmVO());
     }
 
-    long addAlarm(TodolistVo alarm) {
+    long addAlarm(AlarmVO alarm) {
         Log.i(getClass().getSimpleName(), "addAlarm(Alarm alarm) ...");
         return getWritableDatabase().insert("alarmTBL", null, AlarmUtils.toContentValues(alarm));
     }
 
-    public int updateAlarm(TodolistVo alarm) {
+    public int updateAlarm(AlarmVO alarm) {
         final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(alarm.getId()) };
         Log.i(getClass().getSimpleName(), "updateAlarm...");
@@ -104,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 .update("alarmTBL", AlarmUtils.toContentValues(alarm), where, whereArgs);
     }
 
-    public int deleteAlarm(TodolistVo alarm) {
+    public int deleteAlarm(AlarmVO alarm) {
         return deleteAlarm(alarm.getId());
     }
 
@@ -114,7 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return getWritableDatabase().delete("alarmTBL", where, whereArgs);
     }
 
-    public ArrayList<TodolistVo> getAlarms() {
+    public ArrayList<AlarmVO> getAlarms() {
         Log.i(getClass().getSimpleName(), "getAlarms()...");
         Cursor c = null;
 

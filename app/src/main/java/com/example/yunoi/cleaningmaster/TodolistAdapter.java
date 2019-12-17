@@ -46,7 +46,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private Context context;
     private int layout;
 //    private ArrayList<TodolistVo> list;
-    private ArrayList<TodolistVo> alarmList = new ArrayList<>();
+    private ArrayList<AlarmVO> alarmList = new ArrayList<>();
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
     private String[] mDays;
@@ -60,7 +60,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public TodolistAdapter() {
     }
 
-    public TodolistAdapter(Context context, int layout, ArrayList<TodolistVo> alarmList) {
+    public TodolistAdapter(Context context, int layout, ArrayList<AlarmVO> alarmList) {
         this.context = context;
         this.layout = layout;
         this.alarmList = alarmList;
@@ -72,7 +72,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     }
 
     public void setAlarmClickListener(alarmClickListener listener) {
-
         this.listener = listener;
     }
 
@@ -90,16 +89,16 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     public void onBindViewHolder(@NonNull final TodolistAdapter.CustomViewHolder customViewHolder, final int position) {
         final Context context = customViewHolder.itemView.getContext();
 
-        final String taskText = alarmList.get(position).getTodolist_text();
 
         if (mDays == null) {
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
 
-        final TodolistVo alarm = alarmList.get(position);
-        customViewHolder.todolist_text.setText(taskText);
+        final AlarmVO alarm = alarmList.get(position);
+
+        customViewHolder.todolist_text.setText(alarm.getLabel());
         customViewHolder.todolist_alramClocktxt.setText(AlarmUtils.getReadableTime(alarm.getTime()) + " " + AlarmUtils.getAmPm(alarm.getTime()));
-//        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
+        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
 
         Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
 //
@@ -286,9 +285,9 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String text = alarmList.get(position).getTodolist_text();
+                        String text = alarmList.get(position).getLabel();
 
-                        final TodolistVo alarm = alarmList.get(position);
+                        final AlarmVO alarm = alarmList.get(position);
 
                         Log.d(TAG, "for alarm delete position : "+position);
                         Log.d(TAG, "for alarm delete : "+alarmList.get(position).toString());
@@ -328,7 +327,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             }
         });
 
-        customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        customViewHolder.todolist_alram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Context c = view.getContext();
@@ -347,47 +346,47 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         return alarmList != null ? alarmList.size() : 0;
     }
 
-//    private Spannable buildSelectedDays(TodolistVo alarm) {
-//
-//        final int numDays = 7;
-//        final SparseBooleanArray days = alarm.getDays();
-//
-//        final SpannableStringBuilder builder = new SpannableStringBuilder();
-//        ForegroundColorSpan span;
-//
-//        int startIndex, endIndex;
-//        for (int i = 0; i < numDays; i++) {
-//
-//            startIndex = builder.length();
-//
-//            final String dayText = mDays[i];
-//            builder.append(dayText);
-//            builder.append(" ");
-//
-//            endIndex = startIndex + dayText.length();
-//
-//            final boolean isSelected = days.valueAt(i);
-//            if (isSelected) {
-//                span = new ForegroundColorSpan(Color.RED);
-//                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            }
-//        }
-//
-//        return builder;
-//
-//    }
+    private Spannable buildSelectedDays(AlarmVO alarm) {
 
-    public void setAlarms(ArrayList<TodolistVo> alarms) {
+        final int numDays = 7;
+        final SparseBooleanArray days = alarm.getDays();
+
+        final SpannableStringBuilder builder = new SpannableStringBuilder();
+        ForegroundColorSpan span;
+
+        int startIndex, endIndex;
+        for (int i = 0; i < numDays; i++) {
+
+            startIndex = builder.length();
+
+            final String dayText = mDays[i];
+            builder.append(dayText);
+            builder.append(" ");
+
+            endIndex = startIndex + dayText.length();
+
+            final boolean isSelected = days.valueAt(i);
+            if (isSelected) {
+                span = new ForegroundColorSpan(Color.RED);
+                builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        return builder;
+
+    }
+
+    public void setAlarms(ArrayList<AlarmVO> alarms) {
         Log.d(TAG, "setAlarms");
         alarmList = alarms;
         notifyDataSetChanged();
     }
 
-    private TodolistVo getAlarm() {
-        final long id = DBHelper.getInstance(context).addAlarm();
-        LoadAlarmsService.launchLoadAlarmsService(context);
-        return new TodolistVo(id);
-    }
+//    private TodolistVo getAlarm() {
+//        final long id = DBHelper.getInstance(context).addAlarm();
+//        LoadAlarmsService.launchLoadAlarmsService(context);
+//        return new TodolistVo(id);
+//    }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 

@@ -21,7 +21,7 @@ public final class LoadAlarmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(getClass().getSimpleName(), "onReceive ...");
-        final ArrayList<TodolistVo> alarms =
+        final ArrayList<AlarmVO> alarms =
                 intent.getParcelableArrayListExtra(LoadAlarmsService.ALARMS_EXTRA);
         mListener.onAlarmsLoaded(alarms);
     }
@@ -31,7 +31,7 @@ public final class LoadAlarmsReceiver extends BroadcastReceiver {
     }
 
     public interface OnAlarmsLoadedListener {
-        void onAlarmsLoaded(ArrayList<TodolistVo> alarms);
+        void onAlarmsLoaded(ArrayList<AlarmVO> alarms);
     }
 
 }
