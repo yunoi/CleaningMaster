@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +46,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private Context context;
     private int layout;
     private ArrayList<TodolistVo> list;
+    private ArrayList<TodolistVo> alarmList = new ArrayList<>();
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
     private String[] mDays;
@@ -94,11 +96,16 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
 
-        final TodolistVo alarm = list.get(position);
+        final TodolistVo alarm = getAlarm();
+//                list.get(position);
+        alarm.setLabel(taskText);
+        alarmList.add(alarm);
+        Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
 
-        customViewHolder.todolist_text.setText(taskText + "\n" + AlarmUtils.getReadableTime(alarm.getTime())
-                + " " + AlarmUtils.getAmPm(alarm.getTime()));
+//        customViewHolder.todolist_text.setText(taskText + "\n" + AlarmUtils.getReadableTime(alarm.getTime())
+//                + " " + AlarmUtils.getAmPm(alarm.getTime()));
 //        +" "+buildSelectedDays(alarm)
+
         final int isCheckClear = selectIsCheckClear(context);
 
         customViewHolder.todolist_text.setText(taskText);
@@ -263,8 +270,13 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                     public void onClick(DialogInterface dialog, int which) {
                         String text = list.get(position).getTodolist_text();
 
-                        //Cancel any pending notifications for this alarm
+                        final TodolistVo alarm = alarmList.get(position);
+
+                        Log.d(TAG, "for alarm delete position : "+position);
+                        Log.d(TAG, "for alarm delete : "+alarmList.get(position).toString());
+                        // 알림삭제 (Cancel any pending notifications for this alarm)
                         AlarmReceiver.cancelReminderAlarm(context, alarm);
+                        alarmList.remove(position);
                         list.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text, v.getContext()); //DB 삭제부분
@@ -350,10 +362,15 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     public void setAlarms(ArrayList<TodolistVo> alarms) {
         Log.d(TAG, "setAlarms");
-        list = alarms;
+        alarmList = alarms;
         notifyDataSetChanged();
     }
 
+    private TodolistVo getAlarm() {
+        final long id = DBHelper.getInstance(context).addAlarm();
+        LoadAlarmsService.launchLoadAlarmsService(context);
+        return new TodolistVo(id);
+    }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -362,6 +379,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         private SwipeLayout swipe_sample1;
         private LinearLayout todo_linearLayout;
         private CheckBox todolist_checkBox;
+        private TextView todolist_alramReaptTxt, todolist_alramClocktxt;
+
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -370,6 +389,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             swipe_sample1 = itemView.findViewById(R.id.swipe_sample1);
             todo_linearLayout = itemView.findViewById(R.id.todo_linearLayout);
             todolist_checkBox = itemView.findViewById(R.id.todolist_checkBox);
+            todolist_alramReaptTxt = itemView.findViewById(R.id.todolist_alramReaptTxt);
+            todolist_alramClocktxt = itemView.findViewById(R.id.todolist_alramClocktxt);
 
 
         }   // end of constructor

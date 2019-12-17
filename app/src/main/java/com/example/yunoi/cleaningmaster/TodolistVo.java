@@ -254,7 +254,8 @@ public class TodolistVo implements Parcelable{
         this.sun = sun;
     }
 
-    ////////////////////////////////////////////////
+    //////////////////////////////////////////////// 알람 ///////////////////////////////////////////////
+
     private TodolistVo(Parcel in) {
         Log.i(getClass().getSimpleName(), "Creating database...");
         id = in.readLong();
@@ -263,9 +264,6 @@ public class TodolistVo implements Parcelable{
         allDays = in.readSparseBooleanArray();
         isEnabled = in.readByte() != 0;
 
-        //ADD VALUE
-        isSnooze = in.readByte() != 0;
-        colorTitle = in.readString();
     }
 
     public static final Parcelable.Creator<TodolistVo> CREATOR = new Parcelable.Creator<TodolistVo>() {
@@ -293,9 +291,6 @@ public class TodolistVo implements Parcelable{
         parcel.writeSparseBooleanArray(allDays);
         parcel.writeByte((byte) (isEnabled ? 1 : 0));
 
-        //ADD VALUE
-        parcel.writeByte((byte) (isSnooze ? 1 : 0));
-        parcel.writeString(colorTitle);
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -316,8 +311,6 @@ public class TodolistVo implements Parcelable{
     private String label;
     private SparseBooleanArray allDays;
     private boolean isEnabled;
-    private boolean isSnooze;
-    private String colorTitle;
 
     public TodolistVo() {
         this(NO_ID);
@@ -336,17 +329,6 @@ public class TodolistVo implements Parcelable{
         this.time = time;
         this.label = label;
         this.allDays = buildDaysArray(days);
-    }
-
-
-    //ADD VALUE
-    public TodolistVo(long id, long time, String label, boolean isSnooze, String colorTitle, @Days int... days ) {
-        this.id = id;
-        this.time = time;
-        this.label = label;
-        this.allDays = buildDaysArray(days);
-        this.isSnooze = isSnooze;
-        this.colorTitle = colorTitle;
     }
 
     public long getId() {
@@ -398,9 +380,6 @@ public class TodolistVo implements Parcelable{
                 ", allDays=" + allDays +
                 ", isEnabled=" + isEnabled + "}'";
     }
-
-
-
 
     public int notificationId() {
         final long id = getId();
