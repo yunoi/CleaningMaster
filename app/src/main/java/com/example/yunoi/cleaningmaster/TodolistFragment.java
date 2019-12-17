@@ -42,6 +42,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -153,6 +154,17 @@ public class TodolistFragment
 
         //list 추가 + todolist 알람 설정
 
+        //현재 년,월,일
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        String year = new SimpleDateFormat("YYYY").format(date);
+        String month = new SimpleDateFormat("MM").format(date);
+        String day = new SimpleDateFormat("dd").format(date);
+
+        final int currentYear = Integer.parseInt(year);
+        final int currentMonth = Integer.parseInt(month);
+        final int currentDay = Integer.parseInt(day);
+
         actionbar_todoBtnAddlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -169,7 +181,7 @@ public class TodolistFragment
                         if (task.equals("")) {
                             Toast.makeText(v.getContext(), "할 일을 적어주세요!", Toast.LENGTH_SHORT).show();
                         } else {
-                            insertCleaningArea(new TodolistVo(0, 0, 0, groupText, task, 0, 0));
+                            insertCleaningArea(new TodolistVo(currentYear, currentMonth, currentDay, groupText, task, 0, 0));
                             Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
                         }
 

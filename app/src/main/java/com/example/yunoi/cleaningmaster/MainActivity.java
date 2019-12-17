@@ -3,6 +3,7 @@ package com.example.yunoi.cleaningmaster;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences passTutorial;
     int tutorialState;
 
+    TodayListFragment todayListFragment; //오늘할일 프레그먼트
+
 
 
     @Override
@@ -64,8 +67,10 @@ public class MainActivity extends AppCompatActivity {
         mainFragment = new MainFragment();
         pedomterFrgment=new PedomterFrgment();
         pedomterBar=new PedomterBar();
+        todayListFragment=new TodayListFragment();
         profileFragment=new ProfileFragment();
         calendarFragment=new CalendarFragment();
+
 
         //채현 브로드캐스트 추가 데이터 초기화 부분!
         InitActionReceiver=new InitActionReceiver();
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+
         // bottomMenu를 변경했을 때 그것을 감지하여 해당된 프래그먼트를 세팅해주는 리스너
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -86,14 +92,17 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_1:
                         setOnChangeFragment(0);
                         break;
-                    case R.id.action_2:
+                    case R.id.action_1_1:
                         setOnChangeFragment(1);
                         break;
-                    case R.id.action_3:
+                    case R.id.action_2:
                         setOnChangeFragment(2);
                         break;
-                    case R.id.action_4:
+                    case R.id.action_3:
                         setOnChangeFragment(3);
+                        break;
+                    case R.id.action_4:
+                        setOnChangeFragment(4);
                         break;
                 }
                 return true;
@@ -112,18 +121,22 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.coordinatorLayout, mainFragment);
                 ft.commit();
                 break;
+            case 1:
+                ft.replace(R.id.coordinatorLayout, todayListFragment);
+                ft.commit();
+                break;
                 //성민이꺼
-            case 1:ft.replace(R.id.coordinatorLayout,pedomterFrgment);
+            case 2:ft.replace(R.id.coordinatorLayout,pedomterFrgment);
                    ft.commit();
 
                 break;
                 //달력 항목 첫번째 생성
-            case 2:
+            case 3:
                 ft.replace(R.id.coordinatorLayout,calendarFragment);
                 ft.commit();
 
                 break;
-            case 3:
+            case 4:
 
                 break;
 

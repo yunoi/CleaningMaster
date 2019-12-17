@@ -54,6 +54,7 @@
                 android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/todolist_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/alram" />
 
@@ -62,27 +63,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/todolist_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/alarmrepeat" />
 
-            <CheckBox
-                android:id="@+id/todolist_checkBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <lib.mozidev.me.extextview.ExTextView
                 android:id="@+id/todolist_text"
@@ -90,14 +82,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:text="할 일 텍스트"
                 android:textColor="#0365BC"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/todolist_alram"
-                app:layout_constraintStart_toEndOf="@+id/todolist_checkBox"
+
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -115,7 +108,7 @@
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/todolist_text"
-                android:visibility="gone"
+                android:visibility="visible"
                 />
 
             <TextView
@@ -132,7 +125,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/todolist_alramClocktxt"
                 app:layout_constraintTop_toBottomOf="@+id/todolist_text"
-                android:visibility="gone"
+                android:visibility="visible"
 
                 />
 
