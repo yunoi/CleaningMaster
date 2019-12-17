@@ -24,8 +24,11 @@ public class CalendarAdapter extends BaseAdapter {
     public ArrayList<CalendarDAO> items;
     public LayoutInflater layoutInflater;
     private SQLiteDatabase db;
+    ArrayList<Integer> yearList = new ArrayList<Integer>();
+    ArrayList<Integer> monthList = new ArrayList<Integer>();
+    ArrayList<Integer> dayList = new ArrayList<Integer>();
 
-
+    int size1,size2,cursorYear,cursorMonth,cursorDay;
     //    public CalendarAdapter(Context mContext) {
 //        this.context = mContext;
 //        this.layout = R.layout.calendar_item;
@@ -88,46 +91,55 @@ public class CalendarAdapter extends BaseAdapter {
         }
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
-        Log.d("tbl1",String.valueOf(year));
-        Log.d("tbl2",String.valueOf(month));
-        Log.d("tbl3",String.valueOf(iToday));
+//        Log.d("tbl1",String.valueOf(year));
+//        Log.d("tbl2",String.valueOf(month));
+//        Log.d("tbl3",String.valueOf(iToday));
         db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE checkCount="+1+" AND year="+year+" AND month="+(month+1)+" AND day="+iToday+";", null);
-        cursor.moveToFirst();
+        //오늘 날의 성공한 리스트 갯수
+        Cursor cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE checkCount=" + 1 + " AND year=" + year + " AND month=" + (month + 1) + " AND day=" + iToday + ";", null);
 //        Log.d("tbl1",cursor.getString(cursor.getCount()));
-        Cursor cursor1 = db.rawQuery("SELECT * FROM cleaningTBL ;", null);
+        //오늘의 리스트 총 갯수
+        Cursor cursor1 = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE year=" + year + " AND month=" + (month + 1) + " AND day=" + iToday + ";", null);
         Cursor cursor2 = db.rawQuery("SELECT year,month,day FROM cleaningTBL ;", null);
-//        while (cursor2.moveToPosition(position-6)){
-////            item.getDay();
-//        }
-        cursor2.moveToFirst();
-//        Log.d("tbl2",cursor1.getString(cursor1.getCount()));
-        int size=cursor.getCount();
-        int size2=cursor1.getCount();
-        int cursorYear=cursor2.getInt(cursor2.getColumnIndex("year"));
-        int cursorMonth=cursor2.getInt(cursor2.getColumnIndex("month"));
-        int cursorDay=cursor2.getInt(cursor2.getColumnIndex("day"));
-        Log.d("tbl4",String.valueOf(size));
-        Log.d("tbl5",String.valueOf(size2));
-        Log.d("tbl6",String.valueOf(cursorYear));
-        Log.d("tbl7",String.valueOf(cursorMonth));
-        Log.d("tbl8",String.valueOf(cursorDay));
-        if((cursorYear<=year)&&(cursorMonth<=(month+1))&&(cursorDay<=iToday)&&(cursorDay==(position-6))){
-            if(size==size2){
-                ivListResult.setVisibility(View.VISIBLE);
-                ivListResult.setImageResource(R.drawable.add);
-                ivListResult.setAlpha(50);
-            }else if(size!=size2){
-                ivListResult.setVisibility(View.VISIBLE);
-                ivListResult.setImageResource(R.drawable.backbutton);
-                ivListResult.setAlpha(50);
-            }else if(size==0&&size2==0){
-                ivListResult.setVisibility(View.INVISIBLE);
+        size1 = cursor.getCount();
+        size2 = cursor1.getCount();
+
+        while (cursor2.moveToNext()) {
+            cursorYear = cursor2.getInt(cursor2.getColumnIndex("year"));
+            cursorMonth = cursor2.getInt(cursor2.getColumnIndex("month"));
+            cursorDay = cursor2.getInt(cursor2.getColumnIndex("day"));
+            yearList.add(cursorYear);
+            monthList.add(cursorMonth);
+            dayList.add(cursorDay);
+//            Log.d("cal1",String.valueOf(cursorYear));
+//            Log.d("cal2",String.valueOf(cursorMonth));
+//            Log.d("cal3",String.valueOf(cursorDay));
+        }
+
+        for (int i = 0; (i < dayList.size()); i++) {
+//            Log.d("cal4",String.valueOf(dayList.get(i)));
+            if ((yearList.get(i)<=year)&&(monthList.get(i)<=(month+1))&&(dayList.get(i)<=iToday)) {
+//                Log.d("cal5",String.valueOf(dayList.get(i)));
+                if ((yearList.get(i)<=year)&&(monthList.get(i)<=(month+1))&&(dayList.get(i)<=iToday)&&(dayList.get(i) == (position - 6))) {
+                    if (size1 == size2) {
+                        ivListResult.setVisibility(View.VISIBLE);
+                        ivListResult.setImageResource(R.drawable.success_32);
+                        ivListResult.setAlpha(40);
+                    } else if (size1 != size2) {
+                        ivListResult.setVisibility(View.VISIBLE);
+                        ivListResult.setImageResource(R.drawable.fail_32);
+                        ivListResult.setAlpha(40);
+                    } else if (size1 == 0 && size2 == 0) {
+                        ivListResult.setVisibility(View.INVISIBLE);
+                    }
+                }
             }
         }
+
         cursor.close();
         cursor1.close();
         cursor2.close();
+        //달력에 요일 표시 및 날짜 표시-DB연결 X.
         if (item.getDay() < 0) {
             ivListResult.setVisibility(View.INVISIBLE);
             switch (item.getDay()) {
@@ -164,8 +176,6 @@ public class CalendarAdapter extends BaseAdapter {
         } else if (item.getDay() == 0) {
             tvCalendarDay.setVisibility(View.INVISIBLE);
             ivListResult.setVisibility(View.INVISIBLE);
-//            tvCalendarDay.setVisibility(View.VISIBLE);
-//            tvCalendarDay.setTextColor(Color.GRAY);
         } else {
             tvCalendarDay.setVisibility(View.VISIBLE);
             tvCalendarDay.setText("" + item.getDay());
