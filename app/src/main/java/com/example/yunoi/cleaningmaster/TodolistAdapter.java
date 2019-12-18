@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -53,6 +54,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     private int checkSize;
     private static final String TAG = "Adapter";
     private AlarmManager alarmManager;
+    private int selectedColor;
 
     //생성자
 
@@ -347,7 +349,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
     }
 
     private Spannable buildSelectedDays(AlarmVO alarm) {
-
+        selectedColor = ContextCompat.getColor(context, R.color.colorPrimaryDark);
+        int primaryColor = ContextCompat.getColor(context, R.color.colorAccent);
         final int numDays = 7;
         final SparseBooleanArray days = alarm.getDays();
 
@@ -367,7 +370,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
             final boolean isSelected = days.valueAt(i);
             if (isSelected) {
-                span = new ForegroundColorSpan(Color.RED);
+                span = new ForegroundColorSpan(primaryColor);
                 builder.setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }

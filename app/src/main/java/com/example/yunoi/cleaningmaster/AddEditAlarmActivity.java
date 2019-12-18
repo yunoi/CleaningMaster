@@ -49,13 +49,11 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
     EditText alerEdt;
     private TimePicker timePicker;
-    private TextView tvDate, tvTask;
-    private ImageView ivCalendar;
+    private TextView tvTask;
     private Button btnOk, btnCancel;
     private Calendar calendar = Calendar.getInstance(); // 캘린더 인스턴스 생성
 
     // 요일 관련 변수
-    private TextView txtDayCheck;
     private CheckBox cbMon;
     private CheckBox cbTue;
     private CheckBox cbWed;
@@ -88,9 +86,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
         alerEdt = findViewById(R.id.alert_todolist_alerEdt);
         timePicker = findViewById(R.id.timePicker);
-        tvDate = findViewById(R.id.tvDate);
         tvTask = findViewById(R.id.tvTask);
-        ivCalendar = findViewById(R.id.ivCalendar);
         btnOk = findViewById(R.id.btnOk);
         btnCancel = findViewById(R.id.btnCancel);
 
@@ -101,16 +97,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         cbFri = findViewById(R.id.cbFriday);
         cbSat = findViewById(R.id.cbSaturday);
         cbSun = findViewById(R.id.cbSunday);
-        txtDayCheck = findViewById(R.id.txtDayCheck);
-        //오늘 날짜 입력부분
-        tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        // 날짜선택창 불러오기
-        ivCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-            }
-        });
 
         tvTask.setText(getAlarm().getLabel());
 //        // 청소내용 받아오기
@@ -191,11 +177,11 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             alarm.setTime(calendar.getTimeInMillis());
         }
 
-        // 현재보다 이전이면 등록 못하도록
-        if (calendar.before(Calendar.getInstance())) {
-            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
-            return;
-        }
+//        // 현재보다 이전이면 등록 못하도록
+//        if (calendar.before(Calendar.getInstance())) {
+//            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
+//            return;
+//        }
         Log.d(TAG, "alarmSettings. time: "+ alarm.getTime());
 
         alarm.setLabel(tvTask.getText().toString());
@@ -251,20 +237,19 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
-    // 날짜 선택 DatePicker Dialog 메소드
-    private void showDialog() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // 데이터피커에서 선택한 날짜 처리 하는 부분
-                tvDate.setText(String.valueOf(year +"-"+(monthOfYear+1)+"-"+dayOfMonth));
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear+1);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            }
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
-        pickerDialog.show();
-    }
+//    // 날짜 선택 DatePicker Dialog 메소드
+//    private void showDialog() {
+//        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                // 데이터피커에서 선택한 날짜 처리 하는 부분
+//                calendar.set(Calendar.YEAR, year);
+//                calendar.set(Calendar.MONTH, monthOfYear+1);
+//                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//            }
+//        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
+//        pickerDialog.show();
+//    }
 
 
 private AlarmVO getAlarm() {

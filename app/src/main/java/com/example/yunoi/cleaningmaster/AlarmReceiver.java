@@ -16,6 +16,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 
+import org.mozilla.javascript.tools.jsc.Main;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -53,7 +55,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         builder.setSmallIcon(R.drawable.addalram);
         builder.setColor(ContextCompat.getColor(context, R.color.colorAccent));
-        builder.setContentTitle(context.getString(R.string.app_name));
+        builder.setContentTitle("청소하실 시간이에요!");
         builder.setContentText(alarm.getLabel());
         builder.setTicker(alarm.getLabel());
         builder.setVibrate(new long[] {500,500,500});
