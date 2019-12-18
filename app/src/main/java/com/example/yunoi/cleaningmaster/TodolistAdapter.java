@@ -128,7 +128,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         alarmList.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text, v.getContext()); //DB 삭제부분
-                        final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);
+                        final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);  // 알람 DB삭제
 
                         Snackbar snackbar = Snackbar.make(customViewHolder.todo_linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
@@ -263,6 +263,5 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         Log.d(TAG, "DB 삭제됨");
 
     }
-
 
 }
