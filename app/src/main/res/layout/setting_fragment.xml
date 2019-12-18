@@ -72,13 +72,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/setting_pfofileDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="46dp"
         android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintHorizontal_bias="0.686"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/setting_goProfile"

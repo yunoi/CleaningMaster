@@ -18,10 +18,10 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.242"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.232"
+        app:layout_constraintVertical_bias="0.145"
         app:progress_end_color="#cacdf9"
         app:progress_shader="sweep"
         app:progress_start_color="#4fb6ff"
@@ -33,19 +33,17 @@
 
     <Chronometer
         android:id="@+id/chronometer"
-        android:layout_width="78dp"
-        android:layout_height="16dp"
+        android:layout_width="82dp"
+        android:layout_height="19dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="48dp"
         android:format="%s"
         android:gravity="center"
         android:textSize="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/day_Min"
         app:layout_constraintEnd_toEndOf="@+id/textMinute"
-        app:layout_constraintHorizontal_bias="0.813"
+        app:layout_constraintHorizontal_bias="0.888"
         app:layout_constraintStart_toStartOf="@+id/day_Min" />
 
 
@@ -117,32 +115,30 @@
 
     <TextView
         android:id="@+id/textMinute"
-        android:layout_width="117dp"
+        android:layout_width="109dp"
         android:layout_height="26dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:gravity="center"
         android:hint="진행시간"
         android:textColor="#000000"
         android:textSize="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/chronometer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="@+id/day_Min" />
 
 
     <ImageButton
         android:id="@+id/ivBtnBar"
         android:layout_width="41dp"
-        android:layout_height="42dp"
+        android:layout_height="46dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="76dp"
-        android:background="@mipmap/run"
+        android:background="@drawable/ic_icon_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textMinute"
         app:layout_constraintHorizontal_bias="0.18"
@@ -155,31 +151,62 @@
         android:layout_width="41dp"
         android:layout_height="42dp"
         android:layout_marginStart="148dp"
-        android:background="@mipmap/stop"
+        android:background="@drawable/ic_icon_stop"
         app:layout_constraintBottom_toBottomOf="@+id/ivBtnBar"
         app:layout_constraintStart_toEndOf="@+id/ivBtnBar" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="29dp"
+        android:layout_width="44dp"
         android:layout_height="39dp"
-        android:layout_marginBottom="12dp"
-        android:background="@mipmap/run"
+        android:background="@drawable/ic_cleaning"
         app:layout_constraintBottom_toTopOf="@+id/textStep"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="107dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="45dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/ic_calories"
         app:layout_constraintStart_toStartOf="@+id/day_Kcal"
-        app:layout_constraintTop_toTopOf="@+id/day_Kcal"
-        app:srcCompat="@mipmap/kcal" />
+        app:layout_constraintTop_toTopOf="@+id/day_Kcal" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="21dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivbtnTwo"
+        app:layout_constraintEnd_toEndOf="@+id/chronometer"
+        app:layout_constraintTop_toBottomOf="@+id/day_Min"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/yesyes" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="53dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/textMinute"
+        app:layout_constraintStart_toStartOf="@+id/textMinute"
+        app:layout_constraintTop_toTopOf="@+id/day_Min"
+        app:srcCompat="@drawable/ic_stopwatch" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="20dp"
+        android:layout_height="22dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivBtnBar"
+        app:layout_constraintEnd_toEndOf="@+id/ivBtnBar"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/ivBtnBar"
+        app:srcCompat="@drawable/damdam" />
 
 
 </android.support.constraint.ConstraintLayout>
