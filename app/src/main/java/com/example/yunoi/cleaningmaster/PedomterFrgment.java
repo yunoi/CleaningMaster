@@ -45,11 +45,9 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     private CircleProgressBar day_Graph=null;
     private CircleProgressBar day_Kcal=null;
     private CircleProgressBar day_Min=null;
-    private long lastPasue;
     private Context mContext;
     private Activity activity;
     private Thread progressThread;
-    private boolean Yes_No;
     static PedomterSensor sensorService;
     static Chronometer chronometer;
     private TextView textStep , textKcal , textMinute;
@@ -64,8 +62,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     Calendar calendar;
     String ksm;
     String ksm2;
-
-
+    boolean check=false;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -90,8 +87,38 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         ivBtnBar.setOnClickListener(this);
         ivbtnTwo.setOnClickListener(this);
         calendar=Calendar.getInstance();
+     //   CheckInsertData();
      //   Stetho.initializeWithDefaults(this);
         return view;
+    }
+
+    public boolean CheckInsertData() {
+//        int cDay = calendar.get(Calendar.DAY_OF_MONTH);
+//        int bDay = cDay - 7;
+        int aYear = calendar.get(Calendar.YEAR);
+        int bMonth=calendar.get(Calendar.MONTH+1);
+        int cDay=calendar.get(Calendar.DAY_OF_MONTH);
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        ArrayList<Integer> checkCalendar = new ArrayList<>();
+        Cursor curCalendar = db.rawQuery("SELECT year , month , day FROM PedTBL WHERE year= "+ aYear +" AND  month= "+bMonth+" AND day = " +cDay+";", null);
+        while (curCalendar.moveToNext()){
+            curCalendar.getString(0);
+            curCalendar.getString(1);
+            curCalendar.getString(2);
+
+//           checkCalendar.add(Integer.parseInt(curCalendar.getString(0)));
+//           checkCalendar.add(Integer.parseInt(curCalendar.getString(1)));
+//           checkCalendar.add(Integer.parseInt(curCalendar.getString(2)));
+        }
+        if(checkCalendar.size() > 0){
+            check=false; // 데이터 x
+        }else{
+            check=true; // 데이터 ㅇ
+        }
+        return check;
+
+
+
     }
 
     @Override
@@ -165,6 +192,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             // 시작버튼
             case R.id.ivBtnBar :
+
                 if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1)
                     intent = new Intent(activity.getApplicationContext(),PedomterSensor.class);
                 activity.startService(intent);
@@ -177,14 +205,23 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
             // 중지 버튼
 
             case R.id.ivbtnTwo :
-                insert(new PedColumnVO(calendar.get(Calendar.YEAR)
-                ,calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DAY_OF_MONTH),ksm,ksm2));
+                boolean testData=false;
+                testData=CheckInsertData();
+                if(testData){
+                    activity.stopService(intent);
+                    toastDisplay("데이터가 존재합니다");
+                }else{
+                    insert(new PedColumnVO(calendar.get(Calendar.YEAR)
+                            ,calendar.get(Calendar.MONTH+1),calendar.get(Calendar.DAY_OF_MONTH),ksm,ksm2));
+                }
+
                 toastDisplay("만보기 중단");
                 chronometer.stop();
                 //크로미터 정지
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 // 센서값 안받기
-                activity.stopService(intent);
+
+
                 onStop();
                 return;
         }
@@ -199,15 +236,10 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         public void onReceive(final Context context, Intent intent) {
             // SensorService 클래스에서 ksm 값을 받는다
             // 걸음값
-            String ksm;
             ksm = intent.getStringExtra("ksm");
-            // 칼로리값
-            String ksm2;
             ksm2=intent.getStringExtra("ksm2");
             Log.d(LOG_TAG,"onReceive"+ksm);
             // 정지 -> 통계를 볼때 스레드 오류.
-
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -232,8 +264,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
                 }
             }).start();
 
-
-
             // 값을 Toast로 확인한다
           //  Toast.makeText(context,""+ksm,Toast.LENGTH_LONG).show();
             // 값을 TextView 로 확인한다
@@ -246,9 +276,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
                     day_Kcal.setProgress((int) Float.parseFloat(reading));
                 }
             });
-
-
-
             // 다이얼로그 창을 띄우기 -> 거기서 카운트가 10000이 된다면 스레드 센서 스탑
 
 
@@ -289,11 +316,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         });
         progressThread.start();
     }
-
-
-
-
-    private void customActionBar(LayoutInflater inflater) {
+    public void customActionBar(LayoutInflater inflater) {
 
         ActionBar actionBar=((MainActivity)getActivity()).getSupportActionBar();
         // Custom Actionbar 사용하기 위해 CustomEnabled을 true 시키고 필요 없는 것은 false 시킨다
@@ -322,10 +345,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
 //            }
 //        }); //액션바위에 add버튼
     }
-    private void toastDisplay(String s)
-    {
-        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
-    }
 
     public void insert(PedColumnVO pedColumnVO) {
 
@@ -337,14 +356,11 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
 
         // DB 오픈
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-
         db.execSQL("INSERT INTO PedTBL(year,month,day,step,kcal)" +
                 "VALUES(" + year + "," + month + "," + day + ", '" + uStep + "', '" + uKcal + "');");
         // DB를 사용후 종료시키기
         db.close();
     }
-
-
     public ArrayList<String> getResult(PedColumnVO pedColumnVO){
 
         final    int year = pedColumnVO.getYear();
@@ -380,8 +396,8 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     }
 
 
-
-
-
+    private void toastDisplay(String s)
+    {
+        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+    }
 }
-
