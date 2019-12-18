@@ -13,23 +13,22 @@
         android:layout_width="401dp"
         android:layout_height="143dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.242"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:progress_end_color="#585c8e"
+        app:layout_constraintVertical_bias="0.232"
+        app:progress_end_color="#cacdf9"
         app:progress_shader="sweep"
-        app:progress_start_color="#131225"
+        app:progress_start_color="#4fb6ff"
         app:progress_start_degree="180"
         app:progress_stroke_cap="round"
-        app:progress_stroke_width="18dp"
+        app:progress_stroke_width="10dp"
+        app:progress_text_color="#ffffff"
         app:style="solid_line" />
 
     <Chronometer
@@ -88,13 +87,13 @@
         android:id="@+id/textStep"
         android:layout_width="84dp"
         android:layout_height="31dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="76dp"
         android:gravity="center"
         android:text="Step :0"
         android:textColor="#000000"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.543"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/day_Graph" />
 
@@ -134,6 +133,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/day_Min" />
 
+
     <ImageButton
         android:id="@+id/ivBtnBar"
         android:layout_width="41dp"
@@ -154,36 +154,20 @@
         android:id="@+id/ivbtnTwo"
         android:layout_width="41dp"
         android:layout_height="42dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginStart="148dp"
         android:background="@mipmap/stop"
         app:layout_constraintBottom_toBottomOf="@+id/ivBtnBar"
-        app:layout_constraintEnd_toStartOf="@+id/ivbtnThree"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toEndOf="@+id/ivBtnBar" />
-
-    <ImageButton
-        android:id="@+id/ivbtnThree"
-        android:layout_width="39dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="140dp"
-        android:layout_marginLeft="140dp"
-        android:background="@mipmap/test01"
-        app:layout_constraintBottom_toBottomOf="@+id/ivbtnTwo"
         app:layout_constraintStart_toEndOf="@+id/ivBtnBar" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="29dp"
         android:layout_height="39dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="12dp"
         android:background="@mipmap/run"
         app:layout_constraintBottom_toTopOf="@+id/textStep"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView

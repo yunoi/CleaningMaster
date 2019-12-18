@@ -53,7 +53,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     static PedomterSensor sensorService;
     static Chronometer chronometer;
     private TextView textStep , textKcal , textMinute;
-    ImageButton ivBtnBar , ivbtnTwo , ivbtnThree;
+    ImageButton ivBtnBar , ivbtnTwo;
     Intent intent;
     final static int[] timeProgress = {0};
     ArrayList<String> list = new ArrayList<>();
@@ -79,7 +79,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         day_Min=view.findViewById(R.id.day_Min);
         ivBtnBar=view.findViewById(R.id.ivBtnBar);
         ivbtnTwo=view.findViewById(R.id.ivbtnTwo);
-        ivbtnThree=view.findViewById(R.id.ivbtnThree);
         chronometer=view.findViewById(R.id.chronometer);
         // 저장된 값을 불러오기 위한 같은 네임파일을 찾는다
         SharedPreferences sharedPreferences =activity.getSharedPreferences("dSave",MODE_PRIVATE);
@@ -90,7 +89,6 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         textStep.setText(text);
         ivBtnBar.setOnClickListener(this);
         ivbtnTwo.setOnClickListener(this);
-        ivbtnThree.setOnClickListener(this);
         calendar=Calendar.getInstance();
      //   Stetho.initializeWithDefaults(this);
         return view;
@@ -189,41 +187,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
                 activity.stopService(intent);
                 onStop();
                 return;
-            case R.id.ivbtnThree :
-
-//                ArrayList<Integer> dayList = new ArrayList<>();
-//                ArrayList<String> stepList = new ArrayList<>();
-//                int cDay=calendar.get(Calendar.DAY_OF_MONTH);
-//                int bDay=cDay-7;
-//                db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-//                //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
-//                Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN "+bDay+" AND "+cDay+"; " ,null);
-//                //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
-//                while (curDB2.moveToNext()){
-//                    // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
-//                    dayList.add(Integer.parseInt(curDB2.getString(0)));
-//                    stepList.add(curDB2.getString(1));
-//                }
-//               // intent = new Intent(activity.getApplicationContext(),PedomterSensor.class);
-//                Intent intent = new Intent(activity.getApplicationContext(),PedomterBar.class);
-//                intent.putIntegerArrayListExtra("dayList",dayList);
-//                intent.putStringArrayListExtra("stepList",stepList);
-//                activity.startActivity(intent);
-//                Log.d("test", String.valueOf(list2));
-
-                //생성자를 만들고 객체를 만들것
-                // PedTBL 으로 부터 step에 있는 요일 에 날짜를 ..
-//                // 인탠트로 값을 보내볼것.
-                break;
-
-
-
-
-
         }
-
-
-
 
     }
 
@@ -332,13 +296,11 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     private void customActionBar(LayoutInflater inflater) {
 
         ActionBar actionBar=((MainActivity)getActivity()).getSupportActionBar();
-
         // Custom Actionbar 사용하기 위해 CustomEnabled을 true 시키고 필요 없는 것은 false 시킨다
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(false);            //액션바 아이콘을 업 네비게이션 형태로 표시합니다.
         actionBar.setDisplayShowTitleEnabled(false);        //액션바에 표시되는 제목의 표시유무를 설정합니다.
         actionBar.setDisplayShowHomeEnabled(false);//홈 아이콘을 숨김처리합니다.
-
         View actionbarlayout=inflater.inflate(R.layout.mainactionbar_layout,null);
         actionBar.setCustomView(actionbarlayout);
         //액션바 양쪽 공백 없애기
