@@ -126,7 +126,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
                 break;
             case ADD_ALARM:
                 titleResId = "알림 추가";
-                break;
+            break;
             case UNKNOWN:
             default:
                 throw new IllegalStateException("Mode supplied as intent extra for " +
