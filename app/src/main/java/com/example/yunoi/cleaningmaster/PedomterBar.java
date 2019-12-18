@@ -45,16 +45,10 @@ public class PedomterBar extends Fragment {
     private BarData BARDATA;
     private Activity activity;
     private Context mContext;
-
-    // PedDBHelper pedDBHelper;
-    private SQLiteDatabase sqLiteDatabase;
-    private DBHelper dbHelper;
     String day;
     Intent intent;
     SQLiteDatabase db;
     ArrayList<PedColumnVO> list2 = new ArrayList<>();
-   // ArrayList<Integer> dayList = new ArrayList<>();
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,17 +67,9 @@ public class PedomterBar extends Fragment {
         // 데이터와 함께 막대 차트를 로드함
         chart.setData(BARDATA);
         // Y축으로 움직이는 속도 설정
-        chart.animateY(3500);
-
-        //chart.setDescription("테스트하기");
-
- //       AddValuesToBarEntryLabels();
+        chart.animateY(2800);
         return view;
-
     }
-
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -92,7 +78,6 @@ public class PedomterBar extends Fragment {
             activity = (Activity) context;
         }
     }
-
     private void customActionBar(LayoutInflater inflater) {
 
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
@@ -128,13 +113,14 @@ public class PedomterBar extends Fragment {
     public void AddValuesToBARENTRY() {
         int cDay = calendar.get(Calendar.DAY_OF_MONTH);
         int bDay = cDay - 7;
+
         ArrayList<Integer> dayList = new ArrayList<>();
         ArrayList<String> stepList = new ArrayList<>();
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
-        Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN " + bDay + " AND " + cDay + "; ", null);
+        Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day  BETWEEN " + bDay + " AND " + cDay + "; ", null);
         //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
-        while (curDB2.moveToNext()) {
+         while (curDB2.moveToNext()) {
             // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
             dayList.add(Integer.parseInt(curDB2.getString(0)));
             stepList.add(curDB2.getString(1));
@@ -148,55 +134,7 @@ public class PedomterBar extends Fragment {
         for(int i = 0 ; i < dayList.size(); i ++){
             BarEntryLabels.add(String.valueOf(dayList.get(i)));
         }
- //       db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-
    }
-//    public void AddValuesToBarEntryLabels(){
-//            // bar Label 설정 X축
-//        int cDay = calendar.get(Calendar.DAY_OF_MONTH);
-//        int bDay = cDay - 7;
-//        ArrayList<Integer> dayList = new ArrayList<>();
-//        ArrayList<String> stepList = new ArrayList<>();
-//        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-//        //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
-//        Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN " + bDay + " AND " + cDay + "; ", null);
-//        //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
-//        while (curDB2.moveToNext()) {
-//            // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
-//            dayList.add(Integer.parseInt(curDB2.getString(0)));
-//        }
-//        //       db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-//        for (int i = 0; i < dayList.size(); i++) {
-//            BarEntryLabels.add(String.valueOf(dayList.get(i)));
-//            // bar 생성 , 값 설정
-//            Log.d("test:",stepList.get(i));
-//        }
-//    }
-
-    public void  PedCursorData() {
-//        int cDay = calendar.get(Calendar.DAY_OF_MONTH);
-//        int bDay = cDay - 7;
-//        ArrayList<Integer> dayList = new ArrayList<>();
-//        ArrayList<String> stepList = new ArrayList<>();
-//        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-//        //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
-//        Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN " + bDay + " AND " + cDay + "; ", null);
-//        //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
-//        while (curDB2.moveToNext()) {
-//            // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
-//            dayList.add(Integer.parseInt(curDB2.getString(0)));
-//            stepList.add(curDB2.getString(1));
-//        }
-//        intent.putIntegerArrayListExtra("dayList", dayList);
-//        intent.putStringArrayListExtra("stepList", stepList);
-//        activity.startActivity(intent);
-//        Log.d("test", String.valueOf(list2));
-        // intent = new Intent(activity.getApplicationContext(),PedomterSensor.class);
-//        Intent intent = new Intent(activity.MainActivity.this, PedomterBar.class);
-
-        //Intent intent = getIntent() => intent 로 부터 값을 받는다
-    }
-
 }
 
 

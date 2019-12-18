@@ -107,9 +107,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_3:
                         setOnChangeFragment(3);
                         break;
-                    case R.id.action_4:
-                        setOnChangeFragment(4);
-                        break;
                 }
                 return true;
             }
@@ -140,9 +137,6 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 ft.replace(R.id.coordinatorLayout,calendarFragment);
                 ft.commit();
-
-                break;
-            case 4:
 
                 break;
 
