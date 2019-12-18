@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -24,6 +26,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.facebook.stetho.Stetho;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.yunoi.cleaningmaster.PedomterSensor.MY_ACTION;
@@ -47,11 +53,18 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     static PedomterSensor sensorService;
     static Chronometer chronometer;
     private TextView textStep , textKcal , textMinute;
-   // Bar bar;
-   // PedDBHelper pedDBHelper;
     ImageButton ivBtnBar , ivbtnTwo , ivbtnThree;
     Intent intent;
     final static int[] timeProgress = {0};
+    ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> listData = new ArrayList<>();
+    ArrayList<PedColumnVO> list2 = new ArrayList<>();
+    DBHelper dbHelper;
+    SQLiteDatabase db;
+    Calendar calendar;
+    String ksm;
+    String ksm2;
+
 
     @Nullable
     @Override
@@ -78,6 +91,8 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
         ivBtnBar.setOnClickListener(this);
         ivbtnTwo.setOnClickListener(this);
         ivbtnThree.setOnClickListener(this);
+        calendar=Calendar.getInstance();
+     //   Stetho.initializeWithDefaults(this);
         return view;
     }
 
@@ -164,19 +179,45 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
             // 중지 버튼
 
             case R.id.ivbtnTwo :
-//                float xValue = Float.parseFloat(String.valueOf(reading));
-//                float yValue = Float.parseFloat(String.valueOf(readkcal));
-//                float tValue = Integer.parseInt(String.valueOf(timeProgress));
-//               // pedDBHelper.insertBarData(xValue,yValue,(int)tValue);
+                insert(new PedColumnVO(calendar.get(Calendar.YEAR)
+                ,calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DAY_OF_MONTH),ksm,ksm2));
                 toastDisplay("만보기 중단");
-                    chronometer.stop();
+                chronometer.stop();
                 //크로미터 정지
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 // 센서값 안받기
                 activity.stopService(intent);
-
                 onStop();
                 return;
+            case R.id.ivbtnThree :
+
+//                ArrayList<Integer> dayList = new ArrayList<>();
+//                ArrayList<String> stepList = new ArrayList<>();
+//                int cDay=calendar.get(Calendar.DAY_OF_MONTH);
+//                int bDay=cDay-7;
+//                db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+//                //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
+//                Cursor curDB2 = db.rawQuery("SELECT day , step FROM PedTBL WHERE day BETWEEN "+bDay+" AND "+cDay+"; " ,null);
+//                //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
+//                while (curDB2.moveToNext()){
+//                    // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다
+//                    dayList.add(Integer.parseInt(curDB2.getString(0)));
+//                    stepList.add(curDB2.getString(1));
+//                }
+//               // intent = new Intent(activity.getApplicationContext(),PedomterSensor.class);
+//                Intent intent = new Intent(activity.getApplicationContext(),PedomterBar.class);
+//                intent.putIntegerArrayListExtra("dayList",dayList);
+//                intent.putStringArrayListExtra("stepList",stepList);
+//                activity.startActivity(intent);
+//                Log.d("test", String.valueOf(list2));
+
+                //생성자를 만들고 객체를 만들것
+                // PedTBL 으로 부터 step에 있는 요일 에 날짜를 ..
+//                // 인탠트로 값을 보내볼것.
+                break;
+
+
+
 
 
         }
@@ -323,6 +364,62 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
     {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
+
+    public void insert(PedColumnVO pedColumnVO) {
+
+        int year = pedColumnVO.getYear();
+        int month = pedColumnVO.getMonth();
+        int day = pedColumnVO.getDay();
+        String uStep = pedColumnVO.getStep();
+        String uKcal = pedColumnVO.getKcal();
+
+        // DB 오픈
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+
+        db.execSQL("INSERT INTO PedTBL(year,month,day,step,kcal)" +
+                "VALUES(" + year + "," + month + "," + day + ", '" + uStep + "', '" + uKcal + "');");
+        // DB를 사용후 종료시키기
+        db.close();
+    }
+
+
+    public ArrayList<String> getResult(PedColumnVO pedColumnVO){
+
+        final    int year = pedColumnVO.getYear();
+        int month = pedColumnVO.getMonth();
+        int day = pedColumnVO.getDay();
+
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+
+        //cursor=db.rawQuery("SELECT step FROM PedTBL;",null);
+        Cursor curDB = db.rawQuery("SELECT step FROM PedTBL WHERE year="+year+" AND month="+month+" AND day="+day+";",null);
+        while (curDB.moveToNext()){
+            //BARENTRY.add(curDB.getString(0));
+            // BARENTRY.get(Integer.parseInt(curDB.getString(0)));
+        }
+        // 년 월 일에 대한 STEP의 걸음을 확인한다 ( 년 월 일에 있는 스탭을 가져 왔다 ~ PedTBL 으로부터  )
+        return list;
+    }
+    // X축 년 월 일 구하기
+    public ArrayList<String>getCalendar(PedColumnVO pedColumnVO){
+
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+
+        String step = pedColumnVO.getStep();
+        String kcal = pedColumnVO.getKcal();
+
+        // 걸음 , 칼로리에 대한 년 월 일을 확인한다 . ( 걸음 칼로리에 있는 년 월 일 을 가져 온다
+        Cursor curCalendar = db.rawQuery("SELECT year ,month, day FROM PedTBL WHERE step="+step+" AND kcal="+kcal+";",null);
+        while (curCalendar.moveToNext()){
+            list.add(curCalendar.getString(0));
+        }
+
+        return listData;
+    }
+
+
+
+
 
 }
 

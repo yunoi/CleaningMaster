@@ -1,9 +1,10 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,9 +16,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     int tutorialState;
 
     TodayListFragment todayListFragment; //오늘할일 프레그먼트
+
+
 
 
 
@@ -70,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         todayListFragment=new TodayListFragment();
         profileFragment=new ProfileFragment();
         calendarFragment=new CalendarFragment();
-
 
         //채현 브로드캐스트 추가 데이터 초기화 부분!
         InitActionReceiver=new InitActionReceiver();
@@ -204,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             backButtonTime = currentTime;
             Toast.makeText(this, "뒤로 가기를 한번 더 누르면 어플이 종료됩니다.",Toast.LENGTH_SHORT).show();
         }
+
 
     }
 }

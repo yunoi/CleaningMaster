@@ -36,13 +36,19 @@
             <intent-filter>
                 <action android:name="com.example.yunoi.cleaningmaster.MY_ACTION" />
             </intent-filter>
+
+
         </receiver>
+
         <!-- 191213 pm 03:33 알람 관련 리시버, 서비스 by 강윤해 -->
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="false"></receiver>
         <receiver android:name=".LoadAlarmsReceiver" />
+        <service
+            android:name=".LoadAlarmsService"
+            android:enabled="true"></service>
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"
@@ -52,9 +58,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".LoadAlarmsService"
-            android:enabled="true"></service>
         <!-- 191212 am 10:20 닉네임 액티비티 생성- by 재훈 -->
         <activity android:name=".NickNameSetting" />
         <!-- 191212 am 11:10 프로필 설정 액티비티 생성- by 재훈 -->

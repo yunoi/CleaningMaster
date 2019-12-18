@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class AddEditAlarmActivity extends AppCompatActivity implements View.OnClickListener, LoadAlarmsReceiver.OnAlarmsLoadedListener {
+public class AddEditAlarmActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String ALARM_EXTRA = "alarm_extra";
     public static final String MODE_EXTRA = "mode_extra";
@@ -64,21 +64,19 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
     private CheckBox cbSat;
     private CheckBox cbSun;
 
-    private LoadAlarmsReceiver mReceiver;
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_add_notify);
-
-        mReceiver = new LoadAlarmsReceiver(this);
         Log.i(getClass().getSimpleName(), "onCreate ...");
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getToolbarTitle());
 
-        final TodolistVo alarm = getAlarm();
+//        Intent intent = getIntent();
+//        final TodolistVo alarm = intent.getParcelableExtra(ALARM_EXTRA);
+        final AlarmVO alarm = getAlarm();
+        Log.d(TAG, "onCreate. getAlarm() : "+alarm.toString());
 //
 //        if(getSupportFragmentManager().findFragmentById(R.id.edit_alarm_frag_container) == null) {
 //            getSupportFragmentManager()
@@ -114,6 +112,13 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+        tvTask.setText(getAlarm().getLabel());
+//        // 청소내용 받아오기
+//        Intent intent1 = getIntent();
+//        String task = intent1.getStringExtra("task");
+//        tvTask.setText(task);
+//        alarm.setLabel(task);
+//        Log.d(TAG, "end of onCreateView. task : "+task);
         setDayCheckboxes(alarm);
 
         btnOk.setOnClickListener(this);
@@ -151,23 +156,22 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         return i;
     }
 
-    private void setDayCheckboxes(TodolistVo alarm) {
-        cbMon.setChecked(alarm.getDay(TodolistVo.MON));
-        cbTue.setChecked(alarm.getDay(TodolistVo.TUE));
-        cbWed.setChecked(alarm.getDay(TodolistVo.WED));
-        cbThu.setChecked(alarm.getDay(TodolistVo.THU));
-        cbFri.setChecked(alarm.getDay(TodolistVo.FRI));
-        cbSat.setChecked(alarm.getDay(TodolistVo.SAT));
-        cbSun.setChecked(alarm.getDay(TodolistVo.SUN));
+    private void setDayCheckboxes(AlarmVO alarm) {
+        cbMon.setChecked(alarm.getDay(AlarmVO.MON));
+        cbTue.setChecked(alarm.getDay(AlarmVO.TUE));
+        cbWed.setChecked(alarm.getDay(AlarmVO.WED));
+        cbThu.setChecked(alarm.getDay(AlarmVO.THU));
+        cbFri.setChecked(alarm.getDay(AlarmVO.FRI));
+        cbSat.setChecked(alarm.getDay(AlarmVO.SAT));
+        cbSun.setChecked(alarm.getDay(AlarmVO.SUN));
     }
 
 
     ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
     private void alarmSettings() {
 
-        final TodolistVo alarm = getAlarm();
-
-//        alarm.setLabel();
+        final AlarmVO alarm = getAlarm();
+        Log.d(TAG, "alarmSettings. getAlarm() : "+alarm.toString());
 
         // 알람 시간 설정
         // api 버전별 설정
@@ -192,21 +196,31 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
             return;
         }
+        Log.d(TAG, "alarmSettings. time: "+ alarm.getTime());
+
+        alarm.setLabel(tvTask.getText().toString());
+
+        Log.d(TAG, "alarmSettings. task: "+ alarm.getLabel());
+
         // 요일 설정
-        alarm.setDay(TodolistVo.MON, cbMon.isChecked());
-        alarm.setDay(TodolistVo.TUE, cbTue.isChecked());
-        alarm.setDay(TodolistVo.WED, cbWed.isChecked());
-        alarm.setDay(TodolistVo.THU, cbThu.isChecked());
-        alarm.setDay(TodolistVo.FRI, cbFri.isChecked());
-        alarm.setDay(TodolistVo.SAT, cbSat.isChecked());
-        alarm.setDay(TodolistVo.SUN, cbSun.isChecked());
+        alarm.setDay(AlarmVO.MON, cbMon.isChecked());
+        alarm.setDay(AlarmVO.TUE, cbTue.isChecked());
+        alarm.setDay(AlarmVO.WED, cbWed.isChecked());
+        alarm.setDay(AlarmVO.THU, cbThu.isChecked());
+        alarm.setDay(AlarmVO.FRI, cbFri.isChecked());
+        alarm.setDay(AlarmVO.SAT, cbSat.isChecked());
+        alarm.setDay(AlarmVO.SUN, cbSun.isChecked());
+
+        alarm.setIsEnabled(true);
 
         final int rowsUpdated = DBHelper.getInstance(this).updateAlarm(alarm);
-//        final int messageId = (rowsUpdated == 1) ? R.string.update_complete : R.string.update_failed;
-
-        Toast.makeText(this, "알림이 설정되었습니다.", Toast.LENGTH_SHORT).show();
+        final String messageId = (rowsUpdated == 1) ? "알림이 설정되었습니다." : "알람설정을 실패하였습니다.";
+        Log.d(TAG, "alarmSettings. updateAlarm : "+messageId);
+        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
 
         AlarmReceiver.setReminderAlarm(this, alarm);
+
+        finish();
 
     } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,7 +229,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.btnOk:
                 alarmSettings();
-                finish();
                 break;
             case R.id.btnCancel:
                 toastDisplay("취소되었습니다.");
@@ -253,47 +266,23 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         pickerDialog.show();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, filter);
-        LoadAlarmsService.launchLoadAlarmsService(this);
-        Log.d(TAG, "onStart");
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-        Log.d(TAG, "onStop");
+private AlarmVO getAlarm() {
+    switch (getMode()) {
+        case EDIT_ALARM:
+            return getIntent().getParcelableExtra(ALARM_EXTRA);
+        case ADD_ALARM:
+            final long id = DBHelper.getInstance(this).addAlarm();
+            LoadAlarmsService.launchLoadAlarmsService(this);
+            return new AlarmVO(id);
+        case UNKNOWN:
+        default:
+            throw new IllegalStateException("Mode supplied as intent extra for " +
+                    AddEditAlarmActivity.class.getSimpleName() + " must match value in " +
+                    Mode.class.getSimpleName());
     }
+}
 
-    private TodolistVo getAlarm() {
-        switch (getMode()) {
-            case EDIT_ALARM:
-                return getIntent().getParcelableExtra(ALARM_EXTRA);
-            case ADD_ALARM:
-                final long id = DBHelper.getInstance(this).addAlarm();
-                LoadAlarmsService.launchLoadAlarmsService(this);
-                return new TodolistVo(id);
-            case UNKNOWN:
-            default:
-                throw new IllegalStateException("Mode supplied as intent extra for " +
-                        AddEditAlarmActivity.class.getSimpleName() + " must match value in " +
-                        Mode.class.getSimpleName());
-        }
-    }
-
-    @Override
-    public void onAlarmsLoaded(ArrayList<TodolistVo> alarms) {
-        TodolistAdapter todolistAdapter = new TodolistAdapter();
-        for (TodolistVo list : alarms) {
-            Log.d(getClass().getSimpleName(), list.toString());
-        }
-        todolistAdapter.setAlarms(alarms);
-        Log.d(TAG, "onAlarmsLoaded");
-    }
 
 //    private void delete() {
 //        final TodolistVo alarm = getAlarm();

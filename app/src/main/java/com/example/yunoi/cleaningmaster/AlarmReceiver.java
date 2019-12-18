@@ -37,7 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        final TodolistVo alarm = intent.getBundleExtra(BUNDLE_EXTRA).getParcelable(ALARM_KEY);
+        final AlarmVO alarm = intent.getBundleExtra(BUNDLE_EXTRA).getParcelable(ALARM_KEY);
         if(alarm == null) {
             Log.e(TAG, "Alarm is null", new NullPointerException());
             return;
@@ -69,7 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     //Convenience method for setting a notification
-    public static void setReminderAlarm(Context context, TodolistVo alarm) {
+    public static void setReminderAlarm(Context context, AlarmVO alarm) {
         Log.i(TAG, "setReminderAlarm 1...");
         //Check whether the alarm is set to run on any days
         if(!AlarmUtils.isAlarmActive(alarm)) {
@@ -96,9 +96,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         ScheduleAlarm.with(context).schedule(alarm, pIntent);
     }
 
-    public static void setReminderAlarms(Context context, ArrayList<TodolistVo> alarms) {
+    public static void setReminderAlarms(Context context, ArrayList<AlarmVO> alarms) {
         Log.i(TAG, "setReminderAlarms 2...");
-        for(TodolistVo alarm : alarms) {
+        for(AlarmVO alarm : alarms) {
             setReminderAlarm(context, alarm);
         }
     }
@@ -110,7 +110,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      *              should run
      * @return A Calendar with the actual time of the next alarm.
      */
-    private static Calendar getTimeForNextAlarm(TodolistVo alarm) {
+    private static Calendar getTimeForNextAlarm(AlarmVO alarm) {
         Log.i(TAG, "getTimeForNextAlarm...");
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(alarm.getTime());
@@ -137,7 +137,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     }
 
-    public static void cancelReminderAlarm(Context context, TodolistVo alarm) {
+    public static void cancelReminderAlarm(Context context, AlarmVO alarm) {
         Log.i(TAG, "cancelReminderAlarm...");
         final Intent intent = new Intent(context, AlarmReceiver.class);
         final PendingIntent pIntent = PendingIntent.getBroadcast(
@@ -202,7 +202,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private static PendingIntent launchAlarmLandingPage(Context ctx, TodolistVo alarm) {
+    private static PendingIntent launchAlarmLandingPage(Context ctx, AlarmVO alarm) {
         return PendingIntent.getActivity(
                 ctx, alarm.notificationId(), launchIntent(ctx), FLAG_UPDATE_CURRENT
         );
@@ -235,7 +235,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             return new ScheduleAlarm(am, context);
         }
 
-        void schedule(TodolistVo alarm, PendingIntent pi) {
+        void schedule(AlarmVO alarm, PendingIntent pi) {
             Log.i(TAG, "ScheduleAlarm 3...");
             if(SDK_INT > LOLLIPOP) {
                 am.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm.getTime(), launchAlarmLandingPage(ctx, alarm)), pi);

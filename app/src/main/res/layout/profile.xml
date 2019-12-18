@@ -1,182 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ScrollView
+
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#03658c"
+        android:stretchColumns="*"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp"
-            android:orientation="vertical">
+            android:layout_height="1dp"></View>
 
-            <LinearLayout
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp">
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="닉네임 :" />
-                <TextView
-                    android:id="@+id/txtNickName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="닉네임?" />
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="닉네임"
+                android:textColor="#024873"
+                android:textSize="25dp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="점수 :"
-                    android:textColor="#024873"
-                    android:textSize="20dp" />
-                <TextView
-                    android:id="@+id/txtScore"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="점수?" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="등급 :"
-                    android:textColor="#024873"
-                    android:textSize="20dp" />
-                <TextView
-                    android:id="@+id/txtRank"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="등급?" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtNickName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="닉네임?"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="키" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp">
 
-                <TextView
-                    android:id="@+id/txtHeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="들어갈 키" />
-            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="점수"
+                android:textColor="#024873"
+                android:textSize="25dp" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtScore"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="점수?"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:layout_margin="1dp"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="등급"
+                android:textColor="#024873"
+                android:textSize="25dp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="몸무게" />
-
-                <TextView
-                    android:id="@+id/txtWeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="들어갈 몸무게" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtRank"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:layout_margin="1dp"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="등급?"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="성별" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp">
 
-                <TextView
-                    android:id="@+id/txtGender"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="들어갈 성별" />
-            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="성별"
+                android:textColor="#024873"
+                android:textSize="25dp" />
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/ivGender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:padding="10dp"
+                android:src="@drawable/gender_96" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="나이" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp">
 
-                <TextView
-                    android:id="@+id/txtAge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#024873"
-                    android:textSize="20dp"
-                    android:text="들어갈 나이" />
-            </LinearLayout>
-            <!--<Button-->
-                <!--android:id="@+id/btnEditProfile"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="10dp"-->
-                <!--android:text="프로필 수정"/>-->
-            <!--<Button-->
-                <!--android:id="@+id/btnDeleteProfile"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="10dp"-->
-                <!--android:text="프로필 삭제"/>-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="키"
+                android:textColor="#024873"
+                android:textSize="25dp" />
 
-        </LinearLayout>
-    </ScrollView>
+            <TextView
+                android:id="@+id/txtHeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="들어갈 키"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="몸무게"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/txtWeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="들어갈 몸무게"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="1dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="나이"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/txtAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="들어갈 나이"
+                android:textColor="#024873"
+                android:textSize="25dp" />
+        </TableRow>
+
+    </TableLayout>
+    <!--<ScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:foregroundGravity="center">-->
+
+
+    <!--</ScrollView>-->
 </android.support.constraint.ConstraintLayout>

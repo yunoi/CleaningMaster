@@ -61,9 +61,8 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
         final String taskText=list.get(position).getTask();
         area=list.get(position).getArea();
         customViewHolder.todaylist_text.setText(list.get(position).getTask());
-
+        customViewHolder.todaylist_area.setText(area);
         final int isCheckClear = selectIsCheckClear(context);
-
 
         //체크 유무를 가져옴.!!!
         final int check = list.get(position).getCheckCount();
@@ -123,12 +122,12 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                     }
 
                 }
+                Log.d("확인","check  값 : "+check);
                 if (check == 0) {
                     //누른 값이 체크가 안되어있으면 체크 업데이트!
-
+                    final int ischeckCount=selectIsCheck(context,area,taskText);
+                    Log.d("확인","ischeckCount  값 : "+ischeckCount);
                     if (isChecked) {
-
-                        final int ischeckCount=selectIsCheck(context,area,taskText);
 
                             if (isCheckClear==1 && ischeckCount==1){
                                     if (check == 1) {
@@ -146,7 +145,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                                         strikeThroughPainting.color(Color.rgb(2, 72, 112))
                                                 .strokeWidth(4).totalTime(10_0L).strikeThrough();
 
-                                        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
+                                        Snackbar snackbar = Snackbar.make(TodayListFragment.todaylist_LinearLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
                                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
                                         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
                                         layout.setPadding(20, 5, 5, 5);
@@ -167,6 +166,24 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
 
                             }
 
+                            if (ischeckCount==1){
+                                customViewHolder.todaylist_checkBox.setChecked(true);
+                                Log.d(TAG, "눌렀던것 다시 true exp는 안들어감.");
+                                strikeThroughPainting.color(Color.rgb(2, 72, 112))
+                                        .strokeWidth(4).totalTime(10_0L).strikeThrough();
+
+                                Snackbar snackbar = Snackbar.make(TodayListFragment.todaylist_LinearLayout, "이미완료했습니다!", Snackbar.LENGTH_SHORT);
+                                snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+                                Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+                                layout.setPadding(20, 5, 5, 5);
+                                View snackbarView = snackbar.getView();
+                                TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                tv.setTextColor(Color.WHITE);
+                                tv.setTextSize(16);
+                                snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+                                snackbar.show();
+                                return;
+                            }
                             checkBoxTrue(strikeThroughPainting, context, taskText);
                             checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
                             Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
@@ -186,7 +203,6 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
 
                                 startActivity(context, intent, null);
                             }
-
                             if (isCheckClear==1){
                                 return;
                             }
@@ -223,8 +239,8 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                             }
 
                     }else{
-
                         strikeThroughPainting.clearStrikeThrough();
+
                     }
                 }
 

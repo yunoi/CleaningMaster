@@ -10,6 +10,9 @@ import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> listData = new ArrayList<>();
+
     private static DBHelper dbHelper = null;
 
     private static final String TABLE_NAME = "alarmTBL";
@@ -40,6 +43,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // profileTBL: 프로필(키,몸무게 등) 관련 테이블
     // NickName 닉네임 , Score 점수, Rank 등급, , Gender 성별, Height 키, Weight 몸무게, Age 나이, CONSTRAINT PK_Customer PRIMARY KEY (NickName)
+
+    // PedTBL : 년 월 일 걸음 칼로리 관련된 테이블
+    // year 년 month , 월 day 일 <= INTEGER step 걸음 kcal 칼로리 <= TEXT
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE cleaningTBL (_id INTEGER PRIMARY KEY AUTOINCREMENT, year INTEGER, month INTEGER, day INTEGER, area TEXT, task TEXT, checkCount INTEGER, score INTEGER," +
@@ -85,36 +91,82 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return dbHelper;
     }
+    //PedTBL 만보기
+    public void insert(PedColumnVO pedColumnVO){
+
+        int year=pedColumnVO.getYear();
+        int month=pedColumnVO.getMonth();
+        int day=pedColumnVO.getDay();
+        String uStep=pedColumnVO.getStep();
+        String uKcal=pedColumnVO.getKcal();
+
+        // DB 오픈
+        SQLiteDatabase sqldb = getWritableDatabase();
+        sqldb.execSQL("INSERT INTO PedTBL(year,month,day,step,kcal)"+
+                "VALUES(" + year + "," + month +"," + day + "," + uStep + "," +uKcal+",");
+        // DB를 사용후 종료시키기
+        sqldb.close();
+    }
+    public ArrayList<String>getResult(PedColumnVO pedColumnVO){
+
+        SQLiteDatabase db = getWritableDatabase();
+        //cursor=db.rawQuery("SELECT step FROM PedTBL;",null);
+        int year=pedColumnVO.getYear();
+        int month=pedColumnVO.getMonth();
+        int day=pedColumnVO.getDay();
+        // 년 월 일에 대한 STEP의 걸음을 확인한다 ( 년 월 일에 있는 스탭을 가져 왔다 ~ PedTBL 으로부터)
+        Cursor curDB = db.rawQuery("SELECT step FROM PedTBL WHERE year="+year+" AND month="+month+" AND day="+day+";",null);
+        while (curDB.moveToNext()){
+            list.add(curDB.getString(0));
+        }
+        return list;
+    }
+
+    // X축 년 월 일 구하기
+    public ArrayList<String>getCalendar(PedColumnVO pedColumnVO) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        String step = pedColumnVO.getStep();
+        String kcal = pedColumnVO.getKcal();
+
+        // 걸음 , 칼로리에 대한 년 월 일을 확인한다 . ( 걸음 칼로리에 있는 년 월 일 을 가져 온다
+        Cursor curCalendar = db.rawQuery("SELECT year ,month, day FROM PedTBL WHERE step=" + step + " AND kcal=" + kcal + ";", null);
+        while (curCalendar.moveToNext()) {
+            listData.add(curCalendar.getString(0));
+        }
+        return listData;
+    }
+    //PedTBL 만보기
 
     public long addAlarm() {
         Log.i(getClass().getSimpleName(), "addAlarm()...");
-        return addAlarm(new TodolistVo());
+        return addAlarm(new AlarmVO());
     }
 
-    long addAlarm(TodolistVo alarm) {
+    long addAlarm(AlarmVO alarm) {
         Log.i(getClass().getSimpleName(), "addAlarm(Alarm alarm) ...");
         return getWritableDatabase().insert("alarmTBL", null, AlarmUtils.toContentValues(alarm));
     }
 
-    public int updateAlarm(TodolistVo alarm) {
-        final String where = "_id" + "=?";
+    public int updateAlarm(AlarmVO alarm) {
+        final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(alarm.getId()) };
         Log.i(getClass().getSimpleName(), "updateAlarm...");
         return getWritableDatabase()
                 .update("alarmTBL", AlarmUtils.toContentValues(alarm), where, whereArgs);
     }
 
-    public int deleteAlarm(TodolistVo alarm) {
+    public int deleteAlarm(AlarmVO alarm) {
         return deleteAlarm(alarm.getId());
     }
 
     int deleteAlarm(long id) {
-        final String where = "_id" + "=?";
+        final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(id) };
         return getWritableDatabase().delete("alarmTBL", where, whereArgs);
     }
 
-    public ArrayList<TodolistVo> getAlarms() {
+    public ArrayList<AlarmVO> getAlarms() {
         Log.i(getClass().getSimpleName(), "getAlarms()...");
         Cursor c = null;
 

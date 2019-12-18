@@ -49,21 +49,21 @@ public final class AlarmUtils {
 
     }
 
-    public static ContentValues toContentValues(TodolistVo alarm) {
+    public static ContentValues toContentValues(AlarmVO alarm) {
 
-        final ContentValues cv = new ContentValues(11);
+        final ContentValues cv = new ContentValues(12);
 
         cv.put(DBHelper.COL_TIME, alarm.getTime());
         cv.put(DBHelper.COL_LABEL, alarm.getLabel());
 
         final SparseBooleanArray days = alarm.getDays();
-        cv.put(DBHelper.COL_MON, days.get(TodolistVo.MON) ? 1 : 0);
-        cv.put(DBHelper.COL_TUE, days.get(TodolistVo.TUE) ? 1 : 0);
-        cv.put(DBHelper.COL_WED, days.get(TodolistVo.WED) ? 1 : 0);
-        cv.put(DBHelper.COL_THU, days.get(TodolistVo.THU) ? 1 : 0);
-        cv.put(DBHelper.COL_FRI, days.get(TodolistVo.FRI) ? 1 : 0);
-        cv.put(DBHelper.COL_SAT, days.get(TodolistVo.SAT) ? 1 : 0);
-        cv.put(DBHelper.COL_SUN, days.get(TodolistVo.SUN) ? 1 : 0);
+        cv.put(DBHelper.COL_MON, days.get(AlarmVO.MON) ? 1 : 0);
+        cv.put(DBHelper.COL_TUE, days.get(AlarmVO.TUE) ? 1 : 0);
+        cv.put(DBHelper.COL_WED, days.get(AlarmVO.WED) ? 1 : 0);
+        cv.put(DBHelper.COL_THU, days.get(AlarmVO.THU) ? 1 : 0);
+        cv.put(DBHelper.COL_FRI, days.get(AlarmVO.FRI) ? 1 : 0);
+        cv.put(DBHelper.COL_SAT, days.get(AlarmVO.SAT) ? 1 : 0);
+        cv.put(DBHelper.COL_SUN, days.get(AlarmVO.SUN) ? 1 : 0);
 
         cv.put(DBHelper.COL_IS_ENABLED, alarm.isEnabled());
 
@@ -71,13 +71,13 @@ public final class AlarmUtils {
 
     }
 
-    public static ArrayList<TodolistVo> buildAlarmList(Cursor c) {
+    public static ArrayList<AlarmVO> buildAlarmList(Cursor c) {
 
         if (c == null) return new ArrayList<>();
 
         final int size = c.getCount();
 
-        final ArrayList<TodolistVo> alarms = new ArrayList<>(size);
+        final ArrayList<AlarmVO> alarms = new ArrayList<>(size);
 
         if (c.moveToFirst()) {
             do {
@@ -94,14 +94,14 @@ public final class AlarmUtils {
                 final boolean sun = c.getInt(c.getColumnIndex(DBHelper.COL_SUN)) == 1;
                 final boolean isEnabled = c.getInt(c.getColumnIndex(DBHelper.COL_IS_ENABLED)) == 1;
 
-                final TodolistVo alarm = new TodolistVo(id, time, label);
-                alarm.setDay(TodolistVo.MON, mon);
-                alarm.setDay(TodolistVo.TUE, tue);
-                alarm.setDay(TodolistVo.WED, wed);
-                alarm.setDay(TodolistVo.THU, thu);
-                alarm.setDay(TodolistVo.FRI, fri);
-                alarm.setDay(TodolistVo.SAT, sat);
-                alarm.setDay(TodolistVo.SUN, sun);
+                final AlarmVO alarm = new AlarmVO(id, time, label);
+                alarm.setDay(AlarmVO.MON, mon);
+                alarm.setDay(AlarmVO.TUE, tue);
+                alarm.setDay(AlarmVO.WED, wed);
+                alarm.setDay(AlarmVO.THU, thu);
+                alarm.setDay(AlarmVO.FRI, fri);
+                alarm.setDay(AlarmVO.SAT, sat);
+                alarm.setDay(AlarmVO.SUN, sun);
 
                 alarm.setIsEnabled(isEnabled);
 
@@ -122,7 +122,7 @@ public final class AlarmUtils {
         return AM_PM_FORMAT.format(time);
     }
 
-    public static boolean isAlarmActive(TodolistVo
+    public static boolean isAlarmActive(AlarmVO
                                                 alarm) {
 
         final SparseBooleanArray days = alarm.getDays();
@@ -139,17 +139,17 @@ public final class AlarmUtils {
 
     }
 
-    public static String getActiveDaysAsString(TodolistVo alarm) {
+    public static String getActiveDaysAsString(AlarmVO alarm) {
 
         StringBuilder builder = new StringBuilder("Active Days: ");
 
-        if (alarm.getDay(TodolistVo.MON)) builder.append("Monday, ");
-        if (alarm.getDay(TodolistVo.TUE)) builder.append("Tuesday, ");
-        if (alarm.getDay(TodolistVo.WED)) builder.append("Wednesday, ");
-        if (alarm.getDay(TodolistVo.THU)) builder.append("Thursday, ");
-        if (alarm.getDay(TodolistVo.FRI)) builder.append("Friday, ");
-        if (alarm.getDay(TodolistVo.SAT)) builder.append("Saturday, ");
-        if (alarm.getDay(TodolistVo.SUN)) builder.append("Sunday.");
+        if (alarm.getDay(AlarmVO.MON)) builder.append("Monday, ");
+        if (alarm.getDay(AlarmVO.TUE)) builder.append("Tuesday, ");
+        if (alarm.getDay(AlarmVO.WED)) builder.append("Wednesday, ");
+        if (alarm.getDay(AlarmVO.THU)) builder.append("Thursday, ");
+        if (alarm.getDay(AlarmVO.FRI)) builder.append("Friday, ");
+        if (alarm.getDay(AlarmVO.SAT)) builder.append("Saturday, ");
+        if (alarm.getDay(AlarmVO.SUN)) builder.append("Sunday.");
 
         if (builder.substring(builder.length() - 2).equals(", ")) {
             builder.replace(builder.length() - 2, builder.length(), ".");

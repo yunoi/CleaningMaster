@@ -1,4 +1,4 @@
-
+//
 //package com.example.yunoi.cleaningmaster;
 //
 //import android.app.DatePickerDialog;
@@ -44,15 +44,15 @@
 //    private CheckBox cbSat;
 //    private CheckBox cbSun;
 //
-////    public static Fragment newInstance(TodolistVo alarm) {
-////
-////        Bundle args = new Bundle();
-////        args.putParcelable(AddEditAlarmActivity.ALARM_EXTRA, alarm);
-////
-////        AddEditAlarmFragment fragment = new AddEditAlarmFragment();
-////        fragment.setArguments(args);
-////        return fragment;
-////    }
+//    public static Fragment newInstance(TodolistVo alarm) {
+//
+//        Bundle args = new Bundle();
+//        args.putParcelable(AddEditAlarmActivity.ALARM_EXTRA, alarm);
+//
+//        AddEditAlarmFragment fragment = new AddEditAlarmFragment();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 //
 //    @Nullable
 //    @Override
@@ -60,9 +60,9 @@
 //
 //        final View v = inflater.inflate(R.layout.dialog_add_notify, container, false);
 //
-////        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 //
-////        final TodolistVo alarm = getAlarm();
+//        final TodolistVo alarm = getAlarm();
 //
 //        alerEdt = v.findViewById(R.id.alert_todolist_alerEdt);
 //        timePicker = v.findViewById(R.id.timePicker);
@@ -96,9 +96,9 @@
 //        return v;
 //    }
 //
-////    private TodolistVo getAlarm() {
-////        return getArguments().getParcelable(AddEditAlarmActivity.ALARM_EXTRA);
-////    }
+//    private TodolistVo getAlarm() {
+//        return getArguments().getParcelable(AddEditAlarmActivity.ALARM_EXTRA);
+//    }
 //
 //    private void setDayCheckboxes(TodolistVo alarm) {
 //        cbMon.setChecked(alarm.getDay(TodolistVo.MON));
@@ -217,4 +217,4 @@
 //        return new TodolistVo(id);
 //    }
 //}
-
+//
