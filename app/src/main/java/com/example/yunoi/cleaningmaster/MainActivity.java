@@ -107,9 +107,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_3:
                         setOnChangeFragment(3);
                         break;
-                    case R.id.action_4:
-                        setOnChangeFragment(4);
-                        break;
                 }
                 return true;
             }
@@ -140,9 +137,6 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 ft.replace(R.id.coordinatorLayout,calendarFragment);
                 ft.commit();
-
-                break;
-            case 4:
 
                 break;
 
@@ -211,6 +205,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "뒤로 가기를 한번 더 누르면 어플이 종료됩니다.",Toast.LENGTH_SHORT).show();
         }
 
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(InitActionReceiver);
 
     }
 }

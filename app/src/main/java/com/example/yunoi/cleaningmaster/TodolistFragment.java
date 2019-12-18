@@ -90,6 +90,7 @@ public class TodolistFragment
         super.onCreate(savedInstanceState);
         mReceiver = new LoadAlarmsReceiver(this);
         Log.i(getClass().getSimpleName(), "onCreate ...");
+
     }
 
     @Override
@@ -154,9 +155,11 @@ public class TodolistFragment
         linearLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        alarmList = DBHelper.getInstance(context).areaSort(groupText);
+
         todolistAdapter = new TodolistAdapter(context, R.layout.todo_list_holder_layout, alarmList);
         recyclerView.setAdapter(todolistAdapter);
-
+        todolistAdapter.notifyDataSetChanged();
 //        selectCleaningArea(groupText);//구역마다 저장한 할일들 가져오기
         score = selectScore(view.getContext());
 
@@ -200,6 +203,7 @@ public class TodolistFragment
                         final long id = DBHelper.getInstance(context).addAlarm();
                         LoadAlarmsService.launchLoadAlarmsService(context);
                         final AlarmVO alarm1 = new AlarmVO(id);
+                        alarm1.setArea(groupText);
                         alarm1.setLabel(task);
                         int message = DBHelper.getInstance(context).updateAlarm(alarm1);
                         alarmList.add(alarm1);
@@ -336,7 +340,7 @@ public class TodolistFragment
         for (AlarmVO list : alarms) {
             Log.d(TAG, "onAlarmsLoaded. list: " + list.toString());
         }
-        todolistAdapter.setAlarms(alarms);
+//        todolistAdapter.setAlarms(alarms);
         Log.d(TAG, "onAlarmsLoaded");
     }
 }

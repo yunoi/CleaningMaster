@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:layout_gravity="center"
-                android:src="@drawable/delete"
+                app:srcCompat="@drawable/delete"
                 android:clickable="true"
                 />
 
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"
-                android:src="@drawable/add_task"
+                app:srcCompat="@drawable/add_task"
                 android:layout_gravity="center"
                 />
 

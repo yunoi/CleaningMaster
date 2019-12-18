@@ -210,11 +210,11 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     }
 
-    public void setAlarms(ArrayList<AlarmVO> alarms) {
-        Log.d(TAG, "setAlarms");
-        alarmList = alarms;
-        notifyDataSetChanged();
-    }
+//    public void setAlarms(ArrayList<AlarmVO> alarms) {
+//        Log.d(TAG, "setAlarms");
+//        alarmList = alarms;
+//        notifyDataSetChanged();
+//    }
 
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {

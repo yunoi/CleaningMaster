@@ -51,7 +51,7 @@ public final class AlarmUtils {
 
     public static ContentValues toContentValues(AlarmVO alarm) {
 
-        final ContentValues cv = new ContentValues(12);
+        final ContentValues cv = new ContentValues(13);
 
         cv.put(DBHelper.COL_TIME, alarm.getTime());
         cv.put(DBHelper.COL_LABEL, alarm.getLabel());
@@ -66,6 +66,7 @@ public final class AlarmUtils {
         cv.put(DBHelper.COL_SUN, days.get(AlarmVO.SUN) ? 1 : 0);
 
         cv.put(DBHelper.COL_IS_ENABLED, alarm.isEnabled());
+        cv.put(DBHelper.COL_AREA, alarm.getArea());
 
         return cv;
 
@@ -93,8 +94,9 @@ public final class AlarmUtils {
                 final boolean sat = c.getInt(c.getColumnIndex(DBHelper.COL_SAT)) == 1;
                 final boolean sun = c.getInt(c.getColumnIndex(DBHelper.COL_SUN)) == 1;
                 final boolean isEnabled = c.getInt(c.getColumnIndex(DBHelper.COL_IS_ENABLED)) == 1;
+                final String area = c.getString(c.getColumnIndex(DBHelper.COL_AREA));
 
-                final AlarmVO alarm = new AlarmVO(id, time, label);
+                final AlarmVO alarm = new AlarmVO(id, time, label, area);
                 alarm.setDay(AlarmVO.MON, mon);
                 alarm.setDay(AlarmVO.TUE, tue);
                 alarm.setDay(AlarmVO.WED, wed);
@@ -104,6 +106,7 @@ public final class AlarmUtils {
                 alarm.setDay(AlarmVO.SUN, sun);
 
                 alarm.setIsEnabled(isEnabled);
+                alarm.setArea(area);
 
                 alarms.add(alarm);
 

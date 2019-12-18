@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class AlarmVO implements Parcelable {
 
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({MON,TUE,WED,THU,FRI,SAT,SUN})
     @interface Days{}
@@ -29,6 +30,7 @@ public class AlarmVO implements Parcelable {
     private String label;
     private SparseBooleanArray allDays;
     private boolean isEnabled;
+    private String area;
 
     private AlarmVO (Parcel in) {
         Log.i(getClass().getSimpleName(), "Creating database...");
@@ -37,6 +39,7 @@ public class AlarmVO implements Parcelable {
         label = in.readString();
         allDays = in.readSparseBooleanArray();
         isEnabled = in.readByte() != 0;
+        area = in.readString();
 
     }
     public static final Parcelable.Creator<AlarmVO> CREATOR = new Parcelable.Creator<AlarmVO>() {
@@ -63,10 +66,8 @@ public class AlarmVO implements Parcelable {
         parcel.writeString(label);
         parcel.writeSparseBooleanArray(allDays);
         parcel.writeByte((byte) (isEnabled ? 1 : 0));
-
+        parcel.writeString(area);
     }
-
-
 
     public AlarmVO() {
         this(NO_ID);
@@ -100,6 +101,32 @@ public class AlarmVO implements Parcelable {
         this.id = id;
         this.label = label;
 
+    }
+
+    public AlarmVO(long id, long time, String label, String area, @Days int... days) {
+        this.id = id;
+        this.time = time;
+        this.label = label;
+        this.allDays = buildDaysArray(days);
+        this.area = area;
+
+    }
+
+    public AlarmVO(long id, long time, String label, SparseBooleanArray allDays, boolean isEnabled, String area) {
+        this.id = id;
+        this.time = time;
+        this.label = label;
+        this.allDays = allDays;
+        this.isEnabled = isEnabled;
+        this.area = area;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public long getId() {
@@ -147,6 +174,7 @@ public class AlarmVO implements Parcelable {
         return "Alarm{" +
                 "id=" + id +
                 ", time=" + time +
+                ", area='" + area + '\'' +
                 ", label='" + label + '\'' +
                 ", allDays=" + allDays +
                 ", isEnabled=" + isEnabled + "}'";

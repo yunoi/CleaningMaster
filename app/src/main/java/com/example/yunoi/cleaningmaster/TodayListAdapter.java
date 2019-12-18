@@ -84,7 +84,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                 //현재 년,월,일
                 Calendar calendar = Calendar.getInstance();
                 Date date = calendar.getTime();
-                String year = new SimpleDateFormat("YYYY").format(date);
+                String year = new SimpleDateFormat("yyyy").format(date);
                 String month = new SimpleDateFormat("MM").format(date);
                 String day = new SimpleDateFormat("dd").format(date);
 
@@ -184,7 +184,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                                 snackbar.show();
                                 return;
                             }
-                            checkBoxTrue(strikeThroughPainting, context, taskText);
+                             checkBoxTrue(strikeThroughPainting, context, taskText);
                             checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
                             Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
                             Log.d(TAG, "실시간 리스트 사이즈 : " + list.size());
@@ -276,7 +276,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
         //현재 년,월,일
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
-        String year = new SimpleDateFormat("YYYY").format(date);
+        String year = new SimpleDateFormat("yyyy").format(date);
         String month = new SimpleDateFormat("MM").format(date);
         String day = new SimpleDateFormat("dd").format(date);
 
