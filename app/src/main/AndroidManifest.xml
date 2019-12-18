@@ -4,8 +4,6 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -15,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"></activity>
@@ -41,20 +38,20 @@
         </receiver>
 
         <!-- 191213 pm 03:33 알람 관련 리시버, 서비스 by 강윤해 -->
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="true"
-            android:exported="false"></receiver>
+
+        <service  android:name=".LoadAlarmsService"/>
+
+        <receiver android:name=".AlarmReceiver" />
+
         <receiver android:name=".LoadAlarmsReceiver" />
-        <service
-            android:name=".LoadAlarmsService"
-            android:enabled="true"></service>
+
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="${bootPriority}">
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action  android:name="android.intent.action.BOOT_COMPLETED">
+                </action>
             </intent-filter>
         </receiver>
 

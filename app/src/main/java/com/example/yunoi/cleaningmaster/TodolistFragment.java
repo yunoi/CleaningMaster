@@ -49,12 +49,12 @@ import static android.content.Context.ALARM_SERVICE;
 
 
 public class TodolistFragment
-        extends Fragment {
+        extends Fragment implements LoadAlarmsReceiver.OnAlarmsLoadedListener {
 
     View view;
     private SQLiteDatabase db;
     private ArrayList<TodolistVo> list = new ArrayList<TodolistVo>();
-    private ArrayList<TodolistVo> alarmList = new ArrayList<>();
+    private ArrayList<AlarmVO> alarmList = new ArrayList<>();
     private TodolistAdapter todolistAdapter;
     private LinearLayoutManager linearLayoutManager;
     public static ConstraintLayout todo_constraintLayout;
@@ -64,7 +64,6 @@ public class TodolistFragment
     private EditText alerEdt; // alert
     private String task; // 청소내용
     private static final String TAG = "TodolistFragment";
-
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({EDIT_ALARM, ADD_ALARM, UNKNOWN})
@@ -78,7 +77,7 @@ public class TodolistFragment
     public static final String ALARM_EXTRA = "alarm_extra";
     public static final String MODE_EXTRA = "mode_extra";
     private Context context;
-
+    private LoadAlarmsReceiver mReceiver;
 
     @Override
     public void onAttach(Context context) {
@@ -87,9 +86,16 @@ public class TodolistFragment
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mReceiver = new LoadAlarmsReceiver(this);
+        Log.i(getClass().getSimpleName(), "onCreate ...");
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        selectCleaningArea(groupText);
+//        selectCleaningArea(groupText);
     }
 
     @Nullable
@@ -98,7 +104,6 @@ public class TodolistFragment
         view = inflater.inflate(R.layout.todolist_fragment, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.todo_listView);
         todo_constraintLayout = view.findViewById(R.id.todo_constraintLayout);
-
 
 
         //액션바 설정
@@ -152,7 +157,7 @@ public class TodolistFragment
         todolistAdapter = new TodolistAdapter(context, R.layout.todo_list_holder_layout, alarmList);
         recyclerView.setAdapter(todolistAdapter);
 
-        selectCleaningArea(groupText);//구역마다 저장한 할일들 가져오기
+//        selectCleaningArea(groupText);//구역마다 저장한 할일들 가져오기
         score = selectScore(view.getContext());
 
 
@@ -161,7 +166,7 @@ public class TodolistFragment
         //현재 년,월,일
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
-        String year = new SimpleDateFormat("YYYY").format(date);
+        String year = new SimpleDateFormat("yyyy").format(date);
         String month = new SimpleDateFormat("MM").format(date);
         String day = new SimpleDateFormat("dd").format(date);
 
@@ -188,8 +193,18 @@ public class TodolistFragment
                             insertCleaningArea(new TodolistVo(currentYear, currentMonth, currentDay, groupText, task, 0, 0));
                             Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
                         }
-                        alarmList.add(new TodolistVo(task));
                         list.add(new TodolistVo(task));
+//                        AlarmVO alarm = new AlarmVO(task);
+//                        alarmList.add(alarm);
+//                        long test = DBHelper.getInstance(context).addAlarm(alarm);
+                        final long id = DBHelper.getInstance(context).addAlarm();
+                        LoadAlarmsService.launchLoadAlarmsService(context);
+                        final AlarmVO alarm1 = new AlarmVO(id);
+                        alarm1.setLabel(task);
+                        int message = DBHelper.getInstance(context).updateAlarm(alarm1);
+                        alarmList.add(alarm1);
+                        Log.d(TAG, "onCreateView. Dialog positive. test value : " + alarm1);
+                        Log.d(TAG,"if message == 1 {success} : "+message);
                     }
                 });
                 builder.setNegativeButton("취소", null);
@@ -208,30 +223,33 @@ public class TodolistFragment
         todolistAdapter.setAlarmClickListener(new TodolistAdapter.alarmClickListener() {
             @Override
             public void onAlarmClick(View v, int position) {
-                AlarmUtils.checkAlarmPermissions(getActivity());
 
-                final TodolistVo alarm = alarmList.get(position);
-                Log.d(TAG, "SetAlarmClickListener.alarm : "+ alarmList.get(position).toString());
+                final AlarmVO alarm = alarmList.get(position);
+                Log.d(TAG, "SetAlarmClickListener.alarm position: " + position);
+                Log.d(TAG, "SetAlarmClickListener.alarm list: " + alarm.toString());
+
+//                AlarmUtils.checkAlarmPermissions(getActivity());
+//                final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
+//                startActivity(i);
+
                 final Intent launchEditAlarmIntent =
                         AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
-                                context, AddEditAlarmActivity.ADD_ALARM
+                                context, AddEditAlarmActivity.EDIT_ALARM
                         );
-                launchEditAlarmIntent.putExtra("task", task);
+//                launchEditAlarmIntent.putExtra("task", task);
+//                Log.d(TAG, "end of onCreateView. task : " + task);
                 launchEditAlarmIntent.putExtra(AddEditAlarmActivity.ALARM_EXTRA, alarm);
                 startActivity(launchEditAlarmIntent);
-//                final Intent i = buildAddEditAlarmActivityIntent(getContext(), EDIT_ALARM);
-//
-//                startActivity(i);
             }
         });
         return view;
     }//end of onCreatView
 
-    public static Intent buildAddEditAlarmActivityIntent(Context context, @TodolistFragment.Mode int mode) {
-        final Intent i = new Intent(context, AddEditAlarmActivity.class);
-        i.putExtra(MODE_EXTRA, mode);
-        return i;
-    }
+//    public static Intent buildAddEditAlarmActivityIntent(Context context, @TodolistFragment.Mode int mode) {
+//        final Intent i = new Intent(context, AddEditAlarmActivity.class);
+//        i.putExtra(MODE_EXTRA, mode);
+//        return i;
+//    }
 
 
     ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
@@ -297,6 +315,30 @@ public class TodolistFragment
         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
+        LocalBroadcastManager.getInstance(context).registerReceiver(mReceiver, filter);
+        LoadAlarmsService.launchLoadAlarmsService(context);
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mReceiver);
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onAlarmsLoaded(ArrayList<AlarmVO> alarms) {
+        for (AlarmVO list : alarms) {
+            Log.d(TAG, "onAlarmsLoaded. list: " + list.toString());
+        }
+        todolistAdapter.setAlarms(alarms);
+        Log.d(TAG, "onAlarmsLoaded");
+    }
 }
 
 

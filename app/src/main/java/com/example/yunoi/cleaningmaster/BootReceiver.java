@@ -22,7 +22,7 @@ public class BootReceiver extends BroadcastReceiver {
             Executors.newSingleThreadExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final ArrayList<TodolistVo> alarms = DBHelper.getInstance(context).getAlarms();
+                    final ArrayList<AlarmVO> alarms = DBHelper.getInstance(context).getAlarms();
                     setReminderAlarms(context, alarms);
                 }
             });

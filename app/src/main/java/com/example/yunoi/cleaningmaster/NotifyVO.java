@@ -1,7 +1,7 @@
-package com.example.yunoi.cleaningmaster;
-
-public class NotifyVO {
-
+//package com.example.yunoi.cleaningmaster;
+//
+//public class NotifyVO {
+//
 
     //////////사용보류////////////////////
 
@@ -133,4 +133,4 @@ public class NotifyVO {
 //    public void setLoop(int loop) {
 //        this.loop = loop;
 //    }
-}
+//}

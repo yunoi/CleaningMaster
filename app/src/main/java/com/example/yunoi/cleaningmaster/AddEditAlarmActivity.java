@@ -49,13 +49,11 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
     EditText alerEdt;
     private TimePicker timePicker;
-    private TextView tvDate, tvTask;
-    private ImageView ivCalendar;
+    private TextView tvTask;
     private Button btnOk, btnCancel;
     private Calendar calendar = Calendar.getInstance(); // 캘린더 인스턴스 생성
 
     // 요일 관련 변수
-    private TextView txtDayCheck;
     private CheckBox cbMon;
     private CheckBox cbTue;
     private CheckBox cbWed;
@@ -75,7 +73,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
 //        Intent intent = getIntent();
 //        final TodolistVo alarm = intent.getParcelableExtra(ALARM_EXTRA);
-        final TodolistVo alarm = getAlarm();
+        final AlarmVO alarm = getAlarm();
         Log.d(TAG, "onCreate. getAlarm() : "+alarm.toString());
 //
 //        if(getSupportFragmentManager().findFragmentById(R.id.edit_alarm_frag_container) == null) {
@@ -88,9 +86,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
         alerEdt = findViewById(R.id.alert_todolist_alerEdt);
         timePicker = findViewById(R.id.timePicker);
-        tvDate = findViewById(R.id.tvDate);
         tvTask = findViewById(R.id.tvTask);
-        ivCalendar = findViewById(R.id.ivCalendar);
         btnOk = findViewById(R.id.btnOk);
         btnCancel = findViewById(R.id.btnCancel);
 
@@ -101,25 +97,15 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         cbFri = findViewById(R.id.cbFriday);
         cbSat = findViewById(R.id.cbSaturday);
         cbSun = findViewById(R.id.cbSunday);
-        txtDayCheck = findViewById(R.id.txtDayCheck);
-        //오늘 날짜 입력부분
-        tvDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        // 날짜선택창 불러오기
-        ivCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-            }
-        });
 
-        // 청소내용 받아오기
-        Intent intent1 = getIntent();
-        String task = intent1.getStringExtra("task");
-        tvTask.setText(task);
-
+        tvTask.setText(getAlarm().getLabel());
+//        // 청소내용 받아오기
+//        Intent intent1 = getIntent();
+//        String task = intent1.getStringExtra("task");
+//        tvTask.setText(task);
+//        alarm.setLabel(task);
+//        Log.d(TAG, "end of onCreateView. task : "+task);
         setDayCheckboxes(alarm);
-
-        alarmSettings();
 
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
@@ -140,7 +126,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
                 break;
             case ADD_ALARM:
                 titleResId = "알림 추가";
-                break;
+            break;
             case UNKNOWN:
             default:
                 throw new IllegalStateException("Mode supplied as intent extra for " +
@@ -156,25 +142,22 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         return i;
     }
 
-    private void setDayCheckboxes(TodolistVo alarm) {
-        cbMon.setChecked(alarm.getDay(TodolistVo.MON));
-        cbTue.setChecked(alarm.getDay(TodolistVo.TUE));
-        cbWed.setChecked(alarm.getDay(TodolistVo.WED));
-        cbThu.setChecked(alarm.getDay(TodolistVo.THU));
-        cbFri.setChecked(alarm.getDay(TodolistVo.FRI));
-        cbSat.setChecked(alarm.getDay(TodolistVo.SAT));
-        cbSun.setChecked(alarm.getDay(TodolistVo.SUN));
+    private void setDayCheckboxes(AlarmVO alarm) {
+        cbMon.setChecked(alarm.getDay(AlarmVO.MON));
+        cbTue.setChecked(alarm.getDay(AlarmVO.TUE));
+        cbWed.setChecked(alarm.getDay(AlarmVO.WED));
+        cbThu.setChecked(alarm.getDay(AlarmVO.THU));
+        cbFri.setChecked(alarm.getDay(AlarmVO.FRI));
+        cbSat.setChecked(alarm.getDay(AlarmVO.SAT));
+        cbSun.setChecked(alarm.getDay(AlarmVO.SUN));
     }
 
 
     ////////////////////////////////////////알람 세팅 Dialog/////////////////////////////////////////////
     private void alarmSettings() {
 
-        Intent intent = getIntent();
-        final TodolistVo alarm = intent.getParcelableExtra(ALARM_EXTRA);
+        final AlarmVO alarm = getAlarm();
         Log.d(TAG, "alarmSettings. getAlarm() : "+alarm.toString());
-
-//        alarm.setLabel(tvTask.getText().toString());
 
         // 알람 시간 설정
         // api 버전별 설정
@@ -184,38 +167,46 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             calendar.set(Calendar.HOUR_OF_DAY, getHour);
             calendar.set(Calendar.MINUTE, getMinute);
             calendar.set(Calendar.SECOND, 0);
+            alarm.setTime(calendar.getTimeInMillis());
         } else {
             int getHour = timePicker.getHour();
             int getMinute = timePicker.getMinute();
             calendar.set(Calendar.HOUR_OF_DAY, getHour);
             calendar.set(Calendar.MINUTE, getMinute);
             calendar.set(Calendar.SECOND, 0);
+            alarm.setTime(calendar.getTimeInMillis());
         }
-        alarm.setTime(calendar.getTimeInMillis());
-        // 현재보다 이전이면 등록 못하도록
-        if (calendar.before(Calendar.getInstance())) {
-            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
-            return;
-        }
+
+//        // 현재보다 이전이면 등록 못하도록
+//        if (calendar.before(Calendar.getInstance())) {
+//            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
+//            return;
+//        }
+        Log.d(TAG, "alarmSettings. time: "+ alarm.getTime());
+
+        alarm.setLabel(tvTask.getText().toString());
+
+        Log.d(TAG, "alarmSettings. task: "+ alarm.getLabel());
+
+        // 요일 설정
+        alarm.setDay(AlarmVO.MON, cbMon.isChecked());
+        alarm.setDay(AlarmVO.TUE, cbTue.isChecked());
+        alarm.setDay(AlarmVO.WED, cbWed.isChecked());
+        alarm.setDay(AlarmVO.THU, cbThu.isChecked());
+        alarm.setDay(AlarmVO.FRI, cbFri.isChecked());
+        alarm.setDay(AlarmVO.SAT, cbSat.isChecked());
+        alarm.setDay(AlarmVO.SUN, cbSun.isChecked());
 
         alarm.setIsEnabled(true);
 
-        // 요일 설정
-        alarm.setDay(TodolistVo.MON, cbMon.isChecked());
-        alarm.setDay(TodolistVo.TUE, cbTue.isChecked());
-        alarm.setDay(TodolistVo.WED, cbWed.isChecked());
-        alarm.setDay(TodolistVo.THU, cbThu.isChecked());
-        alarm.setDay(TodolistVo.FRI, cbFri.isChecked());
-        alarm.setDay(TodolistVo.SAT, cbSat.isChecked());
-        alarm.setDay(TodolistVo.SUN, cbSun.isChecked());
-
-
         final int rowsUpdated = DBHelper.getInstance(this).updateAlarm(alarm);
-//        final int messageId = (rowsUpdated == 1) ? R.string.update_complete : R.string.update_failed;
-
-        Toast.makeText(this, "알림이 설정되었습니다.", Toast.LENGTH_SHORT).show();
+        final String messageId = (rowsUpdated == 1) ? "알림이 설정되었습니다." : "알람설정을 실패하였습니다.";
+        Log.d(TAG, "alarmSettings. updateAlarm : "+messageId);
+        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
 
         AlarmReceiver.setReminderAlarm(this, alarm);
+
+        finish();
 
     } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
 
@@ -223,7 +214,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnOk:
-                finish();
+                alarmSettings();
                 break;
             case R.id.btnCancel:
                 toastDisplay("취소되었습니다.");
@@ -246,30 +237,29 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
-    // 날짜 선택 DatePicker Dialog 메소드
-    private void showDialog() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // 데이터피커에서 선택한 날짜 처리 하는 부분
-                tvDate.setText(String.valueOf(year +"-"+(monthOfYear+1)+"-"+dayOfMonth));
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear+1);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            }
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
-        pickerDialog.show();
-    }
+//    // 날짜 선택 DatePicker Dialog 메소드
+//    private void showDialog() {
+//        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                // 데이터피커에서 선택한 날짜 처리 하는 부분
+//                calendar.set(Calendar.YEAR, year);
+//                calendar.set(Calendar.MONTH, monthOfYear+1);
+//                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//            }
+//        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
+//        pickerDialog.show();
+//    }
 
 
-private TodolistVo getAlarm() {
+private AlarmVO getAlarm() {
     switch (getMode()) {
         case EDIT_ALARM:
             return getIntent().getParcelableExtra(ALARM_EXTRA);
         case ADD_ALARM:
             final long id = DBHelper.getInstance(this).addAlarm();
             LoadAlarmsService.launchLoadAlarmsService(this);
-            return new TodolistVo(id);
+            return new AlarmVO(id);
         case UNKNOWN:
         default:
             throw new IllegalStateException("Mode supplied as intent extra for " +

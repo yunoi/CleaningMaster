@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
-public class MainFragment extends Fragment implements LoadAlarmsReceiver.OnAlarmsLoadedListener {
+public class MainFragment extends Fragment {
 
     private View view;
     private ListView listView;
@@ -50,7 +50,6 @@ public class MainFragment extends Fragment implements LoadAlarmsReceiver.OnAlarm
     private EditText alerEdt; // 청소구역추가 다이얼로그 내부 변수
     private int checkedPosition; // 리스트뷰의 포지션을 가져온다.
     private static final String TAG = "MainFragment";
-    private LoadAlarmsReceiver mReceiver;
     private Context context;
 
     @Override
@@ -59,12 +58,6 @@ public class MainFragment extends Fragment implements LoadAlarmsReceiver.OnAlarm
         this.context = context;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mReceiver = new LoadAlarmsReceiver(this);
-        Log.i(getClass().getSimpleName(), "onCreate ...");
-    }
 
     @Nullable
     @Override
@@ -438,32 +431,6 @@ public class MainFragment extends Fragment implements LoadAlarmsReceiver.OnAlarm
 
     public void toastDisplay(String s) {
         Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
-        LocalBroadcastManager.getInstance(context).registerReceiver(mReceiver, filter);
-        LoadAlarmsService.launchLoadAlarmsService(context);
-        Log.d(TAG, "onStart");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(mReceiver);
-        Log.d(TAG, "onStop");
-    }
-
-    @Override
-    public void onAlarmsLoaded(ArrayList<TodolistVo> alarms) {
-        TodolistAdapter todolistAdapter = new TodolistAdapter();
-        for (TodolistVo list : alarms) {
-            Log.d(TAG, "onAlarmsLoaded. list: "+list.toString());
-        }
-        todolistAdapter.setAlarms(alarms);
-        Log.d(TAG, "onAlarmsLoaded");
     }
 
 }

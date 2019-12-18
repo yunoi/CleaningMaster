@@ -29,9 +29,10 @@ public class InitActionReceiver extends BroadcastReceiver {
         if (Intent.ACTION_DATE_CHANGED.equals(action)) {
             // 날짜가 변경된 경우 해야 될 작업을 한다.
 
-
             updateIsCheckTBL(context);
             insertCheck(context);
+
+            Log.d("확인","초기화");
 
         }
 
