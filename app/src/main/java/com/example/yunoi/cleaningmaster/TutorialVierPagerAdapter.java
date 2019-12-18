@@ -1,5 +1,6 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -25,4 +26,5 @@ public class TutorialVierPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 4;
     }
+
 }
