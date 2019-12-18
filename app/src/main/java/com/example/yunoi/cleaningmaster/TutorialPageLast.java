@@ -26,9 +26,11 @@ public class TutorialPageLast extends Fragment {
         view = inflater.inflate(R.layout.tutorial_page_last,container,false);
         cbEndTuto=view.findViewById(R.id.cbEndTuto);
         btnTutoClose=view.findViewById(R.id.btnTutoClose);
+        //튜토리얼 종료 버튼 클릭시 이벤트
         btnTutoClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                //만약 다시 보지 않기 버튼 클릭시 다음부터 도움말이 보이지 않음
                 if(cbEndTuto.isChecked()){
                     int intoMain = 1;
                     SharedPreferences.Editor editor = TutorialGuideActivity.spPassTutorial.edit();

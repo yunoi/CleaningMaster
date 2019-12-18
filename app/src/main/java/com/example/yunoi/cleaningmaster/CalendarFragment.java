@@ -116,21 +116,21 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
-
+    //달력 초기화
     private void init() {
         mCalendar = Calendar.getInstance();
 
         recalculate();
         resetDayNumbers();
     }
-
+    //상단에 년월 표시
     private void setTvYearMonth() {
         String yearMonth = String.valueOf(currentYear) + "년 " + String.valueOf(currentMonth + 1) + "월";
 //        Log.d("Date1", String.valueOf(currentYear));
 //        Log.d("Date1", String.valueOf(currentMonth));
         tvMonth.setText(yearMonth);
     }
-
+    //해당 년월일에 맞게 달력 표시
     private void recalculate() {
         mCalendar.set(Calendar.DAY_OF_MONTH, 1);
         int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK);
@@ -146,8 +146,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
 
 
     }
-
-
+    //달의 시작 날짜 구하기
     private int getFirstDay(int dayOfWeek) {
         int firstDay = 0;
         switch (dayOfWeek) {
@@ -177,7 +176,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
         return firstDay;
 
     }
-
+    //매달의 날짜 구하기
     private int getMonthLastDay(int currentYear, int currentMonth) {
         switch (currentMonth + 1) {
             case 1:
@@ -203,7 +202,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
                 }
         }
     }
-
+    //요일에 따른 달력 시작 확인
     private int getFirstDayOfWeek() {
         int startDay = Calendar.getInstance().getFirstDayOfWeek();
         switch (startDay) {
@@ -216,7 +215,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
         }
         return 0;
     }
-
+    //달력 날짜 세팅
     private void resetDayNumbers() {
         items.removeAll(items);
         int dayNum=0;
@@ -233,14 +232,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
             items.add(new CalendarDAO(dayNum));
         }
     }
-
+    //이전달로 이동
     public void setPreviousMonth() {
         mCalendar.add(Calendar.MONTH, -1);
         recalculate();
         resetDayNumbers();
         selectedPosition = -1;
     }
-
+    //다음달로 이동
     public void setNextMonth() {
         mCalendar.add(Calendar.MONTH, 1);
         recalculate();

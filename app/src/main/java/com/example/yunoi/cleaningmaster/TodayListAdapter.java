@@ -36,7 +36,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
     private SQLiteDatabase db;
     private static String TAG="확인";
     private int checkSize;
-    private String area;
+
 
     public TodayListAdapter(int layout, ArrayList<TodayListVO> list) {
         this.layout = layout;
@@ -59,7 +59,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
         final Context context=customViewHolder.itemView.getContext();
         final StrikeThroughPainting strikeThroughPainting = new StrikeThroughPainting(customViewHolder.todaylist_text);
         final String taskText=list.get(position).getTask();
-        area=list.get(position).getArea();
+        final String area=list.get(position).getArea();
         customViewHolder.todaylist_text.setText(list.get(position).getTask());
         customViewHolder.todaylist_area.setText(area);
         final int isCheckClear = selectIsCheckClear(context);
@@ -184,7 +184,8 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                                 snackbar.show();
                                 return;
                             }
-                             checkBoxTrue(strikeThroughPainting, context, taskText);
+
+                            checkBoxTrue(strikeThroughPainting, context, taskText,area);
                             checkSize = selectCheckBoxCount(context, currentYear, currentMonth, currentDay);
                             Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
                             Log.d(TAG, "실시간 리스트 사이즈 : " + list.size());
@@ -271,7 +272,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
     }
 
 //    checkBox True 인경우 함수화
-    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
+    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText,String area) {
 
         //현재 년,월,일
         Calendar calendar = Calendar.getInstance();
@@ -340,7 +341,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
     // 체크 정보 업데이트 (0_false, 1_true)
     public void insertCheck(Context context, int currentYear, int currentMonth, int currentDay, int checkCount, String task, String groupName) {
         db = DBHelper.getInstance(context).getWritableDatabase();
-        Log.d(TAG, "가져온 task : " + task);
+        Log.d(TAG, "가져온 task : " + task+" / area = "+groupName);
         db.execSQL("UPDATE cleaningTBL SET year=" + currentYear + ", month =" + currentMonth + ", day=" + currentDay + ", checkCount=" + checkCount + " WHERE task ='" + task + "' AND area ='" + groupName + "' ;");
         Toast.makeText(context, "업데이트 저장되었습니다.", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "저장된 시간 : " + currentYear + currentMonth + currentDay);
