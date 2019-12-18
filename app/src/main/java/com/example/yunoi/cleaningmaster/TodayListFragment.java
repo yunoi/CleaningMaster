@@ -101,7 +101,7 @@ public class TodayListFragment extends Fragment {
         String date=getStartIndexFromTime(calendar);
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         Cursor cursor;
-        cursor = db.rawQuery("SELECT distinct cleaningTBL.task, cleaningTBL.checkCount, cleaningTBL.area FROM cleaningTBL INNER JOIN alarmTBL ON cleaningTBL.task = alarmTBL.task WHERE alarmTBL."+date+" = 1;", null);
+        cursor = db.rawQuery("SELECT distinct cleaningTBL.task, cleaningTBL.checkCount, cleaningTBL.area FROM cleaningTBL INNER JOIN alarmTBL ON cleaningTBL.task = alarmTBL.task WHERE alarmTBL."+date+" = 1 ORDER BY cleaningTBL.area ASC;", null);
         list.clear();
         while (cursor.moveToNext()) {
 
