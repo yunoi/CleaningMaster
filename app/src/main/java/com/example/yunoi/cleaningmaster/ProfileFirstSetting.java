@@ -70,6 +70,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                 edtHeight.addTextChangedListener(this);
             }
         });
+        //EditText 숫자 제한
         edtWeight.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

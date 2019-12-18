@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,15 +28,8 @@ public class CalendarAdapter extends BaseAdapter {
     ArrayList<Integer> dayList = new ArrayList<Integer>();
 
     int size1,size2,cursorYear,cursorMonth,cursorDay;
-    //    public CalendarAdapter(Context mContext) {
-//        this.context = mContext;
-//        this.layout = R.layout.calendar_item;
-//    }
-//
-//    public CalendarAdapter(Context mContext, Attributes attributes) {
-//        this.context = mContext;
-//        this.layout = R.layout.calendar_item;
-//    }
+
+
     public CalendarAdapter(Context context, int layout, ArrayList<CalendarDAO> items) {
         this.context = context;
         this.layout = layout;
@@ -71,11 +63,8 @@ public class CalendarAdapter extends BaseAdapter {
 
         final CalendarDAO item = items.get(position);
 
-//        view.setTag(tvCalendarDay);
-
-
         int columnIndex = position % 7;
-
+        //일요일은 빨강, 토요일은 초록으로 색 변경
         if (columnIndex == 0)
             tvCalendarDay.setTextColor(Color.RED);
         else if (columnIndex == 6)
@@ -84,22 +73,19 @@ public class CalendarAdapter extends BaseAdapter {
             tvCalendarDay.setTextColor(Color.BLACK);
 
         Calendar calendar = Calendar.getInstance();
+        //오늘 day 텍스트 컬러 변경
         int iToday = calendar.get(Calendar.DAY_OF_MONTH);
         String sToday = String.valueOf(iToday);
         Log.d("tbl1",sToday);
-        if (iToday == item.getDay()) { //오늘 day 텍스트 컬러 변경
+        if (iToday == item.getDay()) {
             Log.d("tbl2",String.valueOf(item.getDay()));
             tvCalendarDay.setTextColor(Color.GREEN);
         }
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
-//        Log.d("tbl1",String.valueOf(year));
-//        Log.d("tbl2",String.valueOf(month));
-//        Log.d("tbl3",String.valueOf(iToday));
         db = DBHelper.getInstance(context.getApplicationContext()).getWritableDatabase();
         //오늘 날의 성공한 리스트 갯수
         Cursor cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE checkCount=" + 1 + " AND year=" + year + " AND month=" + (month + 1) + " AND day=" + iToday + ";", null);
-//        Log.d("tbl1",cursor.getString(cursor.getCount()));
         //오늘의 리스트 총 갯수
         Cursor cursor1 = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE year=" + year + " AND month=" + (month + 1) + " AND day=" + iToday + ";", null);
         Cursor cursor2 = db.rawQuery("SELECT year,month,day FROM cleaningTBL ;", null);
@@ -113,15 +99,10 @@ public class CalendarAdapter extends BaseAdapter {
             yearList.add(cursorYear);
             monthList.add(cursorMonth);
             dayList.add(cursorDay);
-//            Log.d("cal1",String.valueOf(cursorYear));
-//            Log.d("cal2",String.valueOf(cursorMonth));
-//            Log.d("cal3",String.valueOf(cursorDay));
         }
-
+        //오늘부터 과거에 기록이 있으면 달력에 표시
         for (int i = 0; (i < dayList.size()); i++) {
-//            Log.d("cal4",String.valueOf(dayList.get(i)));
             if ((yearList.get(i)<=year)&&(monthList.get(i)<=(month+1))&&(dayList.get(i)<=iToday)) {
-//                Log.d("cal5",String.valueOf(dayList.get(i)));
                 if ((yearList.get(i)<=year)&&(monthList.get(i)<=(month+1))&&(dayList.get(i)<=iToday)&&(dayList.get(i) == (position - 6))) {
                     if (size1 == size2) {
                         ivListResult.setVisibility(View.VISIBLE);

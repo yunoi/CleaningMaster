@@ -71,7 +71,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profile_progressBar.setMax(1000);
         profile_progressBar.startAnimation(progressBarAnimation);
 
-
+        //프로필 항목들에 DB에서 불러온 자료 삽입
         txtNickName.setText(cursorNickName);
         txtScore.setText(String.valueOf(cursorScore));
         txtRank.setText(String.valueOf(cursorRank));
