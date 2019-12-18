@@ -86,7 +86,9 @@ public class CalendarAdapter extends BaseAdapter {
         Calendar calendar = Calendar.getInstance();
         int iToday = calendar.get(Calendar.DAY_OF_MONTH);
         String sToday = String.valueOf(iToday);
-        if (sToday.equals(getItem(position))) { //오늘 day 텍스트 컬러 변경
+        Log.d("tbl1",sToday);
+        if (iToday == item.getDay()) { //오늘 day 텍스트 컬러 변경
+            Log.d("tbl2",String.valueOf(item.getDay()));
             tvCalendarDay.setTextColor(Color.GREEN);
         }
         int year = calendar.get(Calendar.YEAR);
