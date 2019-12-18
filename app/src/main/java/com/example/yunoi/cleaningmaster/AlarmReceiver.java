@@ -212,6 +212,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     public static Intent launchIntent(Context context) {
         final Intent i = new Intent(context, MainActivity.class);
+        i.putExtra("todayFragment", "Notification");
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return i;
     }

@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
     TodayListFragment todayListFragment; //오늘할일 프레그먼트
 
 
-
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -59,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(InitActionReceiver,intentFilter);
 
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +84,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        // 노티피케이션 알림 눌렀을 때 오늘 청소 프래그먼트로 이동
+        String menuFragment = getIntent().getStringExtra("todayFragment");
+
+        fragmentManager = getSupportFragmentManager();
+        ft = fragmentManager.beginTransaction();
+
+        // If menuFragment is defined, then this activity was launched with a fragment selection
+        if (menuFragment != null) {
+            // Here we can decide what do to -- perhaps load other parameters from the intent extras such as IDs, etc
+            if (menuFragment.equals("Notification")) {
+                ft.replace(R.id.coordinatorLayout, todayListFragment);
+                ft.commit();
+            }
+        } else {
+            // Activity was not launched with a menuFragment selected -- continue as if this activity was opened from a launcher (for example)
+            ft.replace(R.id.coordinatorLayout, mainFragment);
+            ft.commit();
+        }
 
         // bottomMenu를 변경했을 때 그것을 감지하여 해당된 프래그먼트를 세팅해주는 리스너
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -111,8 +124,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        setOnChangeFragment(0);
-    }
+//        setOnChangeFragment(0);
+
+
+    }// end of onCreate
 
     private void setOnChangeFragment(int i) {
         // 화면 전환 위해서는 프래그먼트 매니저 필요
