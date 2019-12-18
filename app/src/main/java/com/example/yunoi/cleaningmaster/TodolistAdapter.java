@@ -93,6 +93,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         final StrikeThroughPainting strikeThroughPainting = new StrikeThroughPainting(customViewHolder.todolist_text);
         final String taskText = list.get(position).getTodolist_text();
 
+
         if (mDays == null) {
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
@@ -102,10 +103,10 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         customViewHolder.todolist_text.setText(taskText + "\n" + AlarmUtils.getReadableTime(alarm.getTime())
                 + " " + AlarmUtils.getAmPm(alarm.getTime()));
 //        +" "+buildSelectedDays(alarm)
-        final int isCheckClear = selectIsCheckClear(context);
+//        final int isCheckClear = selectIsCheckClear(context);
 
         customViewHolder.todolist_text.setText(taskText);
-        final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
+//        final int allListSize = selectAllListSize(context); //전체 리스트 사이즈 (구역 상관없는 전체 리스트사이즈)
 
 //        //체크 유무를 가져옴.!!!
 //        final int check = list.get(position).getCheckcount();
@@ -320,6 +321,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             public void onClick(View v) {
                 if (listener != null) {
                     listener.onAlarmClick(v, position);
+
                 }
             }
         });
@@ -397,104 +399,104 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     } // end of customViewHolder class
 
-    //checkBox True 인경우 함수화
-    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
+//    //checkBox True 인경우 함수화
+//    public void checkBoxTrue(StrikeThroughPainting strikeThroughPainting, final Context context, String taskText) {
+//
+//        //현재 년,월,일
+//        Calendar calendar = Calendar.getInstance();
+//        Date date = calendar.getTime();
+//        String year = new SimpleDateFormat("YYYY").format(date);
+//        String month = new SimpleDateFormat("MM").format(date);
+//        String day = new SimpleDateFormat("dd").format(date);
+//
+//        final int currentYear = Integer.parseInt(year);
+//        final int currentMonth = Integer.parseInt(month);
+//        final int currentDay = Integer.parseInt(day);
+//
+//        Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
+//
+//        TodolistFragment.score += 100;
+//
+//        //체크시 줄 생기는것
+//        strikeThroughPainting.color(Color.rgb(2, 72, 112))
+//                .strokeWidth(4).totalTime(10_0L).strikeThrough();
+//        //체크 True DB저장 , 스코어 저장
+//        insertScore(TodolistFragment.score, context);
+//        insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
+//
+//
+//    }
 
-        //현재 년,월,일
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        String year = new SimpleDateFormat("YYYY").format(date);
-        String month = new SimpleDateFormat("MM").format(date);
-        String day = new SimpleDateFormat("dd").format(date);
-
-        final int currentYear = Integer.parseInt(year);
-        final int currentMonth = Integer.parseInt(month);
-        final int currentDay = Integer.parseInt(day);
-
-        Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
-
-        TodolistFragment.score += 100;
-
-        //체크시 줄 생기는것
-        strikeThroughPainting.color(Color.rgb(2, 72, 112))
-                .strokeWidth(4).totalTime(10_0L).strikeThrough();
-        //체크 True DB저장 , 스코어 저장
-        insertScore(TodolistFragment.score, context);
-        insertCheck(context, currentYear, currentMonth, currentDay, 1, taskText, TodolistFragment.groupText);
-
-
-    }
-
-    //스낵바 설정 함수화
-    public void stnackBar(String txt) {
-        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, txt + TodolistFragment.score, Snackbar.LENGTH_SHORT);
-        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-        layout.setPadding(10, 10, 50, 10);
-        View snackbarView = snackbar.getView();
-        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-        tv.setTextColor(Color.WHITE);
-        tv.setTextSize(16);
-        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-
-        snackbar.show();
-    }
-
-
-    //DB 스코어 저장하기
-    public void insertScore(int score, Context context) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT * FROM profileTBL", null);
-        String nickname = null;
-        while (cursor.moveToNext()) {
-
-            nickname = cursor.getString(0);
-        }
-        Log.d(TAG, "닉네임 확인 : " + nickname);
-
-
-        db.execSQL("UPDATE profileTBL SET score=" + score + " WHERE NickName=" + "'" + nickname + "'" + ";");
-
-        cursor.close();
-
-        Log.d(TAG, "scoer DB 저장 : " + score);
-
-    }
-
-    // 체크 정보 업데이트 (0_false, 1_true)
-    public void insertCheck(Context context, int currentYear, int currentMonth, int currentDay, int checkCount, String task, String groupName) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Log.d(TAG, "가져온 task : " + task);
-        db.execSQL("UPDATE cleaningTBL SET year=" + currentYear + ", month =" + currentMonth + ", day=" + currentDay + ", checkCount=" + checkCount + " WHERE task ='" + task + "' AND area ='" + groupName + "' ;");
-        Toast.makeText(context, "업데이트 저장되었습니다.", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "저장된 시간 : " + currentYear + currentMonth + currentDay);
-        Log.d(TAG, "저장된 체크 : " + checkCount);
-    }
-
-
-    //체크 한 개수 가져오기
-    public int selectCheckBoxCount(Context context, int year, int month, int day) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE checkCount=" + 1 + " AND year=" + year + " AND month=" + month + " AND day=" + day + ";", null);
-        int size = cursor.getCount();
-        cursor.close();
-        return size;
-    }
-
-    //전체 저장 되어있는 리스트 사이즈
-    public int selectAllListSize(Context context) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT * FROM cleaningTBL;", null);
-        int allSize = cursor.getCount();
-        cursor.close();
-        Log.d(TAG, "총 리스트 사이즈 : " + allSize);
-        return allSize;
-    }
-
+//    //스낵바 설정 함수화
+//    public void stnackBar(String txt) {
+//        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, txt + TodolistFragment.score, Snackbar.LENGTH_SHORT);
+//        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
+//        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+//        layout.setPadding(10, 10, 50, 10);
+//        View snackbarView = snackbar.getView();
+//        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+//        tv.setTextColor(Color.WHITE);
+//        tv.setTextSize(16);
+//        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
+//
+//        snackbar.show();
+//    }
+//
+//
+//    //DB 스코어 저장하기
+//    public void insertScore(int score, Context context) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//
+//        Cursor cursor;
+//        cursor = db.rawQuery("SELECT * FROM profileTBL", null);
+//        String nickname = null;
+//        while (cursor.moveToNext()) {
+//
+//            nickname = cursor.getString(0);
+//        }
+//        Log.d(TAG, "닉네임 확인 : " + nickname);
+//
+//
+//        db.execSQL("UPDATE profileTBL SET score=" + score + " WHERE NickName=" + "'" + nickname + "'" + ";");
+//
+//        cursor.close();
+//
+//        Log.d(TAG, "scoer DB 저장 : " + score);
+//
+//    }
+//
+//    // 체크 정보 업데이트 (0_false, 1_true)
+//    public void insertCheck(Context context, int currentYear, int currentMonth, int currentDay, int checkCount, String task, String groupName) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//        Log.d(TAG, "가져온 task : " + task);
+//        db.execSQL("UPDATE cleaningTBL SET year=" + currentYear + ", month =" + currentMonth + ", day=" + currentDay + ", checkCount=" + checkCount + " WHERE task ='" + task + "' AND area ='" + groupName + "' ;");
+//        Toast.makeText(context, "업데이트 저장되었습니다.", Toast.LENGTH_SHORT).show();
+//        Log.d(TAG, "저장된 시간 : " + currentYear + currentMonth + currentDay);
+//        Log.d(TAG, "저장된 체크 : " + checkCount);
+//    }
+//
+//
+//    //체크 한 개수 가져오기
+//    public int selectCheckBoxCount(Context context, int year, int month, int day) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//        Cursor cursor;
+//        cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE checkCount=" + 1 + " AND year=" + year + " AND month=" + month + " AND day=" + day + ";", null);
+//        int size = cursor.getCount();
+//        cursor.close();
+//        return size;
+//    }
+//
+//    //전체 저장 되어있는 리스트 사이즈
+//    public int selectAllListSize(Context context) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//        Cursor cursor;
+//        cursor = db.rawQuery("SELECT * FROM cleaningTBL;", null);
+//        int allSize = cursor.getCount();
+//        cursor.close();
+//        Log.d(TAG, "총 리스트 사이즈 : " + allSize);
+//        return allSize;
+//    }
+//
     // 청소리스트 DB 삭제 부분
     public void deleteCleningArea(String text, Context context) {
         db = DBHelper.getInstance(context).getWritableDatabase();
@@ -503,37 +505,38 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     }
 
-    //오늘 날짜에 청소 다 완료할때 업데이트(보너스 점수 막기용)
-    public void insertIsCheckClear(Context context) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        db.execSQL("INSERT INTO ischeckTBL (isCheckClear) VALUES (1) ;");
-        Log.d(TAG, "DB ischeckClear 업데이트됨.");
-    }
-
-    //isCheckClear 가져오기
-    public int selectIsCheckClear(Context context) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT * FROM ischeckTBL", null);
-        int ischeckClear = 0;
-        while (cursor.moveToNext()) {
-            ischeckClear = cursor.getInt(0);
-        }
-        Log.d(TAG, "ischeckClear 확인 : " + ischeckClear);
-
-        return ischeckClear;
-    }
-
-    //체크정보 가져오기
-    public int selectIsCheck(Context context, String groupName, String task) {
-        db = DBHelper.getInstance(context).getWritableDatabase();
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE task='" + task + "' AND area='" + groupName + "';", null);
-        int count = 0;
-        while (cursor.moveToNext()) {
-            count = cursor.getInt(0);
-        }
-        return count;
-    }
+//
+//    //오늘 날짜에 청소 다 완료할때 업데이트(보너스 점수 막기용)
+//    public void insertIsCheckClear(Context context) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//        db.execSQL("INSERT INTO ischeckTBL (isCheckClear) VALUES (1) ;");
+//        Log.d(TAG, "DB ischeckClear 업데이트됨.");
+//    }
+//
+//    //isCheckClear 가져오기
+//    public int selectIsCheckClear(Context context) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//        Cursor cursor;
+//        cursor = db.rawQuery("SELECT * FROM ischeckTBL", null);
+//        int ischeckClear = 0;
+//        while (cursor.moveToNext()) {
+//            ischeckClear = cursor.getInt(0);
+//        }
+//        Log.d(TAG, "ischeckClear 확인 : " + ischeckClear);
+//
+//        return ischeckClear;
+//    }
+//
+//    //체크정보 가져오기
+//    public int selectIsCheck(Context context, String groupName, String task) {
+//        db = DBHelper.getInstance(context).getWritableDatabase();
+//        Cursor cursor;
+//        cursor = db.rawQuery("SELECT checkCount FROM cleaningTBL WHERE task='" + task + "' AND area='" + groupName + "';", null);
+//        int count = 0;
+//        while (cursor.moveToNext()) {
+//            count = cursor.getInt(0);
+//        }
+//        return count;
+//    }
 
 }

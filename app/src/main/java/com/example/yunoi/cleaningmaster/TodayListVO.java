@@ -4,10 +4,12 @@ public class TodayListVO {
 
     private String task;
     private int checkCount;
+    private String area;
 
-    public TodayListVO(String task, int checkCount) {
+    public TodayListVO(String task, int checkCount,String area) {
         this.task = task;
         this.checkCount = checkCount;
+        this.area = area;
     }
 
     public String getTask() {
@@ -24,5 +26,13 @@ public class TodayListVO {
 
     public void setCheckCount(int checkCount) {
         this.checkCount = checkCount;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
     }
 }

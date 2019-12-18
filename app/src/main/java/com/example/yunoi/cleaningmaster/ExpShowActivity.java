@@ -89,6 +89,7 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
                 selectProfile(getApplicationContext(),"중수");
                 todo_shineButton.setVisibility(View.VISIBLE);
                 todo_celebration.setVisibility(View.INVISIBLE);
+                todo_medal.setImageResource(R.drawable.winner);
                 todo_shineButton.callOnClick();
             }
             progressBarAnimation.to= score -1000;
@@ -105,33 +106,31 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
                 selectProfile(getApplicationContext(),"고수");
                 todo_shineButton.setVisibility(View.VISIBLE);
                 todo_celebration.setVisibility(View.INVISIBLE);
+                todo_medal.setImageResource(R.drawable.award);
                 todo_shineButton.callOnClick();
             }
             progressBarAnimation.to= score -2000;
             todo_progessBar.startAnimation(progressBarAnimation);
 
-        }else if (score >=3000 && score <4000){
+        }else if (score >=3000){
 
             if (level.equals("마스터")){
                 todo_txtCore.setText(String.valueOf(score));
-                todo_txtLevel.setText("마스터");
+                todo_txtLevel.setText("이미 청소마스터입니다!\n 존경합니다!");
             }else {
-                todo_txtCore.setText("레벨업!!! 고지가 얼마 안남았어여!!");
+                todo_txtCore.setText("레벨업!!!\n드디어 청소의 경지로 오르셨습니다!\n축하합니다! ");
                 todo_txtLevel.setText("마스터");
                 selectProfile(getApplicationContext(),"마스터");
                 todo_shineButton.setVisibility(View.VISIBLE);
                 todo_celebration.setVisibility(View.INVISIBLE);
+                todo_medal.setImageResource(R.drawable.master);
                 todo_shineButton.callOnClick();
             }
             progressBarAnimation.to= score -3000;
             todo_progessBar.startAnimation(progressBarAnimation);
 
         }
-
-
         todo_btnCancel.setOnClickListener(this);
-
-
 
     }
 
