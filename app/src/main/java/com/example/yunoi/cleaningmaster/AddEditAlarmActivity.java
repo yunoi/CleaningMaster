@@ -268,14 +268,14 @@ private AlarmVO getAlarm() {
     }
 }
 
+    // 청소구역 한번에 지울때만
+    public void delete() {
+        final AlarmVO alarm = getIntent().getParcelableExtra("delete_alarm");
+        Log.d(TAG, "intent.deleted_alarm : " + alarm.toString());
+        //Cancel any pending notifications for this alarm
+        AlarmReceiver.cancelReminderAlarm(this, alarm);
 
-//    private void delete() {
-//        final TodolistVo alarm = getAlarm();
-//
-//        //Cancel any pending notifications for this alarm
-//        AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
-//
-//        final int rowsDeleted = DBHelper.getInstance(getContext()).deleteAlarm(alarm);
-//        getActivity().finish();
-//    }
+        final int rowsDeleted = DBHelper.getInstance(this).deleteAlarm(alarm);
+        Log.d(TAG, "deleted row: " + rowsDeleted);
+    }
 }
