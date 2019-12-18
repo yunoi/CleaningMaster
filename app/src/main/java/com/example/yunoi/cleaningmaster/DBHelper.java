@@ -28,9 +28,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_SAT = "sat";
     public static final String COL_SUN = "sun";
     public static final String COL_IS_ENABLED = "alarmState";
+    public static final String COL_AREA = "area";
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 15);
+        super(context, "cleaningMasterDB", null, 17);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
@@ -65,7 +66,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 COL_FRI + " INTEGER NOT NULL, " +
                 COL_SAT + " INTEGER NOT NULL, " +
                 COL_SUN + " INTEGER NOT NULL, " +
-                COL_IS_ENABLED + " INTEGER NOT NULL)" );
+                COL_IS_ENABLED + " INTEGER NOT NULL, " +
+                COL_AREA + " TEXT);");
         db.execSQL("CREATE TABLE PedTBL (year INTEGER , month INTEGER , day INTEGER ,step TEXT , kcal TEXT ,PRIMARY KEY (year   ,month,   day))");
 
     }
@@ -177,5 +179,18 @@ public class DBHelper extends SQLiteOpenHelper {
             if (c != null && !c.isClosed()) c.close();
         }
 
+    }
+
+    public ArrayList<AlarmVO> areaSort(String area){
+        Cursor c = null;
+        String where = COL_AREA + "=?";
+        String[] whereArgs = new String[]{area};
+        try{
+            c = getReadableDatabase().query("alarmTBL", null, where, whereArgs, null, null, null);
+            Log.i(getClass().getSimpleName(), "alarm in room : " + AlarmUtils.buildAlarmList(c).toString()         );
+            return AlarmUtils.buildAlarmList(c);
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+        }
     }
 }
