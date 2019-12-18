@@ -65,6 +65,7 @@
         <activity android:name=".TutorialGuideActivity"></activity>
         <activity android:name=".ExpShowActivity" />
         <activity android:name=".AddEditAlarmActivity" />
+        <activity android:name=".LisenceActivity"></activity>
         <receiver
             android:name="com.example.yunoi.cleaningmaster.InitActionReceiver"
             android:enabled="true"

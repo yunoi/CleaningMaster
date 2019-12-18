@@ -26,8 +26,9 @@ import static android.content.Context.MODE_PRIVATE;
 public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private View view;
-    private ImageButton setting_goProfile,setting_pfofileDelete;
+    private ImageButton setting_goProfile,setting_pfofileDelete,lisenceBtn;
     private Switch swNotify,swTutoCheck;
+
 
     private DBHelper dbHelper;
     private SQLiteDatabase sqLiteDatabase;
@@ -41,6 +42,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         swTutoCheck = view.findViewById(R.id.swTutoCheck);
         setting_goProfile = view.findViewById(R.id.setting_goProfile);
         setting_pfofileDelete = view.findViewById(R.id.setting_pfofileDelete);
+        lisenceBtn = view.findViewById(R.id.lisenceBtn);
 
         //액션바 설정
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
@@ -109,6 +111,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
         setting_goProfile.setOnClickListener(this);
         setting_pfofileDelete.setOnClickListener(this);
+        lisenceBtn.setOnClickListener(this);
         return view;
     }//end of onCreateView
 
@@ -147,6 +150,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 });
                 deleteCheck.setNegativeButton("취소",null);
                 deleteCheck.show();
+                break;
+            case R.id.lisenceBtn:
+                Intent lisenceActivity=new Intent(getContext(),LisenceActivity.class);
+                startActivity(lisenceActivity);
+
                 break;
         }
     }

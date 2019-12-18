@@ -190,7 +190,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                             Log.d(TAG, "실시간 체크사이즈 : " + checkSize);
                             Log.d(TAG, "실시간 리스트 사이즈 : " + list.size());
                             //스낵바 설정(체크할 시 경험치 확인 스낵바)
-                            stnackBar("경험치가 적립되었습니다!(+100xp)\n경험치 :");
+                            stnackBar("경험치가 적립되었습니다!(+10xp)\n경험치 :");
 
                             Intent intent = new Intent(context, ExpShowActivity.class);
                             if (TodolistFragment.score==1000){
@@ -210,19 +210,18 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
                             //체크한 카운트가 만든 리스트와 맞을때
                             if (checkSize == list.size()) {
                                 insertIsCheckClear(context);//다완료할때 1집어늠.
-                                TodolistFragment.score += 200;
+                                TodolistFragment.score += 20;
 
-                                Snackbar snackbar = Snackbar.make(TodayListFragment.todaylist_LinearLayout, "축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+200exp)가 적립되었습니다!\n경험치 :" + TodolistFragment.score, Snackbar.LENGTH_INDEFINITE);
+                                Snackbar snackbar = Snackbar.make(TodayListFragment.todaylist_LinearLayout, "축하합니다! 모든 목표를 다 달성하셨습니다!\n보너스 경험치(+20exp)가 적립되었습니다!\n경험치 :" + TodolistFragment.score, Snackbar.LENGTH_INDEFINITE);
                                 snackbar.setActionTextColor(Color.parseColor("#ffffff"));
                                 Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                                layout.setPadding(10, 10, 50, 10);
+                                layout.setPadding(10, 10, 10, 10);
                                 View snackbarView = snackbar.getView();
                                 TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
                                 tv.setTextColor(Color.WHITE);
-                                tv.setTextSize(16);
+                                tv.setTextSize(14);
                                 tv.setMaxLines(3);
-                                tv.setTextSize(16);
-                                tv.setPadding(60, 60, 60, 60);
+                                tv.setPadding(20, 20, 20, 20);
                                 snackbarView.setBackgroundColor(Color.parseColor("#024873"));
 
 
@@ -287,7 +286,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
 
         Log.d(TAG, "날짜 : " + currentYear + "년" + currentMonth + "월" + currentDay + "일");
 
-        TodolistFragment.score += 100;
+        TodolistFragment.score += 10;
 
         //체크시 줄 생기는것
         strikeThroughPainting.color(Color.rgb(2, 72, 112))
@@ -343,7 +342,7 @@ public class TodayListAdapter extends RecyclerView.Adapter<TodayListAdapter.Cust
         db = DBHelper.getInstance(context).getWritableDatabase();
         Log.d(TAG, "가져온 task : " + task+" / area = "+groupName);
         db.execSQL("UPDATE cleaningTBL SET year=" + currentYear + ", month =" + currentMonth + ", day=" + currentDay + ", checkCount=" + checkCount + " WHERE task ='" + task + "' AND area ='" + groupName + "' ;");
-        Toast.makeText(context, "업데이트 저장되었습니다.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "업데이트 저장되었습니다.", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "저장된 시간 : " + currentYear + currentMonth + currentDay);
         Log.d(TAG, "저장된 체크 : " + checkCount);
     }

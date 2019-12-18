@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbarStyle="outsideOverlay"
+    android:gravity="center"
     >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                >
                 <TextView
                     android:id="@+id/tvTask"
                     android:layout_width="match_parent"
@@ -18,67 +22,54 @@
                     android:text="청소 내용"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:padding="8dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="top"
+                    android:padding="10dp"
+
                     />
                 
                 <TimePicker
                     android:id="@+id/timePicker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:timePickerMode="spinner" />
+                    android:timePickerMode="spinner"
+                    android:layout_gravity="center"
 
-                <!--<LinearLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:gravity="center_vertical"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:padding="16dp">-->
-
-                    <!--<TextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:text="날짜" />-->
-                    <!--<TextView-->
-                        <!--android:id="@+id/tvDate"-->
-                        <!--android:layout_width="0px"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginStart="8dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:textStyle="bold" />-->
-
-                <!--</LinearLayout>-->
+                    />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:gravity="center"
+                    android:layout_weight="1"
+
+                    >
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="반복"
                         android:textColor="#024873"
                         android:textSize="20dp"
+                        android:gravity="center"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtDayCheck"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:gravity="center"
                         android:text="요일을 선택해 주세요." />
                 </LinearLayout>
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp">
+                    >
 
                     <CheckBox
                         android:id="@+id/cbMonday"
@@ -190,15 +181,19 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center">
+                    android:layout_gravity="bottom"
+                    android:layout_weight="1"
+                    >
 
                     <Button
                         android:id="@+id/btnOk"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#024873"
                         android:text="저장"
                         android:textSize="20sp" />
 
@@ -207,11 +202,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:gravity="center"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#024873"
                         android:text="취소"
                         android:textSize="20sp" />
                 </LinearLayout>
 
             </LinearLayout>
 
-</ScrollView>
+</LinearLayout>
