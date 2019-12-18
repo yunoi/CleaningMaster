@@ -1,35 +1,35 @@
 package com.example.yunoi.cleaningmaster;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import static android.content.Context.MODE_PRIVATE;
+import com.dinuscxj.progressbar.CircleProgressBar;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     TextView txtNickName, txtScore, txtRank, txtHeight, txtWeight, txtAge;
-    ImageView ivGender;
+    ImageView ivGender, ivMedal;
     View view;
+    CircleProgressBar profile_progressBar;
+    ProgressBarAnimation progressBarAnimation;
 
     SQLiteDatabase sqLiteDatabase;
     Cursor cursor;
@@ -39,17 +39,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.profile, container, false);
         customActionBar(inflater);
-
+        //ID연결
         txtNickName = view.findViewById(R.id.txtNickName);
         txtScore = view.findViewById(R.id.txtScore);
+        profile_progressBar = view.findViewById(R.id.profile_progressBar);
         txtRank = view.findViewById(R.id.txtRank);
+        ivMedal = view.findViewById(R.id.ivMedal);
         txtHeight = view.findViewById(R.id.txtHeight);
         txtWeight = view.findViewById(R.id.txtWeight);
         ivGender = view.findViewById(R.id.ivGender);
         txtAge = view.findViewById(R.id.txtAge);
-//        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-//        btnDeleteProfile = view.findViewById(R.id.btnDeleteProfile);
 
+        //profileTBL항목에서 자료들을 불러와 각 항목에 미리 세팅시킨다.
         sqLiteDatabase = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL;", null);
         cursor.moveToLast();
@@ -61,14 +62,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         float cursorWeight = cursor.getFloat(cursor.getColumnIndex("Weight"));
         int cursorAge = cursor.getInt(cursor.getColumnIndex("Age"));
 
+        //프로그래스바 관련 코드
+        //프로그래스바 세팅
+        progressBarAnimation = new ProgressBarAnimation(profile_progressBar, 0, cursorScore);
+        progressBarAnimation.setDuration(1000);
+        //프로그래스바 모양
+        profile_progressBar.setCap(Paint.Cap.ROUND);
+        profile_progressBar.setMax(1000);
+        profile_progressBar.startAnimation(progressBarAnimation);
+
+
         txtNickName.setText(cursorNickName);
         txtScore.setText(String.valueOf(cursorScore));
         txtRank.setText(String.valueOf(cursorRank));
-        if(cursorGender.equals("남성")){
+        switch (txtRank.getText().toString()){
+            case "초수": ivMedal.setImageResource(R.drawable.medal);break;
+            case "중수": ivMedal.setImageResource(R.drawable.winner);break;
+            case "고수": ivMedal.setImageResource(R.drawable.award);break;
+            case "마스터": ivMedal.setImageResource(R.drawable.master);break;
+        }
+        if (cursorGender.equals("남성")) {
             ivGender.setImageResource(R.drawable.man_96);
-        }else if (cursorGender.equals("여성")){
+        } else if (cursorGender.equals("여성")) {
             ivGender.setImageResource(R.drawable.woman_96);
-        }else {
+        } else {
             ivGender.setImageResource(R.drawable.gender_96);
         }
         txtHeight.setText(String.valueOf(cursorHeight));
@@ -100,70 +117,47 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         ////end of 액션바 공백 없애기
 
         ImageButton acbar_backToMain = actionbarlayout.findViewById(R.id.acbar_backToMain);
-        ImageButton acbar_delete = actionbarlayout.findViewById(R.id.acbar_delete);
-        ImageButton acbar_edit = actionbarlayout.findViewById(R.id.acbar_edit);
 
         acbar_backToMain.setOnClickListener(this);
-        acbar_delete.setOnClickListener(this);
-        acbar_edit.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.acbar_backToMain:
                 Fragment mainFragment = new MainFragment();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.coordinatorLayout, mainFragment).commit();
 
-//                fragmentTransaction.remove(ProfileFragment.this).commit();
-//                fragmentManager.popBackStack();
-                break;
-            case R.id.acbar_delete:
-                AlertDialog.Builder deleteCheck = new AlertDialog.Builder(getContext());
-                deleteCheck.setTitle("프로필 삭제");
-                deleteCheck.setIcon(R.drawable.warnning);
-                deleteCheck.setMessage("정말로 삭제하시겠습니까?");
-                deleteCheck.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        sqLiteDatabase.execSQL("DELETE FROM profileTBL;");
-                        SharedPreferences passTutorial = getActivity().getSharedPreferences("change",MODE_PRIVATE);
-                        SharedPreferences.Editor editor = passTutorial.edit();
-                        int intoTuto = 0;
-                        editor.putInt("First",intoTuto);
-                        editor.commit();
-                        Intent resetIntent = new Intent(getContext(), NickNameSetting.class);
-                        startActivity(resetIntent);
-                        getActivity().finish();
-                    }
-                });
-                deleteCheck.setNegativeButton("취소",null);
-                deleteCheck.show();
-                break;
-            case R.id.acbar_edit:
-                String cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
-                Intent intent = new Intent(getContext(), ProfileFirstSetting.class);
-                intent.putExtra("nickName", cursorData);
-                startActivity(intent);
                 break;
         }
+
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        sqLiteDatabase = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL;", null);
-        cursor.moveToLast();
-    }
+    //프로그래스바 애니메이션
+    public class ProgressBarAnimation extends Animation {
+        CircleProgressBar circleProgressBar;
+        private float from;
+        private float to;
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
+        public ProgressBarAnimation(CircleProgressBar circleProgressBar, float from, float to) {
+            super();
+            this.circleProgressBar = circleProgressBar;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            float value = from + (to - from) * interpolatedTime;
+            circleProgressBar.setProgress((int) value);
+        }
 
 
+    }//end of onClickLister
 }
+
+

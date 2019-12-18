@@ -1,6 +1,11 @@
 package com.example.yunoi.cleaningmaster;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,17 +23,24 @@ import android.widget.Toast;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class SettingFragment extends Fragment {
+public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private View view;
+    private ImageButton setting_goProfile,setting_pfofileDelete;
     private Switch swNotify,swTutoCheck;
 
+    private DBHelper dbHelper;
+    private SQLiteDatabase sqLiteDatabase;
+    Cursor cursor;
+    String cursorData;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.setting_fragment, container, false);
 //        swNotify = view.findViewById(R.id.swNotify);
         swTutoCheck = view.findViewById(R.id.swTutoCheck);
+        setting_goProfile = view.findViewById(R.id.setting_goProfile);
+        setting_pfofileDelete = view.findViewById(R.id.setting_pfofileDelete);
 
         //액션바 설정
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
@@ -66,10 +78,8 @@ public class SettingFragment extends Fragment {
 
         //////////////////////////////////////////////////여기까지 by채현
 
-
-
-
-
+        //재훈's part
+        //튜토리얼 관련 SharedPreferences
         final SharedPreferences passTutorial = getActivity().getSharedPreferences("change",MODE_PRIVATE);
         int tutorialState = passTutorial.getInt("First",0);
         if(tutorialState==1){
@@ -96,6 +106,48 @@ public class SettingFragment extends Fragment {
                 }
             }
         });
+
+        setting_goProfile.setOnClickListener(this);
+        setting_pfofileDelete.setOnClickListener(this);
         return view;
+    }//end of onCreateView
+
+    @Override
+    public void onClick(View v) {
+        sqLiteDatabase = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL;", null);
+        cursor.moveToLast();
+        String cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
+        switch (v.getId()){
+            case R.id.setting_goProfile:
+//                String cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
+                Intent intent = new Intent(getContext(), ProfileFirstSetting.class);
+                intent.putExtra("nickName", cursorData);
+                startActivity(intent);
+                getActivity().finish();
+                break;
+            case R.id.setting_pfofileDelete:
+                AlertDialog.Builder deleteCheck = new AlertDialog.Builder(getContext());
+                deleteCheck.setTitle("프로필 삭제");
+                deleteCheck.setIcon(R.drawable.warnning);
+                deleteCheck.setMessage("정말로 삭제하시겠습니까?");
+                deleteCheck.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sqLiteDatabase.execSQL("DELETE FROM profileTBL;");
+                        SharedPreferences passTutorial = getActivity().getSharedPreferences("change",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = passTutorial.edit();
+                        int intoTuto = 0;
+                        editor.putInt("First",intoTuto);
+                        editor.commit();
+                        Intent resetIntent = new Intent(getContext(), NickNameSetting.class);
+                        startActivity(resetIntent);
+                        getActivity().finish();
+                    }
+                });
+                deleteCheck.setNegativeButton("취소",null);
+                deleteCheck.show();
+                break;
+        }
     }
 }

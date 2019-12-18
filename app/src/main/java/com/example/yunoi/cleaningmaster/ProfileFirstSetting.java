@@ -31,7 +31,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         Stetho.initializeWithDefaults(this);
         setContentView(R.layout.profile_setting);
-
+        //id연결
         ibMale = findViewById(R.id.ibMale);
         ibFemale = findViewById(R.id.ibFemale);
         btnProfileSave = findViewById(R.id.btnProfileSave);
@@ -39,7 +39,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
         edtWeight = findViewById(R.id.edtWeight);
         edtAge = findViewById(R.id.edtAge);
         btnPass = findViewById(R.id.btnPass);
-
+        //EditText 숫자 제한
         edtHeight.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,6 +100,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                 edtWeight.addTextChangedListener(this);
             }
         });
+        //profileTBL항목에서 성별에 따라서 버튼의 색상을 미리 결정해둔다.
         sqLiteDatabase = DBHelper.getInstance(getApplicationContext()).getWritableDatabase();
         Intent intent = getIntent();
         String data = intent.getStringExtra("nickName");
@@ -126,6 +127,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        //DB를 불러오고 이후 인텐트로 받아온 닉네임을 DB의 profileTBL의 닉네임과 같은 항목의 수정을 진행한다.
         sqLiteDatabase = DBHelper.getInstance(getApplicationContext()).getWritableDatabase();
         Intent intent = getIntent();
         String data = intent.getStringExtra("nickName");
@@ -136,6 +138,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
         cursorData = cursor.getString(cursor.getColumnIndex("NickName"));
         String cursorGender = cursor.getString(cursor.getColumnIndex("Gender"));
         switch (v.getId()){
+            //여성 이미지 버튼 클릭이벤트
             case R.id.ibFemale :
                 if(cursorGender.equals("성별")){
                     sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "여성" + "';");
@@ -147,6 +150,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                     ibMale.setEnabled(true);
                 }
                 break;
+            //남성 이미지 버튼 클릭이벤트
             case R.id.ibMale :
                 if(cursorGender.equals("성별")){
                     sqLiteDatabase.execSQL("UPDATE profileTBL SET Gender = '" + "남성" + "';");
@@ -159,6 +163,7 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                 }
 
                 break;
+            //프로필 저장 버튼 클릭이벤트
             case R.id.btnProfileSave :
                 if(edtHeight.getText().toString().equals("")||edtWeight.getText().toString().equals("")||
                         edtAge.getText().toString().equals("")){
@@ -174,25 +179,16 @@ public class ProfileFirstSetting extends Activity implements View.OnClickListene
                 EndPage();
                 cursor.close();
                 break;
+            //다음에 저장 버튼 클릭이벤트
             case R.id.btnPass :
                 EndPage();
                 break;
         }
     }
+    //메인으로 이동
     private void EndPage() {
-        int cursorHeight = cursor.getInt(cursor.getColumnIndex("Height"));
-        int cursorWeight = cursor.getInt(cursor.getColumnIndex("Weight"));
-        int cursorAge = cursor.getInt(cursor.getColumnIndex("Age"));
-        String cursorGender = cursor.getString(cursor.getColumnIndex("Gender"));
-        if(cursorHeight == 0 || cursorWeight==0 || cursorAge==0 || cursorGender.equals("성별") ){
-            Intent intent = new Intent(ProfileFirstSetting.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }else{
-            Fragment profileFragment = new ProfileFragment();
-            Bundle bundle = new Bundle();
-            profileFragment.setArguments(bundle);
-            finish();
-        }
+        Intent intent = new Intent(ProfileFirstSetting.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
