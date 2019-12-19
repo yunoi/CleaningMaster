@@ -130,7 +130,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 getActivity().finish();
                 break;
             case R.id.setting_pfofileDelete:
-                AlertDialog.Builder deleteCheck = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder deleteCheck = new AlertDialog.Builder(getContext(),R.style.MyDialogTheme);
                 deleteCheck.setTitle("프로필 삭제");
                 deleteCheck.setIcon(R.drawable.warnning);
                 deleteCheck.setMessage("정말로 삭제하시겠습니까?");
