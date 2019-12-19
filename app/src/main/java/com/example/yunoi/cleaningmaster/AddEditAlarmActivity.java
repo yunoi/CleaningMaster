@@ -136,6 +136,17 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         return titleResId;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public static Intent buildAddEditAlarmActivityIntent(Context context, @Mode int mode) {
         final Intent i = new Intent(context, AddEditAlarmActivity.class);
         i.putExtra(MODE_EXTRA, mode);
