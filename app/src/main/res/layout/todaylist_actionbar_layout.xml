@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="오늘 할일"
+        android:text="오늘의 청소"
         android:textColor="#024873"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
