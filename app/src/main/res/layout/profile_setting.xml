@@ -57,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="키"
+                android:gravity="center"
                 android:textColor="#024873"
                 android:textSize="20dp" />
 
@@ -65,17 +66,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="000.00"
+                android:hint="키를 적어주세요"
+
                 android:inputType="numberDecimal"
                 android:maxLength="6"
                 android:textColor="#024873"
-                android:textSize="20dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="cm"
+                android:gravity="center"
                 android:textColor="#024873"
                 android:textSize="20dp" />
         </LinearLayout>
@@ -92,6 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="몸무게"
+                android:gravity="center"
                 android:textColor="#024873"
                 android:textSize="20dp" />
 
@@ -100,17 +104,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="000.00"
+                android:hint="몸무게를 적어주세요"
                 android:inputType="numberDecimal"
                 android:maxLength="6"
                 android:textColor="#024873"
-                android:textSize="20dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="kg"
+                android:gravity="center"
                 android:textColor="#024873"
                 android:textSize="20dp" />
         </LinearLayout>
@@ -127,6 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="나이"
+                android:gravity="center"
                 android:textColor="#024873"
                 android:textSize="20dp" />
 
@@ -135,17 +141,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="000"
+                android:hint="나이를 적어주세요"
                 android:inputType="number"
                 android:maxLength="3"
                 android:textColor="#024873"
-                android:textSize="20dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="세"
+                android:gravity="center"
                 android:textColor="#024873"
                 android:textSize="20dp" />
         </LinearLayout>
@@ -161,14 +168,20 @@
                 android:id="@+id/btnProfileSave"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="70dp"
-                android:text="프로필 저장" />
+                android:text="프로필 저장"
+                android:textColor="#ffffff"
+                android:layout_weight="1"
+                android:backgroundTint="#024873"
+                />
 
             <Button
                 android:id="@+id/btnPass"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="70dp"
+                android:layout_weight="1"
+                android:backgroundTint="#024873"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ffffff"
                 android:text="다음에 저장" />
         </LinearLayout>
     </LinearLayout>

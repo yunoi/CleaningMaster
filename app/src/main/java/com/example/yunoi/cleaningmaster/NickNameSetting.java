@@ -31,9 +31,8 @@ public class NickNameSetting extends Activity {
         edtNickName = findViewById(R.id.edtNickName);
         btnNickSave = findViewById(R.id.btnNickSave);
 
-
+        //DB연결
         sqLiteDatabase = DBHelper.getInstance(getApplicationContext()).getWritableDatabase();
-
         cursor = sqLiteDatabase.rawQuery("SELECT * FROM profileTBL;", null);
         if (cursor.getCount() != 0) {
             cursor.moveToLast();
@@ -66,6 +65,7 @@ public class NickNameSetting extends Activity {
                 }
             });
         } else if (cursorData != null) {
+            //만약 닉네임 존재시 바로 메인으로.
             Toast.makeText(NickNameSetting.this, cursorData + "님, 환영합니다.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(NickNameSetting.this, MainActivity.class);
             startActivity(intent);

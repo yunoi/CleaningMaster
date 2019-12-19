@@ -39,7 +39,7 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
     protected void onPause() {
         super.onPause();
         updateScore(getApplicationContext(),score);
-        Toast.makeText(getApplicationContext(),"core가 db로 다시 업데이트됨"+ score,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(),"core가 db로 다시 업데이트됨"+ score,Toast.LENGTH_SHORT).show();
 
     }
 
@@ -114,11 +114,11 @@ public class ExpShowActivity extends AppCompatActivity implements View.OnClickLi
 
         }else if (score >=3000){
 
-            if (level.equals("마스터")){
+            if (level.equals("달인")){
                 todo_txtCore.setText(String.valueOf(score));
-                todo_txtLevel.setText("이미 청소마스터입니다!\n 존경합니다!");
+                todo_txtLevel.setText("이미 청소의 달인 입니다!\n 존경합니다!");
             }else {
-                todo_txtCore.setText("레벨업!!!\n드디어 청소의 경지로 오르셨습니다!\n축하합니다! ");
+                todo_txtCore.setText("레벨업!!!\n드디어 청소의 달인이 되셨습니다! 축하합니다! ");
                 todo_txtLevel.setText("마스터");
                 selectProfile(getApplicationContext(),"마스터");
                 todo_shineButton.setVisibility(View.VISIBLE);

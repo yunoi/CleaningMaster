@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
 
         listView = view.findViewById(R.id.listView);
         list = getTotalArea();
-        final MainAdapter adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
+        adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -115,6 +115,7 @@ public class MainFragment extends Fragment {
                             if (preventDuplicateArea(str1)) {
                                 insertMainCleaningArea(str1);
                                 list.add(str1);
+                                adapter.notifyDataSetChanged();
                                 toastDisplay(str1+"이(가) 추가되었습니다.");
                                 alertDialog.dismiss();
                             }
@@ -201,6 +202,13 @@ public class MainFragment extends Fragment {
     public void deleteArea(String groupName) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         db.execSQL("DELETE FROM areaTBL WHERE area='" + groupName + "';");
+        Log.d(TAG, "areaTBL에서 청소구역 삭제됨");
+    }
+
+    //청소 구역에 해당되는 청소 목록도 함께 삭제
+    public void deleteTaskList(String groupName) {
+        db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
+        db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
         Log.d(TAG, "cleaningTBL에서 청소구역 삭제됨");
     }
 
@@ -320,10 +328,20 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            // 청소구역 전체 알림 리스트와 db 삭제
+                            ArrayList<AlarmVO> alarmList;
+                            alarmList = DBHelper.getInstance(context).areaSort(groupText);
+
+                            for(int i = 0 ; i < alarmList.size(); i++){
+                                AlarmVO alarm = alarmList.get(i);
+                                AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
+                                final int rowsDeleted = DBHelper.getInstance(getContext()).deleteAlarm(alarm);
+                            }
+
                             list.remove(position);
                             notifyDataSetChanged();
-
                             deleteArea(groupText); // 청소구역 db 삭제
+                            deleteTaskList(groupText); // 청소구역소속 리스트 삭제
 
                             Snackbar snackbar = Snackbar.make(linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
 
@@ -433,4 +451,11 @@ public class MainFragment extends Fragment {
         Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
+//    private void delete() {
+//        final AlarmVO alarm = getIntent().getParcelableExtra("delete_alarm");
+//        //Cancel any pending notifications for this alarm
+//        AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
+//        final int rowsDeleted = DBHelper.getInstance(getContext()).deleteAlarm(alarm);
+//        getActivity().finish();
+//    }
 }

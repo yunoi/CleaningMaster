@@ -8,7 +8,7 @@
     <item android:id="@+id/action_1_1"
         android:enabled="true"
         android:icon="@drawable/ic_event_note_black_24dp"
-        android:title="오늘할일"
+        android:title="오늘청소"
         />
     <item android:id="@+id/action_2"
         android:enabled="true"

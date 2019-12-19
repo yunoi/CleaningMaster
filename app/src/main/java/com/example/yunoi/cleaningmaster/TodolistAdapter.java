@@ -97,12 +97,15 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
 
-        final AlarmVO alarm = alarmList.get(position);
 
+        final AlarmVO alarm = alarmList.get(position);
         customViewHolder.todolist_text.setText(alarm.getLabel());
         customViewHolder.todolist_alramClocktxt.setText(AlarmUtils.getReadableTime(alarm.getTime()) + " " + AlarmUtils.getAmPm(alarm.getTime()));
         customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
-
+        customViewHolder.todolist_alram.setBackgroundResource(imageChange(alarm));
+        customViewHolder.todolist_text.setTag(customViewHolder);
+        customViewHolder.todolist_alramClocktxt.setTag(customViewHolder);
+        customViewHolder.todolist_alramReaptTxt.setTag(customViewHolder);
         Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
 
         //취소 버튼 액션
@@ -128,7 +131,7 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
                         alarmList.remove(position);
                         notifyDataSetChanged();
                         deleteCleningArea(text, v.getContext()); //DB 삭제부분
-                        final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);
+                        final int rowsDeleted = DBHelper.getInstance(context).deleteAlarm(alarm);  // 알람 DB삭제
 
                         Snackbar snackbar = Snackbar.make(customViewHolder.todo_linearLayout, "삭제되었습니다!", Snackbar.LENGTH_SHORT);
                         snackbar.setActionTextColor(Color.parseColor("#ffffff"));
@@ -210,12 +213,21 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     }
 
-//    public void setAlarms(ArrayList<AlarmVO> alarms) {
-//        Log.d(TAG, "setAlarms");
-//        alarmList = alarms;
-//        notifyDataSetChanged();
-//    }
+    public int imageChange(AlarmVO alarm){
+        if(alarm.isEnabled()) {
+            Log.d(TAG, "imageChange value == null? : "+alarm.toString());
+            return R.drawable.alarmrepeat;
+        } else {
+            return R.drawable.alram;
+        }
+    }
 
+    public void setAlarms(ArrayList<AlarmVO> alarms) {
+        Log.d(TAG, "setAlarms");
+//        DBHelper.getInstance(context).areaSort();
+        alarmList = alarms;
+        notifyDataSetChanged();
+    }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -234,6 +246,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             todo_linearLayout = itemView.findViewById(R.id.todo_linearLayout);
             todolist_alramReaptTxt = itemView.findViewById(R.id.todolist_alramReaptTxt);
             todolist_alramClocktxt = itemView.findViewById(R.id.todolist_alramClocktxt);
+
+            todolist_alram.setBackgroundResource(R.drawable.alram);
         }   // end of constructor
 
     } // end of customViewHolder class
@@ -263,6 +277,5 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
         Log.d(TAG, "DB 삭제됨");
 
     }
-
 
 }

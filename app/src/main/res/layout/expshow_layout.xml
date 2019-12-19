@@ -33,7 +33,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:text="점수"
-        android:textSize="23sp"
+        android:textSize="21sp"
         app:layout_constraintBottom_toTopOf="@+id/todo_shineButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

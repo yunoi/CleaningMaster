@@ -122,10 +122,10 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         String titleResId;
         switch (getMode()) {
             case EDIT_ALARM:
-                titleResId = "알림 수정";
+                titleResId = "알림 설정";
                 break;
             case ADD_ALARM:
-                titleResId = "알림 추가";
+                titleResId = "알림 설정";
             break;
             case UNKNOWN:
             default:
@@ -134,6 +134,17 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
                         Mode.class.getSimpleName());
         }
         return titleResId;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static Intent buildAddEditAlarmActivityIntent(Context context, @Mode int mode) {
@@ -197,7 +208,11 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         alarm.setDay(AlarmVO.SAT, cbSat.isChecked());
         alarm.setDay(AlarmVO.SUN, cbSun.isChecked());
 
-        alarm.setIsEnabled(true);
+        if(!(cbMon.isChecked() || cbTue.isChecked() || cbWed.isChecked() || cbThu.isChecked() || cbFri.isChecked() || cbSat.isChecked() || cbSun.isChecked())) {
+            alarm.setIsEnabled(false);
+        } else {
+            alarm.setIsEnabled(true);
+        }
 
         final int rowsUpdated = DBHelper.getInstance(this).updateAlarm(alarm);
         final String messageId = (rowsUpdated == 1) ? "알림이 설정되었습니다." : "알람설정을 실패하였습니다.";
@@ -206,7 +221,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
         AlarmReceiver.setReminderAlarm(this, alarm);
 
-        finish();
 
     } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,6 +229,8 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.btnOk:
                 alarmSettings();
+                finish();
+
                 break;
             case R.id.btnCancel:
                 toastDisplay("취소되었습니다.");
@@ -268,14 +284,14 @@ private AlarmVO getAlarm() {
     }
 }
 
+    // 청소구역 한번에 지울때만
+    public void delete() {
+        final AlarmVO alarm = getIntent().getParcelableExtra("delete_alarm");
+        Log.d(TAG, "intent.deleted_alarm : " + alarm.toString());
+        //Cancel any pending notifications for this alarm
+        AlarmReceiver.cancelReminderAlarm(this, alarm);
 
-//    private void delete() {
-//        final TodolistVo alarm = getAlarm();
-//
-//        //Cancel any pending notifications for this alarm
-//        AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
-//
-//        final int rowsDeleted = DBHelper.getInstance(getContext()).deleteAlarm(alarm);
-//        getActivity().finish();
-//    }
+        final int rowsDeleted = DBHelper.getInstance(this).deleteAlarm(alarm);
+        Log.d(TAG, "deleted row: " + rowsDeleted);
+    }
 }

@@ -181,6 +181,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    // 청소 구역별 청소 내용 정리
     public ArrayList<AlarmVO> areaSort(String area){
         Cursor c = null;
         String where = COL_AREA + "=?";

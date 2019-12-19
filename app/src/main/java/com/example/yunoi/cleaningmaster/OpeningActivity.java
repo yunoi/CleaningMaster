@@ -9,6 +9,7 @@ public class OpeningActivity extends Activity {
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //2초 동안 해당 오프닝 화면부터 시작
         setContentView(R.layout.opening);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

@@ -10,6 +10,7 @@ public class TutorialVierPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+    //각 도움말 페이지 부르기
     @Override
     public Fragment getItem(int position) {
         switch (position){
@@ -19,7 +20,6 @@ public class TutorialVierPagerAdapter extends FragmentPagerAdapter {
             case 3: return TutorialPageLast.newInstance();
             default: return null;
         }
-
     }
 
     @Override
