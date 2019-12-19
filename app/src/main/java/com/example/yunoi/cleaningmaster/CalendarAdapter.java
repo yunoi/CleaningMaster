@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.jar.Attributes;
@@ -32,6 +33,7 @@ public class CalendarAdapter extends BaseAdapter {
     public int currentMonth;
     public int lastDay;
     public int selectedPosition = -1;
+    Integer[] markCheck = new Integer[49];
 
 
     public CalendarAdapter(Context mContext) {
@@ -72,7 +74,7 @@ public class CalendarAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
+    public View getView(final int position, View view, ViewGroup viewGroup) {
         if (view == null) {
             view = layoutInflater.inflate(layout, viewGroup, false);
         }
@@ -138,33 +140,53 @@ public class CalendarAdapter extends BaseAdapter {
 
             tvCalendarDay.setVisibility(View.VISIBLE);
             tvCalendarDay.setText(String.valueOf(item.getDay()));
-
+            //리스트가 있으면
             if (size2 != 0) {
+                //성공 갯수가 리스트 전체 갯수와 같다.
                 if (size1 == size2) {
                     ivListResult.setVisibility(View.VISIBLE);
                     ivListResult.setImageResource(R.drawable.success_32);
-                    ivListResult.setAlpha(40);
+                    ivListResult.setAlpha(100);
+                    markCheck[position] =1;
+                    //성공 갯수가 리스트 전체 갯수와 같다.
                 } else {
                     ivListResult.setVisibility(View.VISIBLE);
                     ivListResult.setImageResource(R.drawable.fail_32);
-                    ivListResult.setAlpha(40);
+                    ivListResult.setAlpha(100);
+                    markCheck[position] =2;
                 }
+                //리스트가 아예 없을 때
             } else if (size2 == 0) {
                 ivListResult.setVisibility(View.INVISIBLE);
-            }
+                markCheck[position] =0;
 
+            }
+            Log.d("MarkCheck",String.valueOf(markCheck));
             //오늘 day 텍스트 컬러 변경
-            if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == item.getDay()) {
-                Log.d("Table1", String.valueOf((calendar.get(Calendar.DAY_OF_MONTH))));
-                Log.d("Table2", String.valueOf(item.getDay()));
+            if ((Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == item.getDay())&&(Calendar.getInstance().get(Calendar.MONTH) == currentMonth)
+                    &&(Calendar.getInstance().get(Calendar.YEAR) == currentYear)) {
                 tvCalendarDay.setTextColor(Color.GREEN);
             }
-
+            //날짜 클릭했을 때 이벤트
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch (markCheck[position]){
+                        case 0: toastDisplay("자료가 없습니다."); break;
+                        case 1: toastDisplay("청소를 완료한 날!"); break;
+                        case 2: toastDisplay("청소를 다 하지 못한 날..."); break;
+                    }
+                }
+            });
             cursor.close();
             cursor1.close();
         }
 
         return view;
+    }
+
+    private void toastDisplay(String s) {
+        Toast.makeText(mContext,s,Toast.LENGTH_SHORT).show();
     }
 
     //요일에 따른 달력 시작 확인
