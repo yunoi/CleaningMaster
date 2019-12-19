@@ -122,10 +122,10 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         String titleResId;
         switch (getMode()) {
             case EDIT_ALARM:
-                titleResId = "알림 수정";
+                titleResId = "알림 설정";
                 break;
             case ADD_ALARM:
-                titleResId = "알림 추가";
+                titleResId = "알림 설정";
             break;
             case UNKNOWN:
             default:
@@ -197,7 +197,11 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         alarm.setDay(AlarmVO.SAT, cbSat.isChecked());
         alarm.setDay(AlarmVO.SUN, cbSun.isChecked());
 
-        alarm.setIsEnabled(true);
+        if(!(cbMon.isChecked() || cbTue.isChecked() || cbWed.isChecked() || cbThu.isChecked() || cbFri.isChecked() || cbSat.isChecked() || cbSun.isChecked())) {
+            alarm.setIsEnabled(false);
+        } else {
+            alarm.setIsEnabled(true);
+        }
 
         final int rowsUpdated = DBHelper.getInstance(this).updateAlarm(alarm);
         final String messageId = (rowsUpdated == 1) ? "알림이 설정되었습니다." : "알람설정을 실패하였습니다.";

@@ -99,10 +99,10 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
 
         final AlarmVO alarm = alarmList.get(position);
-        if(alarmList.get(position).getArea() == alarm.getArea()){
         customViewHolder.todolist_text.setText(alarm.getLabel());
         customViewHolder.todolist_alramClocktxt.setText(AlarmUtils.getReadableTime(alarm.getTime()) + " " + AlarmUtils.getAmPm(alarm.getTime()));
-        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));}
+        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
+        customViewHolder.todolist_alram.setBackgroundResource(imageChange(alarm));
         customViewHolder.todolist_text.setTag(customViewHolder);
         customViewHolder.todolist_alramClocktxt.setTag(customViewHolder);
         customViewHolder.todolist_alramReaptTxt.setTag(customViewHolder);
@@ -213,13 +213,21 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     }
 
+    public int imageChange(AlarmVO alarm){
+        if(alarm.isEnabled()) {
+            Log.d(TAG, "imageChange value == null? : "+alarm.toString());
+            return R.drawable.alarmrepeat;
+        } else {
+            return R.drawable.alram;
+        }
+    }
+
     public void setAlarms(ArrayList<AlarmVO> alarms) {
         Log.d(TAG, "setAlarms");
 //        DBHelper.getInstance(context).areaSort();
         alarmList = alarms;
         notifyDataSetChanged();
     }
-
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -238,6 +246,8 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             todo_linearLayout = itemView.findViewById(R.id.todo_linearLayout);
             todolist_alramReaptTxt = itemView.findViewById(R.id.todolist_alramReaptTxt);
             todolist_alramClocktxt = itemView.findViewById(R.id.todolist_alramClocktxt);
+
+            todolist_alram.setBackgroundResource(R.drawable.alram);
         }   // end of constructor
 
     } // end of customViewHolder class
