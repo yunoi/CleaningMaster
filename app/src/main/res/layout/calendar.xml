@@ -9,17 +9,22 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:orientation="horizontal">
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/ibPrevious"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@android:color/transparent"
-            android:src="@drawable/backbutton" />
+        android:id="@+id/ibPrevious"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:background="@android:color/transparent"
+        android:src="@drawable/backbutton"
+        tools:ignore="VectorDrawableCompat" />
 
         <TextView
             android:id="@+id/tvMonth"
@@ -33,12 +38,13 @@
             android:textSize="25dp" />
 
         <ImageButton
-            android:id="@+id/ibNext"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@android:color/transparent"
-            android:src="@drawable/previous" />
+        android:id="@+id/ibNext"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:background="@android:color/transparent"
+        android:src="@drawable/previous"
+        tools:ignore="VectorDrawableCompat" />
     </LinearLayout>
 
     <GridView
