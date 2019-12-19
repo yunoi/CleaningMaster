@@ -120,7 +120,7 @@ public class PedomterBar extends Fragment {
 
 
         //    SELECT * FROM test WHERE date BETWEEN "2011-01-11" AND "2011-8-11"
-        Cursor curDB2 = db.rawQuery("SELECT day , sum(step) FROM PedTBL WHERE day  BETWEEN " + bDay + " AND " + cDay + "; ", null);
+        Cursor curDB2 = db.rawQuery("SELECT  day , sum(step) FROM PedTBL group by day having day limit-1;" , null);
         //  Cursor curDB = database.rawQuery("SELECT day, step FROM PedTBL WHERE day = 16 <= 날짜 AND 날짜 >16-7;",null);
          while (curDB2.moveToNext()) {
             // curDB에 담겨진 변수를 객체화 시켜서 list2에 담는다

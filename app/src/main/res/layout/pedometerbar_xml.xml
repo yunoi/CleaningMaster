@@ -11,7 +11,7 @@
         android:layout_width="360dp"
         android:layout_height="400dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="72dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -20,19 +20,5 @@
 
     </com.github.mikephil.charting.charts.BarChart>
 
-
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="91dp"
-        android:layout_height="22dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="12월"
-        android:textColor="#03658c"
-        app:layout_constraintEnd_toEndOf="@+id/chart1"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="@+id/chart1"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

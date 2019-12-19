@@ -99,6 +99,7 @@ public class PedomterFrgment extends Fragment implements View.OnClickListener {
 
         //액션바 버튼
         ImageButton imageButton = actionbarlayout.findViewById(R.id.pedometer_backToMain);
+
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
