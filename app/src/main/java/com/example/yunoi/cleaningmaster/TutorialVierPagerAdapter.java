@@ -17,14 +17,15 @@ public class TutorialVierPagerAdapter extends FragmentPagerAdapter {
             case 0: return TutorialPageFirst.newInstance();
             case 1: return TutorialPage2.newInstance();
             case 2: return TutorialPage3.newInstance();
-            case 3: return TutorialPageLast.newInstance();
+            case 3: return TutorialPage4.newInstance();
+            case 4: return TutorialPageLast.newInstance();
             default: return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
 
 }

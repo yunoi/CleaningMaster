@@ -1,6 +1,5 @@
 package com.example.yunoi.cleaningmaster;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,49 +9,29 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
-public class TutorialPageLast extends Fragment {
-    ImageButton btnTutoClose;
-    CheckBox cbEndTuto;
+public class TutorialPage4 extends Fragment {
+    private ImageView tu4ImageView;
     View view;
-    private ImageView tu5ImageView;
-    public static TutorialPageLast newInstance(){
-        TutorialPageLast tutorialPageLast=new TutorialPageLast();
-        return tutorialPageLast;
+    public static TutorialPage4 newInstance(){
+        TutorialPage4 tutorialPage4=new TutorialPage4();
+        return tutorialPage4;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.tutorial_page_last,container,false);
-        cbEndTuto=view.findViewById(R.id.cbEndTuto);
-        btnTutoClose=view.findViewById(R.id.btnTutoClose);
-        tu5ImageView=view.findViewById(R.id.tu5ImageView);
+        view = inflater.inflate(R.layout.tutorial_page_4,container,false);
+        tu4ImageView=view.findViewById(R.id.tu4ImageView);
 
-        Bitmap bitmapImag=BitmapFactory.decodeResource(view.getContext().getResources(),R.drawable.tu5);
+        Bitmap bitmapImag=BitmapFactory.decodeResource(view.getContext().getResources(),R.drawable.tu4);
         Bitmap bitmap=resizeBitmapImageFn(bitmapImag,800);
-        tu5ImageView.setImageBitmap(bitmap);
+        tu4ImageView.setImageBitmap(bitmap);
 
-
-        //튜토리얼 종료 버튼 클릭시 이벤트
-        btnTutoClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                //만약 다시 보지 않기 버튼 클릭시 다음부터 도움말이 보이지 않음
-                if(cbEndTuto.isChecked()){
-                    int intoMain = 1;
-                    SharedPreferences.Editor editor = TutorialGuideActivity.spPassTutorial.edit();
-                    editor.putInt("First",intoMain);
-                    editor.commit();
-                }
-                getActivity().finish();
-            }
-        });
         return view;
     }
+
     public Bitmap resizeBitmapImageFn(Bitmap bmpSource, int maxResolution){
 
         int iWidth = bmpSource.getWidth();      //비트맵이미지의 넓이

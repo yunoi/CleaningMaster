@@ -36,7 +36,7 @@ public class TutorialGuideActivity extends AppCompatActivity {
         vpTutorial.setAdapter(fragmentPagerAdapter);
 
         pageIndicatorView.setViewPager(vpTutorial);
-        pageIndicatorView.setCount(4);
+        pageIndicatorView.setCount(5);
         pageIndicatorView.setSelection(1);
         pageIndicatorView.setAnimationType(AnimationType.THIN_WORM);
 

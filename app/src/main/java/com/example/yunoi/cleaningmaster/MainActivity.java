@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 fragmentManager = getSupportFragmentManager();
                 ft = fragmentManager.beginTransaction();
-                toastDisplay("옵션메뉴테스트");
                 Log.d("MainActivity", "설정");
                 ft.replace(R.id.coordinatorLayout, settingFragment);
                 ft.commit();
@@ -184,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 fragmentManager=getSupportFragmentManager();
                 ft=fragmentManager.beginTransaction();
-                toastDisplay("통계 테스트");
                 Log.d("MainActivity","통계");
                 ft.replace(R.id.coordinatorLayout,pedomterBar);
                 ft.commit();
@@ -193,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
              case 1:
                 fragmentManager=getSupportFragmentManager();
                 ft=fragmentManager.beginTransaction();
-                toastDisplay("프로필 테스트");
                 Log.d("MainActivity","프로필");
                 ft.replace(R.id.coordinatorLayout,profileFragment);
                 ft.commit();
