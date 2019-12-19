@@ -340,7 +340,9 @@ public class TodolistFragment
         for (AlarmVO list : alarms) {
             Log.d(TAG, "onAlarmsLoaded. list: " + list.toString());
         }
-//        todolistAdapter.setAlarms(alarms);
+
+        alarmList = DBHelper.getInstance(context).areaSort(groupText);
+        todolistAdapter.setAlarms(alarmList);
         Log.d(TAG, "onAlarmsLoaded");
     }
 }

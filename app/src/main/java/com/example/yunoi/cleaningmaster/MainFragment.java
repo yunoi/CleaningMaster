@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
 
         listView = view.findViewById(R.id.listView);
         list = getTotalArea();
-        final MainAdapter adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
+        adapter = new MainAdapter(getActivity().getApplicationContext(), R.layout.main_list_view_holder, list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -115,6 +115,7 @@ public class MainFragment extends Fragment {
                             if (preventDuplicateArea(str1)) {
                                 insertMainCleaningArea(str1);
                                 list.add(str1);
+                                adapter.notifyDataSetChanged();
                                 toastDisplay(str1+"이(가) 추가되었습니다.");
                                 alertDialog.dismiss();
                             }
@@ -207,7 +208,7 @@ public class MainFragment extends Fragment {
     //청소 구역에 해당되는 청소 목록도 함께 삭제
     public void deleteTaskList(String groupName) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-        db.execSQL("DELETE FROM cleaingTBL WHERE area='" + groupName + "';");
+        db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
         Log.d(TAG, "cleaningTBL에서 청소구역 삭제됨");
     }
 

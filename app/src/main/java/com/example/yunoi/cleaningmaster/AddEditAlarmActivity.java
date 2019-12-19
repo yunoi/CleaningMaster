@@ -206,7 +206,6 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
         AlarmReceiver.setReminderAlarm(this, alarm);
 
-        finish();
 
     } // end of alarmSettings ////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,6 +214,8 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.btnOk:
                 alarmSettings();
+                finish();
+
                 break;
             case R.id.btnCancel:
                 toastDisplay("취소되었습니다.");

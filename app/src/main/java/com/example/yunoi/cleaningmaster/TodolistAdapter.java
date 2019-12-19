@@ -97,12 +97,15 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
             mDays = context.getResources().getStringArray(R.array.days_abbreviated);
         }
 
-        final AlarmVO alarm = alarmList.get(position);
 
+        final AlarmVO alarm = alarmList.get(position);
+        if(alarmList.get(position).getArea() == alarm.getArea()){
         customViewHolder.todolist_text.setText(alarm.getLabel());
         customViewHolder.todolist_alramClocktxt.setText(AlarmUtils.getReadableTime(alarm.getTime()) + " " + AlarmUtils.getAmPm(alarm.getTime()));
-        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));
-
+        customViewHolder.todolist_alramReaptTxt.setText(buildSelectedDays(alarm));}
+        customViewHolder.todolist_text.setTag(customViewHolder);
+        customViewHolder.todolist_alramClocktxt.setTag(customViewHolder);
+        customViewHolder.todolist_alramReaptTxt.setTag(customViewHolder);
         Log.d(TAG, "onBindViewHolder. alarm : "+ alarm.toString());
 
         //취소 버튼 액션
@@ -210,11 +213,12 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     }
 
-//    public void setAlarms(ArrayList<AlarmVO> alarms) {
-//        Log.d(TAG, "setAlarms");
-//        alarmList = alarms;
-//        notifyDataSetChanged();
-//    }
+    public void setAlarms(ArrayList<AlarmVO> alarms) {
+        Log.d(TAG, "setAlarms");
+//        DBHelper.getInstance(context).areaSort();
+        alarmList = alarms;
+        notifyDataSetChanged();
+    }
 
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
