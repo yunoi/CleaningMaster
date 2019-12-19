@@ -31,7 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_AREA = "area";
 
     private DBHelper(Context context) {
-        super(context, "cleaningMasterDB", null, 17);
+        super(context, "cleaningMasterDB", null, 18);
     }
     // notifyTBL: 알림관련 테이블
     // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
@@ -68,7 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 COL_SUN + " INTEGER NOT NULL, " +
                 COL_IS_ENABLED + " INTEGER NOT NULL, " +
                 COL_AREA + " TEXT);");
-        db.execSQL("CREATE TABLE PedTBL (year INTEGER , month INTEGER , day INTEGER ,step TEXT , kcal TEXT ,PRIMARY KEY (year   ,month,   day))");
+        db.execSQL("CREATE TABLE PedTBL (year INTEGER , month INTEGER , day INTEGER ,step TEXT , kcal TEXT)");
 
     }
 
