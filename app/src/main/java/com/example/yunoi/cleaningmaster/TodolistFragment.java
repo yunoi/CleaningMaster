@@ -197,9 +197,6 @@ public class TodolistFragment
                             Toast.makeText(v.getContext(), "저장되었습니다!", Toast.LENGTH_SHORT).show();
                         }
                         list.add(new TodolistVo(task));
-//                        AlarmVO alarm = new AlarmVO(task);
-//                        alarmList.add(alarm);
-//                        long test = DBHelper.getInstance(context).addAlarm(alarm);
                         final long id = DBHelper.getInstance(context).addAlarm();
                         LoadAlarmsService.launchLoadAlarmsService(context);
                         final AlarmVO alarm1 = new AlarmVO(id);
@@ -214,12 +211,6 @@ public class TodolistFragment
                 builder.setNegativeButton("취소", null);
                 builder.show();
                 todolistAdapter.notifyDataSetChanged();
-//                Fragment fragment = new AddEditAlarmFragment(); // 알림설정 프래그먼트로
-//                getActivity().getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.coordinatorLayout, fragment)
-//                        .addToBackStack(null)
-//                        .commit();
 
             }
         });
@@ -232,16 +223,11 @@ public class TodolistFragment
                 Log.d(TAG, "SetAlarmClickListener.alarm position: " + position);
                 Log.d(TAG, "SetAlarmClickListener.alarm list: " + alarm.toString());
 
-//                AlarmUtils.checkAlarmPermissions(getActivity());
-//                final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
-//                startActivity(i);
-
                 final Intent launchEditAlarmIntent =
                         AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
                                 context, AddEditAlarmActivity.EDIT_ALARM
                         );
-//                launchEditAlarmIntent.putExtra("task", task);
-//                Log.d(TAG, "end of onCreateView. task : " + task);
+
                 launchEditAlarmIntent.putExtra(AddEditAlarmActivity.ALARM_EXTRA, alarm);
                 startActivity(launchEditAlarmIntent);
             }
@@ -249,14 +235,7 @@ public class TodolistFragment
         return view;
     }//end of onCreatView
 
-//    public static Intent buildAddEditAlarmActivityIntent(Context context, @TodolistFragment.Mode int mode) {
-//        final Intent i = new Intent(context, AddEditAlarmActivity.class);
-//        i.putExtra(MODE_EXTRA, mode);
-//        return i;
-//    }
 
-
-    ////////////////////////////////////채현이꺼///////////////////////////////////////////////////////////////
     //cleaningTBL 구역 저장하기(insert) (현재 년도, 월, 일, 구역, 할일,taskCount 나머지는 2개 checkCount,score 0 으로)
     public void insertCleaningArea(TodolistVo todolistVo) {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();

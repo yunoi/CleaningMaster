@@ -33,9 +33,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private DBHelper(Context context) {
         super(context, "cleaningMasterDB", null, 18);
     }
-    // notifyTBL: 알림관련 테이블
-    // alarmId 알림리퀘스트번호, year 알림설정년 , month 알림설정달, day 알림설정일, hour 알림시, minute 알림분
-    // area 청소구역, task 청소내용, alarmSet 알림on/off, loop 반복여부
+    // alarmTBL: 알림관련 테이블
+    // _id 자동증가아이디, time 알림시간 , task 청소내용, mon 월요반복알림, tue 화요반복알림, wed 수요반복알림, thu 목요반복알림,
+    // fri 금요반복알림, sat 토요반복알림, sun 일요반복알림, alarmState 알림반복여부, area 청소구역.
 
     // cleaningTBL: 청소, 점수, 달성 관련 테이블
     // year 달성년 , month 달성달, day 달성일, area 청소구역, task 청소내용, taskCount 청소리스트개수, checkCount 달성한 청소 갯수
@@ -140,6 +140,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     //PedTBL 만보기
 
+    // 알람
     public long addAlarm() {
         Log.i(getClass().getSimpleName(), "addAlarm()...");
         return addAlarm(new AlarmVO());

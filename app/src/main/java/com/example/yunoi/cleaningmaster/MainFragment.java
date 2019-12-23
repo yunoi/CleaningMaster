@@ -45,7 +45,6 @@ public class MainFragment extends Fragment {
     private ListView listView;
     private ArrayList<String> list = new ArrayList<>();
     private SQLiteDatabase db;
-    private DBHelper dbHelper;
     private MainAdapter adapter;
     private EditText alerEdt; // 청소구역추가 다이얼로그 내부 변수
     private int checkedPosition; // 리스트뷰의 포지션을 가져온다.
@@ -210,67 +209,6 @@ public class MainFragment extends Fragment {
         db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
         db.execSQL("DELETE FROM cleaningTBL WHERE area='" + groupName + "';");
         Log.d(TAG, "cleaningTBL에서 청소구역 삭제됨");
-    }
-
-    // 청소 구역 수정 (upadate)
-    public void updateArea() {
-        final View dialogView = View.inflate(getActivity().getApplicationContext(), R.layout.dialog_add_room, null);
-        final AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
-
-        dlg.setView(dialogView);
-        ImageView imageView =
-                dialogView.findViewById(R.id.imageView);
-        TextView alertTxt1 =
-                dialogView.findViewById(R.id.alertTxt1);
-        alerEdt = dialogView.findViewById(R.id.alerEdt);
-        alertTxt1.setText("변경하실 구역명을 작성해 주세요");
-        final String curArea = list.get(checkedPosition);
-        alerEdt.setText(list.get(checkedPosition));
-        Log.d(TAG, "curArea + alerEdt.setText의 포지션 = "+checkedPosition);
-
-        dlg.setPositiveButton("확인", null);
-        dlg.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,
-                                        int which) {
-                        toastDisplay("취소되었습니다.");
-                    }
-                });
-        final AlertDialog alertDialog = dlg.create();
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String newArea = alerEdt.getText().toString(); // 내용을 꼭 입력하도록 막아놓기
-                        if (newArea.equals("")) {
-                            toastDisplay("청소구역을 입력해 주세요!");
-                        } else {
-                            Log.d(TAG, "추가된 리스트: " + newArea);
-                            if (preventDuplicateArea(newArea)) {
-                                db = DBHelper.getInstance(getActivity().getApplicationContext()).getWritableDatabase();
-                                if (alerEdt.getText().toString() != "") {
-                                    db.execSQL("UPDATE areaTBL SET area = '"
-                                            + newArea + "' WHERE area = '"
-                                            + curArea + "';");
-                                }
-                                list.remove(checkedPosition);
-                                list.add(newArea);
-                                Log.d(TAG, "기존 리스트: " + curArea);
-                                toastDisplay("수정되었습니다.");
-                                alertDialog.dismiss();
-                            }
-
-
-                        }
-                    }
-                });
-            } // end of onShow
-        });
-        alertDialog.show();
-
     }
 
     class MainAdapter extends BaseAdapter {
@@ -451,11 +389,4 @@ public class MainFragment extends Fragment {
         Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
-//    private void delete() {
-//        final AlarmVO alarm = getIntent().getParcelableExtra("delete_alarm");
-//        //Cancel any pending notifications for this alarm
-//        AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
-//        final int rowsDeleted = DBHelper.getInstance(getContext()).deleteAlarm(alarm);
-//        getActivity().finish();
-//    }
 }

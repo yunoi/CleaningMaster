@@ -1,11 +1,9 @@
 package com.example.yunoi.cleaningmaster;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -21,44 +19,27 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
 
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import lib.mozidev.me.extextview.ExTextView;
-import lib.mozidev.me.extextview.StrikeThroughPainting;
-
-import static android.support.v4.content.ContextCompat.startActivity;
-
 public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.CustomViewHolder> {
 
     private Context context;
     private int layout;
-//    private ArrayList<TodolistVo> list;
     private ArrayList<AlarmVO> alarmList = new ArrayList<>();
     private SQLiteDatabase db;
     private alarmClickListener listener = null;
     private String[] mDays;
-    private int checkSize;
     private static final String TAG = "Adapter";
-    private AlarmManager alarmManager;
     private int selectedColor;
 
+
     //생성자
-
-
     public TodolistAdapter() {
     }
 
@@ -252,23 +233,6 @@ public class TodolistAdapter extends RecyclerView.Adapter<TodolistAdapter.Custom
 
     } // end of customViewHolder class
 
-
-
-//    //스낵바 설정 함수화
-//    public void stnackBar(String txt) {
-//        Snackbar snackbar = Snackbar.make(TodolistFragment.todo_constraintLayout, txt + TodolistFragment.score, Snackbar.LENGTH_SHORT);
-//        snackbar.setActionTextColor(Color.parseColor("#ffffff"));
-//        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-//        layout.setPadding(10, 10, 50, 10);
-//        View snackbarView = snackbar.getView();
-//        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-//        tv.setTextColor(Color.WHITE);
-//        tv.setTextSize(16);
-//        snackbarView.setBackgroundColor(Color.parseColor("#024873"));
-//
-//        snackbar.show();
-//    }
-//
 
     // 청소리스트 DB 삭제 부분
     public void deleteCleningArea(String text, Context context) {

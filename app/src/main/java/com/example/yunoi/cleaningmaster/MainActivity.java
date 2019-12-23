@@ -90,15 +90,12 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         ft = fragmentManager.beginTransaction();
 
-        // If menuFragment is defined, then this activity was launched with a fragment selection
         if (menuFragment != null) {
-            // Here we can decide what do to -- perhaps load other parameters from the intent extras such as IDs, etc
             if (menuFragment.equals("Notification")) {
                 ft.replace(R.id.coordinatorLayout, todayListFragment);
                 ft.commit();
             }
         } else {
-            // Activity was not launched with a menuFragment selected -- continue as if this activity was opened from a launcher (for example)
             ft.replace(R.id.coordinatorLayout, mainFragment);
             ft.commit();
         }

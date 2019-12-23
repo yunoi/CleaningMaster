@@ -39,6 +39,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
 
 
     @Retention(RetentionPolicy.SOURCE)
+    ////// ADD_ALARM : 쓰이지 않음!!!
     @IntDef({EDIT_ALARM, ADD_ALARM, UNKNOWN})
     @interface Mode {
     }
@@ -67,22 +68,12 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_add_notify);
         Log.i(getClass().getSimpleName(), "onCreate ...");
-        //noinspection ConstantConditions
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getToolbarTitle());
 
-//        Intent intent = getIntent();
-//        final TodolistVo alarm = intent.getParcelableExtra(ALARM_EXTRA);
         final AlarmVO alarm = getAlarm();
         Log.d(TAG, "onCreate. getAlarm() : "+alarm.toString());
-//
-//        if(getSupportFragmentManager().findFragmentById(R.id.edit_alarm_frag_container) == null) {
-//            getSupportFragmentManager()
-//                    .beginTransaction().add(R.id.edit_alarm_frag_container, AddEditAlarmFragment.newInstance(alarm))
-//                    .commit();
-//
-//
-//        }
 
         alerEdt = findViewById(R.id.alert_todolist_alerEdt);
         timePicker = findViewById(R.id.timePicker);
@@ -99,12 +90,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
         cbSun = findViewById(R.id.cbSunday);
 
         tvTask.setText(getAlarm().getLabel());
-//        // 청소내용 받아오기
-//        Intent intent1 = getIntent();
-//        String task = intent1.getStringExtra("task");
-//        tvTask.setText(task);
-//        alarm.setLabel(task);
-//        Log.d(TAG, "end of onCreateView. task : "+task);
+
         setDayCheckboxes(alarm);
 
         btnOk.setOnClickListener(this);
@@ -188,11 +174,7 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             alarm.setTime(calendar.getTimeInMillis());
         }
 
-//        // 현재보다 이전이면 등록 못하도록
-//        if (calendar.before(Calendar.getInstance())) {
-//            toastDisplay("알람시간이 현재시간보다 이전일 수 없습니다.");
-//            return;
-//        }
+
         Log.d(TAG, "alarmSettings. time: "+ alarm.getTime());
 
         alarm.setLabel(tvTask.getText().toString());
@@ -235,38 +217,15 @@ public class AddEditAlarmActivity extends AppCompatActivity implements View.OnCl
             case R.id.btnCancel:
                 toastDisplay("취소되었습니다.");
                 finish();
-//                delete();
                 break;
 
         }
     }
-//    public void goTodoList(){
-//        Fragment fragment = new TodolistFragment(); //돌아가는 fragment
-//                this.getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.coordinatorLayout, fragment)
-//                .addToBackStack(null)
-//                .commit();
-//    }
+
 
     private void toastDisplay(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
-
-//    // 날짜 선택 DatePicker Dialog 메소드
-//    private void showDialog() {
-//        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-//        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//                // 데이터피커에서 선택한 날짜 처리 하는 부분
-//                calendar.set(Calendar.YEAR, year);
-//                calendar.set(Calendar.MONTH, monthOfYear+1);
-//                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//            }
-//        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH)));
-//        pickerDialog.show();
-//    }
-
 
 private AlarmVO getAlarm() {
     switch (getMode()) {
